@@ -1,11 +1,11 @@
 <template>
-    <div id="projects" class="container">
+    <div id="home" class="container">
         <div class="row">
             <div class="one column">
                 &nbsp;
             </div>
             <div class="ten columns">
-                <h1>Projects</h1>
+                <h1>Welcome</h1>
             </div>
             <div class="one column">
                 &nbsp;
@@ -15,8 +15,8 @@
             <div class="one column">
                 &nbsp;
             </div>
-            <div class="ten columns projects">
-                <div v-for="project in results.projects" class="card u-pull-left">
+            <div class="ten columns">
+                <!-- <div v-for="project in results.projects" class="card u-pull-left">
                     <div class="card-title">
                         <img :src="`${publicPath}${project.screenshot}`" width="350" height="auto" :alt="`Screenshot of ${project.projectTitle}`">
                         <h2>
@@ -32,7 +32,7 @@
                             <a :href="project.repoLink">See the code on Github</a>
                         </p>
                     </div>
-                </div>
+                </div> -->
             </div>
             <div class="one column">
                 &nbsp;
@@ -43,24 +43,24 @@
 
 <script>
 
-    export default {
+    // export default {
 
-        data: () => {
-            return {
-            results: [],
-            publicPath: process.env.BASE_URL
-            }
-        },
+    //     data: () => {
+    //         return {
+    //         results: [],
+    //         publicPath: process.env.BASE_URL
+    //         }
+    //     },
 
-        created() {
-            fetch("https://www.olen.dev/api/projects")
-                .then((response) => {
-                    return response.json();
-                })
-                .then((json) => {
-                    this.results = json;
-                });
-        }
-    }
+    //     created() {
+    //         fetch("https://www.olen.dev/api/projects")
+    //             .then((response) => {
+    //                 return response.json();
+    //             })
+    //             .then((json) => {
+    //                 this.results = json;
+    //             });
+    //     }
+    // }
 
 </script>
