@@ -48,7 +48,7 @@
                 let self = this;
                 window.addEventListener("click", function(e) {
                     if(!self.$el.contains(e.target)){
-                       self.visible = !self.visible;
+                       self.visible = false;
                     }
                 })
             },
