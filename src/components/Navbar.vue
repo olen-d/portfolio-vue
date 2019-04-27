@@ -42,12 +42,19 @@
             },
 
             created() {
-                window.addEventListener("resize", this.handleResize)
+                window.addEventListener("resize", this.handleResize);
                 this.handleResize();
+
+                let self = this;
+                window.addEventListener("click", function(e) {
+                    if(!self.$el.contains(e.target)){
+                       self.visible = !self.visible;
+                    }
+                })
             },
-            
+
             destroyed() {
-                window.removeEventListener("resize", this.handleResize)
+                window.removeEventListener("resize", this.handleResize);
             },
             
             methods: {
@@ -58,7 +65,16 @@
 
                 toggleDropDownMenu() {
                     this.visible = !this.visible;
+                },
+
+                hideDiv(divToHide) {
+                    console.log("--------------------\n",divToHide,document.getElementById(divToHide));
+                    let elementToHide = document.getElementById(divToHide);
+                    if (this.id !== elementToHideId) {
+                        elementToHide.style.display = "none";
+                    }
                 }
+
             }
     }
 </script>
