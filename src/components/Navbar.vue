@@ -18,7 +18,7 @@
             data: () => { // TODO: Set up the DB to include this information. Remember, only the links are coming from the DB. Window and Visible are coded here.
                 return {
                 links: [
-                    {id: 0, sort: 0, title: "OD", uri: "/"},
+                    {id: 0, sort: 0, title: "Home", uri: "/home"},
                     {id: 1, sort: 1, title: "About", uri: "/about"},
                     {id: 2, sort: 2, title: "Projects", uri: "/projects"},
                     {id: 3, sort: 3, title: "Contact", uri: "/contact"}

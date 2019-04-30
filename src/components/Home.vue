@@ -5,7 +5,9 @@
                 &nbsp;
             </div>
             <div class="ten columns">
-                <h1>Welcome</h1>
+                <h5>
+                    {{welcome.headline}}
+                </h5>
             </div>
             <div class="one column">
                 &nbsp;
@@ -43,24 +45,23 @@
 
 <script>
 
-    // export default {
+    export default {
 
-    //     data: () => {
-    //         return {
-    //         results: [],
-    //         publicPath: process.env.BASE_URL
-    //         }
-    //     },
+        data: () => {
+            return {
+            welcome: []
+            }
+        },
 
-    //     created() {
-    //         fetch("https://www.olen.dev/api/projects")
-    //             .then((response) => {
-    //                 return response.json();
-    //             })
-    //             .then((json) => {
-    //                 this.results = json;
-    //             });
-    //     }
-    // }
+        created() {
+            fetch("https://www.olen.dev/api/welcome")
+                .then((response) => {
+                    return response.json();
+                })
+                .then((json) => {
+                    this.welcome = json.welcome[0];
+                });
+        }
+    }
 
 </script>
