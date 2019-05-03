@@ -50,7 +50,13 @@
                     if(!self.$el.contains(e.target)){
                        self.visible = false;
                     }
-                })
+                });
+
+                window.addEventListener("touchStart", function(e) {
+                    if(!self.$el.contains(e.target)){
+                       self.visible = false;
+                    }
+                });
             },
 
             destroyed() {
