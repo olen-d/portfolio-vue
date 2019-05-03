@@ -1,6 +1,9 @@
 <template>
   <div id="app">
     <navbar />
+      <div class="logo-header">
+        <img src="/assets/images/OD_min_500x500.png" width="300px" height="300px" />
+      </div>
     <router-view />
     <div class="footer">
 	    <social />	
