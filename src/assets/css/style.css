@@ -219,3 +219,8 @@ p:first-child {
 #dropDownContainer li:last-child {
     margin-bottom:4.5rem;
 }
+
+.logo-header {
+    margin-top:-20rem;
+    margin-left:5rem;
+}
