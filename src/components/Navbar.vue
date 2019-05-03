@@ -52,8 +52,8 @@
                     }
                 });
 
-                window.addEventListener("touchStart", function(e) {
-                    if(!self.$el.contains(e.target)){
+                window.addEventListener("touchend", function(e) {
+                    if(!self.$el.contains(e.targetTouches[0])){
                        self.visible = false;
                     }
                 });
