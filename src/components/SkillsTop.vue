@@ -1,43 +1,14 @@
 <template>
-    <div id="skillsTop" class="container">
-        <div class="row">
-            <div class="one column">
-                &nbsp;
-            </div>
-            <div class="ten columns">
-                <h1>
-                    Skills
-                </h1>
-            </div>
-            <div class="one column">
-                &nbsp;
-            </div>
-        </div>
-        <div class="row">
-            <div class="one column">
-                &nbsp;
-            </div>
-            <div class="ten columns">
-                <!-- <div v-for="project in results.projects" class="card u-pull-left">
-                    <div class="card-title">
-                        <img :src="`${publicPath}${project.screenshot}`" width="350" height="auto" :alt="`Screenshot of ${project.projectTitle}`">
-                        <h2>
-                            {{project.projectTitle}}
-                        </h2>
-                        <p>
-                            {{project.description}}
-                        </p>
-                        <p>
-                            <a :href="project.deployedLink">Visit the project</a>.
-                        </p>
-                        <p>
-                            <a :href="project.repoLink">See the code on Github</a>
-                        </p>
-                    </div>
-                </div> -->
-            </div>
-            <div class="one column">
-                &nbsp;
+    <div>
+        <div v-for="skill in results.skills" class="card u-pull-left">
+            <div class="card-title">
+                <i :class="skill.icon"></i>
+                <h2>
+                    {{skill.name}}
+                </h2>
+                <p>
+                    {{skill.description}}
+                </p>
             </div>
         </div>
     </div>
@@ -49,17 +20,17 @@
 
         data: () => {
             return {
-            welcome: []
+            results: []
             }
         },
 
         created() {
-            fetch("https://www.olen.dev/api/skills/top")
+            fetch("https://www.olen.dev/api/skills/top/3")
                 .then((response) => {
                     return response.json();
                 })
                 .then((json) => {
-                    this.welcome = json.welcome[0];
+                    this.results = json;
                 });
         }
     }

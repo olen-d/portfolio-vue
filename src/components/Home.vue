@@ -18,23 +18,20 @@
                 &nbsp;
             </div>
             <div class="ten columns">
-                <!-- <div v-for="project in results.projects" class="card u-pull-left">
-                    <div class="card-title">
-                        <img :src="`${publicPath}${project.screenshot}`" width="350" height="auto" :alt="`Screenshot of ${project.projectTitle}`">
-                        <h2>
-                            {{project.projectTitle}}
-                        </h2>
-                        <p>
-                            {{project.description}}
-                        </p>
-                        <p>
-                            <a :href="project.deployedLink">Visit the project</a>.
-                        </p>
-                        <p>
-                            <a :href="project.repoLink">See the code on Github</a>
-                        </p>
-                    </div>
-                </div> -->
+                <h1>
+                    Skills
+                </h1>
+            </div>
+            <div class="one column">
+                &nbsp;
+            </div>
+        </div>
+        <div class="row">
+            <div class="one column">
+                &nbsp;
+            </div>
+            <div class="ten columns">
+                <SkillsTop />
             </div>
             <div class="one column">
                 &nbsp;
@@ -44,8 +41,14 @@
 </template>
 
 <script>
+    import SkillsTop from "./SkillsTop.vue";
+    console.log("-------\n",SkillsTop);
 
     export default {
+
+        components: {
+            SkillsTop
+        },
 
         data: () => {
             return {
