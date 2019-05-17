@@ -2,7 +2,7 @@
   <div id="app">
     <Navbar />
       <div class="logo-header">
-        <img src="/assets/images/OD_min_500x500.png" width="300px" height="300px" />
+        <img src="/assets/images/OD_min_500x500.png" width="200px" height="200px" />
       </div>
     <router-view />
     <div class="footer">

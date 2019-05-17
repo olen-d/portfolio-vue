@@ -5,6 +5,9 @@
                 &nbsp;
             </div>
             <div class="ten columns">
+                <h1>
+                    Olen Daelhousen
+                </h1>
                 <h5>
                     {{welcome.headline}}
                 </h5>
@@ -42,7 +45,6 @@
 
 <script>
     import SkillsTop from "./SkillsTop.vue";
-    console.log("-------\n",SkillsTop);
 
     export default {
 

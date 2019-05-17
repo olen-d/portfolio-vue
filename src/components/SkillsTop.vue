@@ -1,8 +1,8 @@
 <template>
-    <div>
-        <div v-for="skill in results.skills" class="card u-pull-left">
+    <div class="skills">
+        <div v-for="skill in results.skills" class="card-skinny u-pull-left">
             <div class="card-title">
-                <i :class="skill.icon"></i>
+                <i :class="skill.icon" class="card-icon"></i>
                 <h2>
                     {{skill.name}}
                 </h2>
