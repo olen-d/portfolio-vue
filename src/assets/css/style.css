@@ -37,26 +37,44 @@ a:hover {
     display: none;
 }
 
-.projects {
+.projects, .skills {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
 }
 
+.fab {
+    margin-top: 3.5rem;
+    margin-bottom: 3.55rem;
+}
+
 .card {
     width: 350px;
-    /* margin-right:30px; */
+}
+
+.card-skinny {
+    width: 250px;
+}
+
+.card, .card-skinny {
     margin-bottom: 10rem;
     border: 1px solid #dddddd;
     border-bottom-right-radius: 15px;
     border-bottom-left-radius: 15px;
 }
 
-.card p {
+.card p, .card-skinny p {
     margin-right: 3rem;
     margin-left: 3rem;
 
+}
+
+.card-icon {
+    display: block;
+    font-size: 800%;
+    text-align: center;
+    color: #36a0ce; 
 }
 
 #message-status {
@@ -115,6 +133,10 @@ a:hover {
   }
 }
 
+#about, #contact {
+    margin-bottom: 10rem;
+}
+
 #social {
     padding-top:1rem;
     padding-bottom:1rem;
@@ -141,7 +163,7 @@ a:hover {
     bottom:0px;
     left:0px;
     width:100%;
-    height:16rem;
+    height:21rem;
     color:#36a0ce;
     background-color:#3d3d3d;
     text-align:center;
