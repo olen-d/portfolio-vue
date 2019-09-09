@@ -22,22 +22,19 @@ export default new Router({
       path: "/admin",
       name: "admin",
       component: Admin,
-      // components: {
-        // default: Admin,
-        // adminViews: AdminLogin,
-        children: [
-          {
-            path: "",
-            component: AdminLogin,
-            alias: "login"
-          },
-          {
-            path: "signup",
-            // name: "adminSignUp",
-            component: AdminSignUp
-          }
-        ]
-      // }
+      children: [
+        {
+          path: "",
+          name: "adminLogin",
+          component: AdminLogin,
+          alias: "login"
+        },
+        {
+          path: "signup",
+          name: "adminSignUp",
+          component: AdminSignUp
+        }
+      ]
     },
     {
       path: "/about",
