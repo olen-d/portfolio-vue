@@ -175,6 +175,17 @@ app.post("/api/contact/send", (req, res, next) => {
   });
 });
 
+// Administrative Backend
+
+app.post("/admin", (req, res) => {
+  // Administration Back End
+});
+
+// User related routes
+app.post("/api/user/create", (req, res) => {
+  // Create User
+});
+
 app.use((req, res) => {
   // Fail
   // TODO - update this to send a fail JSON

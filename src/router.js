@@ -2,6 +2,10 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home.vue";
 
+const Admin = () => import("./views/Admin.vue");
+const AdminLogin = () => import("./views/AdminLogin.vue");
+const AdminSignUp = () => import("./views/AdminSignUp.vue");
+
 Vue.use(Router);
 
 export default new Router({
@@ -13,6 +17,27 @@ export default new Router({
       name: "home",
       component: Home,
       alias: "/home"
+    },
+    {
+      path: "/admin",
+      name: "admin",
+      component: Admin,
+      // components: {
+        // default: Admin,
+        // adminViews: AdminLogin,
+        children: [
+          {
+            path: "",
+            component: AdminLogin,
+            alias: "login"
+          },
+          {
+            path: "signup",
+            // name: "adminSignUp",
+            component: AdminSignUp
+          }
+        ]
+      // }
     },
     {
       path: "/about",
@@ -27,7 +52,7 @@ export default new Router({
       path: "/projects",
       name: "projects",
       component: () =>
-        import(/* webpackChunkName: "about" */ "./views/Projects.vue")
+        import(/* webpackChunkName: "projects" */ "./views/Projects.vue")
     },
     {
       path: "/contact",
