@@ -10,6 +10,6 @@
     <input type="text" class="u-full-width" id="userName" placeholder="Your Username" required>
     <label for="password">Password</label>
     <input type="password" class="u-full-width" id="password" placeholder="Your Password" required>
-    <button v-on:click.prevent="signIn" type="submit" class="button-primary" id="signIn">Sign Up</button>
+    <button v-on:click.prevent="submitSignUpForm" type="submit" class="button-primary" id="signIn">Sign Up</button>
   </form>
 </template>
