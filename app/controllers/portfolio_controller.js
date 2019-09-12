@@ -23,6 +23,9 @@ const social = require("../models/social");
 // Admin Side
 const createUser = require("../models/createUser");
 
+// Other stuff
+const bcrypt = require("../helpers/bcrypt-module");
+
 // TODO: Fix this to serve up index.html
 // TODO: Serve a proper 404 error page when something isn't found
 
@@ -178,25 +181,30 @@ app.post("/api/user/create", (req, res) => {
   let userName = req.body.userName;
   let password = req.body.password;
 
-  let userInfo = {
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    userName: userName,
-    password: password
-  };
-
-  createUser
-    .data(userInfo)
-    .then(resolve => {
-      let userObj = {
-        user: resolve
+  bcrypt.newPass(password).then(pwdRes => {
+    if (pwdRes.status === 200) {
+      let userInfo = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        userName: userName,
+        password: pwdRes.passwordHash
       };
-      res.send(userObj);
-    })
-    .catch(err => {
-      res.json(err);
-    });
+
+      createUser
+        .data(userInfo)
+        .then(resolve => {
+          let userObj = {
+            status: 200,
+            user: resolve
+          };
+          res.send(userObj);
+        })
+        .catch(err => {
+          res.json(err);
+        });
+    }
+  });
 });
 
 app.use((req, res) => {

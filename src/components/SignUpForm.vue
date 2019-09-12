@@ -45,7 +45,22 @@
           return response.json();
         }).then(data => {
           console.log("Doritos\n", data);
-          // Redirect to the matches page
+          console.log("Cheetos\n", data.status);
+          if (data.status === 200) {
+            console.log("Fritos\n", data.user._id);
+            jwt.sign({ userId: data.user._id }, config.secret, { expiresIn: "24h" }, (err, token) => {
+              return res
+                .status(200)
+                .json({ 
+                  token,
+                  authenticated: true
+                })
+                // .redirect("/"); // Since this project is using React, the redirect will be handled on the client side
+            });
+          } else {
+              // Something went horribly wrong
+              // TODO: Provide some sort of intelligent error and update the UI with it
+          }
         }).catch(error => {
           return ({
             errorCode: 500,
