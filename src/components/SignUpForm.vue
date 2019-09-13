@@ -18,6 +18,8 @@
   export default {
     methods: {
       submitSignUpForm: () => {
+        const jwt = require("jsonwebtoken");
+        const config = require("./../../config");
 
         const firstName = document.getElementById("firstName").value;
         const lastName = document.getElementById("lastName").value;
@@ -44,18 +46,18 @@
         }).then(response => {
           return response.json();
         }).then(data => {
+          console.log("Config\n",config);
           console.log("Doritos\n", data);
           console.log("Cheetos\n", data.status);
           if (data.status === 200) {
             console.log("Fritos\n", data.user._id);
             jwt.sign({ userId: data.user._id }, config.secret, { expiresIn: "24h" }, (err, token) => {
-              return res
-                .status(200)
-                .json({ 
-                  token,
-                  authenticated: true
-                })
+              console.log("JWT ERROR\n", err);
+              console.log("++++JWT-----\n",token);
+              localStorage.setItem("user_token", token);
+              // this.setState({ userToken: data.token, authenticated: data.authenticated, toRedirect: true });
                 // .redirect("/"); // Since this project is using React, the redirect will be handled on the client side
+                console.log("TOKEN----\n",localStorage.getItem("user_token"))
             });
           } else {
               // Something went horribly wrong
