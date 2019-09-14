@@ -4,12 +4,29 @@
       <div class="logo-header">
         <img src="/assets/images/OD_min_500x500.png" width="200px" height="200px" />
       </div>
+                  <p>
+              JWT: {{jwtData}}
+            </p>
     <router-view />
     <div class="footer">
-	    <Social />	
-			<p>
-				Copyright &copy; 2019 Olen Daelhousen
-			</p>
+	    <Social />
+      <div class="container">	
+        <div class="row">
+          <div class="four columns">
+            &nbsp;
+          </div>
+          <div class="four columns">
+            <p>
+              Copyright &copy; 2019 Olen Daelhousen
+            </p>
+          </div>
+          <div class="four columns">
+            <p class="right">
+              Login Signup
+            </p>
+          </div>
+        </div>
+      </div>
 		</div>
   </div>
 </template>
@@ -25,7 +42,67 @@ export default {
   components: {
     Navbar,
     Social
-  }
+  },
+
+  // Set up the data to hold the login information
+  // TODO: Update this to use Vuex in the future as
+  // the application gets more complex
+
+  data: () => {
+    return {
+      jwt: "",
+      debug: true,
+      state: {
+        userId: "",
+        userName: "",
+        firstName: "",
+        lastName: "",
+        administrator: false,
+        editor: false,
+        loggedIn: false,
+        redirect: false
+      }
+    } 
+  },
+
+  computed: {
+    jwtData() {
+    if (this.jwt) return JSON.parse(atob(this.jwt.split(".")[1]));
+    return {};
+    }
+  },
+
+  methods: {
+    async fetchJWT() {
+      // TODO: Add error handling
+
+      const res = await localStorage.getItem("user_token");
+      this.jwt = await res;
+      this.setStateAction("userId", this.jwtData.userId);
+      this.setStateAction("userName", this.jwtData.userName);
+      this.setStateAction("firstName", this.jwtData.firstName);
+      this.setStateAction("lastName", this.jwtData.lastName);
+      // this.setUserNameAction(this.jwtData.userName);
+      // this.setFirstNameAction(this.jwtData.firstName);
+      // this.setLastNameAction(this.jwtData.lastName);
+      // this.setAdministratorAction(this.jwtData.userId);
+      // this.setEditorAction(this.jwtData.userId);
+      console.log("xxyyyzzyy\n", this.state.lastName);
+      console.log("lllllllll\n", this.jwtData);
+      console.log("CHICKENPOTPIE\n",this.state);
+    },
+
+    setStateAction(key, newValue) {
+      if (this.debug) {
+        console.log(key, " Triggered");
+      }
+      this.state[key] = newValue;
+    }
+  },
+
+  mounted() {
+    this.fetchJWT();
+    }
 }
 
 </script>
@@ -44,4 +121,9 @@ export default {
 #navigation li a.router-link-exact-active {
   color: #f00;
 } */
+
+.right {
+  text-align: right;
+}
+
 </style>

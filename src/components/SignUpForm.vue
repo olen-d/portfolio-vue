@@ -18,6 +18,7 @@
   export default {
     methods: {
       submitSignUpForm: () => {
+        localStorage.removeItem("user_token");
         const jwt = require("jsonwebtoken");
         const config = require("./../../config");
 
@@ -50,8 +51,16 @@
           console.log("Doritos\n", data);
           console.log("Cheetos\n", data.status);
           if (data.status === 200) {
-            console.log("Fritos\n", data.user._id);
-            jwt.sign({ userId: data.user._id }, config.secret, { expiresIn: "24h" }, (err, token) => {
+            console.log("Fritos\n", data.user._id, data.user.userName, data.firstName);
+            jwt.sign({
+                userId: data.user._id, 
+                userName: data.user.userName,
+                firstName: data.user.firstName, 
+                lastName: data.user.lastName
+              }, 
+              config.secret, 
+              { expiresIn: "24h" }, 
+              (err, token) => {
               console.log("JWT ERROR\n", err);
               console.log("++++JWT-----\n",token);
               localStorage.setItem("user_token", token);
