@@ -5,6 +5,7 @@ import Home from "./views/Home.vue";
 const Admin = () => import("./views/Admin.vue");
 const AdminLogin = () => import("./views/AdminLogin.vue");
 const AdminSignUp = () => import("./views/AdminSignUp.vue");
+const AdminDashboard = () => import("./views/AdminDashboard.vue");
 
 Vue.use(Router);
 
@@ -32,6 +33,11 @@ export default new Router({
           path: "signup",
           name: "adminSignUp",
           component: AdminSignUp
+        },
+        {
+          path: "dashboard",
+          name: "adminDashboard",
+          component: AdminDashboard
         }
       ]
     },

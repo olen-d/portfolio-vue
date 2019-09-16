@@ -4,9 +4,13 @@
       <div class="logo-header">
         <img src="/assets/images/OD_min_500x500.png" width="200px" height="200px" />
       </div>
-                  <p>
+            <pre>
               JWT: {{jwtData}}
-            </p>
+            </pre>
+            <p></p>
+            <pre>
+              State: {{state.userName}}
+            </pre>
     <router-view />
     <div class="footer">
 	    <Social />
@@ -51,18 +55,25 @@ export default {
   data: () => {
     return {
       jwt: "",
+      // userToken: "",
       debug: true,
-      state: {
-        userId: "",
-        userName: "",
-        firstName: "",
-        lastName: "",
-        administrator: false,
-        editor: false,
-        loggedIn: false,
-        redirect: false
-      }
+      state: []
     } 
+  },
+
+  created: () => {
+    let state = {
+      userId: "",
+      userName: "",
+      firstName: "",
+      lastName: "",
+      administrator: false,
+      editor: false,
+      loggedIn: false,
+      redirect: false,
+      };
+  
+    return state;
   },
 
   computed: {
@@ -82,14 +93,14 @@ export default {
       this.setStateAction("userName", this.jwtData.userName);
       this.setStateAction("firstName", this.jwtData.firstName);
       this.setStateAction("lastName", this.jwtData.lastName);
-      // this.setUserNameAction(this.jwtData.userName);
-      // this.setFirstNameAction(this.jwtData.firstName);
-      // this.setLastNameAction(this.jwtData.lastName);
-      // this.setAdministratorAction(this.jwtData.userId);
-      // this.setEditorAction(this.jwtData.userId);
+      this.setStateAction("administrator", this.jwtData.administrator);
+      this.setStateAction("editor", this.jwtData.editor);
+      this.setStateAction("loggedIn", this.jwtData.loggedIn);
+      this.setStateAction("redirect", this.jwtData.redirect);
       console.log("xxyyyzzyy\n", this.state.lastName);
       console.log("lllllllll\n", this.jwtData);
       console.log("CHICKENPOTPIE\n",this.state);
+      // console.log("LOCALSTORAGE\n",localStorage.user_token);
     },
 
     setStateAction(key, newValue) {
@@ -102,7 +113,7 @@ export default {
 
   mounted() {
     this.fetchJWT();
-    }
+  }
 }
 
 </script>

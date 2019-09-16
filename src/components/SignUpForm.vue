@@ -15,9 +15,10 @@
 </template>
 
 <script>
+
   export default {
     methods: {
-      submitSignUpForm: () => {
+      submitSignUpForm () {
         localStorage.removeItem("user_token");
         const jwt = require("jsonwebtoken");
         const config = require("./../../config");
@@ -51,12 +52,14 @@
           console.log("Doritos\n", data);
           console.log("Cheetos\n", data.status);
           if (data.status === 200) {
-            console.log("Fritos\n", data.user._id, data.user.userName, data.firstName);
+            console.log("Fritos\n", data.user._id, data.user.userName, data.user.firstName);
             jwt.sign({
                 userId: data.user._id, 
                 userName: data.user.userName,
                 firstName: data.user.firstName, 
-                lastName: data.user.lastName
+                lastName: data.user.lastName,
+                administrator: data.user.administrator,
+                editor: data.user.editor
               }, 
               config.secret, 
               { expiresIn: "24h" }, 
@@ -64,9 +67,9 @@
               console.log("JWT ERROR\n", err);
               console.log("++++JWT-----\n",token);
               localStorage.setItem("user_token", token);
-              // this.setState({ userToken: data.token, authenticated: data.authenticated, toRedirect: true });
-                // .redirect("/"); // Since this project is using React, the redirect will be handled on the client side
-                console.log("TOKEN----\n",localStorage.getItem("user_token"))
+              console.log("TOKEN----\n",localStorage.getItem("user_token"));
+              this.$emit("clicked", "submit");
+              this.$router.push({ name: "adminDashboard" });
             });
           } else {
               // Something went horribly wrong
