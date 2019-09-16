@@ -11,7 +11,10 @@
             <pre>
               State: {{state.userName}}
             </pre>
-    <router-view />
+            <p>
+              TEST: {{test}}
+            </p>
+    <router-view @clicked="doClicked" />
     <div class="footer">
 	    <Social />
       <div class="container">	
@@ -55,6 +58,7 @@ export default {
   data: () => {
     return {
       jwt: "",
+      test: "",
       // userToken: "",
       debug: true,
       state: []
@@ -108,6 +112,11 @@ export default {
         console.log(key, " Triggered");
       }
       this.state[key] = newValue;
+    },
+
+    doClicked () {
+      this.test = "Doritos";
+      this.fetchJWT();
     }
   },
 

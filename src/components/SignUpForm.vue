@@ -68,7 +68,7 @@
               console.log("++++JWT-----\n",token);
               localStorage.setItem("user_token", token);
               console.log("TOKEN----\n",localStorage.getItem("user_token"));
-              this.$emit("clicked", "submit");
+              this.$emit("clicked");
               this.$router.push({ name: "adminDashboard" });
             });
           } else {
