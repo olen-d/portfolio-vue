@@ -48,11 +48,7 @@
         }).then(response => {
           return response.json();
         }).then(data => {
-          console.log("Config\n",config);
-          console.log("Doritos\n", data);
-          console.log("Cheetos\n", data.status);
           if (data.status === 200) {
-            console.log("Fritos\n", data.user._id, data.user.userName, data.user.firstName);
             jwt.sign({
                 userId: data.user._id, 
                 userName: data.user.userName,
@@ -64,12 +60,8 @@
               config.secret, 
               { expiresIn: "24h" }, 
               (err, token) => {
-              console.log("JWT ERROR\n", err);
-              console.log("++++JWT-----\n",token);
-              localStorage.setItem("user_token", token);
-              console.log("TOKEN----\n",localStorage.getItem("user_token"));
-              this.$emit("clicked");
-              this.$router.push({ name: "adminDashboard" });
+                this.$store.commit("setJWT", token);
+                this.$router.push({ name: "adminDashboard" });
             });
           } else {
               // Something went horribly wrong

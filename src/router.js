@@ -31,7 +31,8 @@ export default new Router({
         {
           path: "dashboard",
           name: "adminDashboard",
-          component: AdminDashboard
+          component: AdminDashboard,
+          props: true
         }
       ]
     },
@@ -51,7 +52,7 @@ export default new Router({
         import(/* webpackChunkName: "projects" */ "./views/Projects.vue")
     },
     {
-      path:"/signup",
+      path: "/signup",
       name: "signUp",
       component: () =>
         import(/* webpackChunkName: "signup" */ "./views/SignUp.vue")

@@ -4,17 +4,7 @@
       <div class="logo-header">
         <img src="/assets/images/OD_min_500x500.png" width="200px" height="200px" />
       </div>
-            <pre>
-              JWT: {{jwtData}}
-            </pre>
-            <p></p>
-            <pre>
-              State: {{state.userName}}
-            </pre>
-            <p>
-              TEST: {{test}}
-            </p>
-    <router-view @clicked="doClicked" />
+    <router-view />
     <div class="footer">
 	    <Social />
       <div class="container">	
@@ -39,85 +29,41 @@
 </template>
 
 <script>
-
+import { mapGetters, mapActions } from "vuex";
+import { store } from "./store/store";
 import Navbar from "./components/Navbar.vue";
 import Social from "./components/Social.vue";
 
 export default {
   name: 'app',
-
+  store,
   components: {
     Navbar,
     Social
   },
 
-  // Set up the data to hold the login information
-  // TODO: Update this to use Vuex in the future as
-  // the application gets more complex
-
   data: () => {
     return {
-      jwt: "",
-      test: "",
-      // userToken: "",
-      debug: true,
-      state: []
+
     } 
   },
 
-  created: () => {
-    let state = {
-      userId: "",
-      userName: "",
-      firstName: "",
-      lastName: "",
-      administrator: false,
-      editor: false,
-      loggedIn: false,
-      redirect: false,
-      };
-  
-    return state;
-  },
-
   computed: {
-    jwtData() {
-    if (this.jwt) return JSON.parse(atob(this.jwt.split(".")[1]));
-    return {};
-    }
+    ...mapGetters([
+      "jwt",
+      "userId",
+      "userName",
+      "firstName",
+      "lastName",
+      "administrator",
+      "editor"
+    ])
   },
 
   methods: {
-    async fetchJWT() {
-      // TODO: Add error handling
-
-      const res = await localStorage.getItem("user_token");
-      this.jwt = await res;
-      this.setStateAction("userId", this.jwtData.userId);
-      this.setStateAction("userName", this.jwtData.userName);
-      this.setStateAction("firstName", this.jwtData.firstName);
-      this.setStateAction("lastName", this.jwtData.lastName);
-      this.setStateAction("administrator", this.jwtData.administrator);
-      this.setStateAction("editor", this.jwtData.editor);
-      this.setStateAction("loggedIn", this.jwtData.loggedIn);
-      this.setStateAction("redirect", this.jwtData.redirect);
-      console.log("xxyyyzzyy\n", this.state.lastName);
-      console.log("lllllllll\n", this.jwtData);
-      console.log("CHICKENPOTPIE\n",this.state);
-      // console.log("LOCALSTORAGE\n",localStorage.user_token);
-    },
-
-    setStateAction(key, newValue) {
-      if (this.debug) {
-        console.log(key, " Triggered");
-      }
-      this.state[key] = newValue;
-    },
-
-    doClicked () {
-      this.test = "Doritos";
-      this.fetchJWT();
-    }
+    ...mapActions([
+      "fetchJWT"
+    ])
   },
 
   mounted() {
