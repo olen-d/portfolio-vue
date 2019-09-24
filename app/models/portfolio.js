@@ -3,18 +3,18 @@ const db = require("../config/connection");
 
 const portfolio = {
   all(cb) {
-    portfolio.about((aData) => {
-      let aboutObj = {about : aData};
-      portfolio.projects((pData) => {
-        let projObj = {projects : pData};
-        cb({...aboutObj, ...projObj});
+    portfolio.about(aData => {
+      let aboutObj = { about: aData };
+      portfolio.projects(pData => {
+        let projObj = { projects: pData };
+        cb({ ...aboutObj, ...projObj });
       });
     });
   },
 
   about(cb) {
     db.about.find({ userName: "olen.d" }, (err, data) => {
-      if(err) {
+      if (err) {
         throw err;
       } else {
         cb(data);
@@ -23,7 +23,7 @@ const portfolio = {
   },
 
   projects(cb) {
-    db.projects.find({show: 1}, (err, data) => {
+    db.projects.find({ show: 1 }, (err, data) => {
       if (err) {
         throw err;
       } else {
@@ -31,7 +31,7 @@ const portfolio = {
       }
     });
   }
-}
+};
 
 // Export for the controller
 module.exports = portfolio;

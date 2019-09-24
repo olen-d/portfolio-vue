@@ -2,6 +2,10 @@ import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home.vue";
 
+const Admin = () => import("./views/Admin.vue");
+const AdminLogin = () => import("./views/AdminLogin.vue");
+const AdminDashboard = () => import("./views/AdminDashboard.vue");
+
 Vue.use(Router);
 
 export default new Router({
@@ -13,6 +17,24 @@ export default new Router({
       name: "home",
       component: Home,
       alias: "/home"
+    },
+    {
+      path: "/admin",
+      component: Admin,
+      children: [
+        {
+          path: "",
+          name: "adminLogin",
+          component: AdminLogin,
+          alias: "login"
+        },
+        {
+          path: "dashboard",
+          name: "adminDashboard",
+          component: AdminDashboard,
+          props: true
+        }
+      ]
     },
     {
       path: "/about",
@@ -27,7 +49,13 @@ export default new Router({
       path: "/projects",
       name: "projects",
       component: () =>
-        import(/* webpackChunkName: "about" */ "./views/Projects.vue")
+        import(/* webpackChunkName: "projects" */ "./views/Projects.vue")
+    },
+    {
+      path: "/signup",
+      name: "signUp",
+      component: () =>
+        import(/* webpackChunkName: "signup" */ "./views/SignUp.vue")
     },
     {
       path: "/contact",

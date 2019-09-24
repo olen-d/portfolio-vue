@@ -6,25 +6,68 @@
       </div>
     <router-view />
     <div class="footer">
-	    <Social />	
-			<p>
-				Copyright &copy; 2019 Olen Daelhousen
-			</p>
+	    <Social />
+      <div class="container">	
+        <div class="row">
+          <div class="four columns">
+            &nbsp;
+          </div>
+          <div class="four columns">
+            <p>
+              Copyright &copy; 2019 Olen Daelhousen
+            </p>
+          </div>
+          <div class="four columns">
+            <p class="right">
+              Login Signup
+            </p>
+          </div>
+        </div>
+      </div>
 		</div>
   </div>
 </template>
 
 <script>
-
+import { mapGetters, mapActions } from "vuex";
+import { store } from "./store/store";
 import Navbar from "./components/Navbar.vue";
 import Social from "./components/Social.vue";
 
 export default {
   name: 'app',
-
+  store,
   components: {
     Navbar,
     Social
+  },
+
+  data: () => {
+    return {
+
+    } 
+  },
+
+  computed: {
+    ...mapGetters([
+      "jwt",
+      "userId",
+      "userName",
+      "firstName",
+      "lastName",
+      "administrator",
+      "editor"
+    ])
+  },
+
+  methods: {
+    ...mapActions([
+      "fetchJWT"
+    ])
+  },
+
+  mounted() {
+    this.fetchJWT();
   }
 }
 
@@ -44,4 +87,9 @@ export default {
 #navigation li a.router-link-exact-active {
   color: #f00;
 } */
+
+.right {
+  text-align: right;
+}
+
 </style>

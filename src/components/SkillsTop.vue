@@ -1,5 +1,5 @@
 <template>
-    <div class="skills">
+    <div class="skills">message {{msg}}
         <div v-for="skill in results.skills" class="card-skinny u-pull-left">
             <div class="card-title">
                 <i :class="skill.icon" class="card-icon"></i>
@@ -17,6 +17,9 @@
 <script>
 
     export default {
+        props: {
+            msg: String
+        },
 
         data: () => {
             return {

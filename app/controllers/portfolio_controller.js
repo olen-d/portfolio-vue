@@ -12,7 +12,7 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 
 // Models
-const welcome = require("../models/welcome.js");
+const welcome = require("../models/welcome");
 const about = require("../models/about");
 const projects = require("../models/projects");
 const skills = require("../models/skills");
@@ -20,15 +20,14 @@ const skillsTop = require("../models/skillsTop");
 const contactOnly = require("../models/contactOnly");
 const social = require("../models/social");
 
+// Admin Side
+const createUser = require("../models/createUser");
+
+// Other stuff
+const bcrypt = require("../helpers/bcrypt-module");
+
 // TODO: Fix this to serve up index.html
-app.get("/", (req, res) => {
-  portfolio.about(data => {
-    let aboutObj = {
-      about: data
-    };
-    res.json(aboutObj);
-  });
-});
+// TODO: Serve a proper 404 error page when something isn't found
 
 // Get the welcome information
 app.get("/api/welcome", (req, res, next) => {
@@ -139,10 +138,6 @@ app.get("/api/social/user/:username", (req, res, next) => {
     });
 });
 
-app.post("/admin", (req, res) => {
-  // Administration Back End
-});
-
 // Contact Form
 // cors(corsOptions),
 app.post("/api/contact/send", (req, res, next) => {
@@ -171,6 +166,43 @@ app.post("/api/contact/send", (req, res, next) => {
       res.json({ error: err });
     } else {
       res.json(success);
+    }
+  });
+});
+
+// Administrative Backend
+
+// User related routes
+// Create User
+app.post("/api/user/create", (req, res) => {
+  let firstName = req.body.firstName;
+  let lastName = req.body.lastName;
+  let email = req.body.email;
+  let userName = req.body.userName;
+  let password = req.body.password;
+
+  bcrypt.newPass(password).then(pwdRes => {
+    if (pwdRes.status === 200) {
+      let userInfo = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        userName: userName,
+        password: pwdRes.passwordHash
+      };
+
+      createUser
+        .data(userInfo)
+        .then(resolve => {
+          let userObj = {
+            status: 200,
+            user: resolve
+          };
+          res.send(userObj);
+        })
+        .catch(err => {
+          res.json(err);
+        });
     }
   });
 });
