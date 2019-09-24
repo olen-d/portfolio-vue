@@ -4,7 +4,7 @@
       &nbsp;
     </div>
     <div class="six columns">
-      <SignUpForm v-on="$listeners" />
+      <SignUpForm />
     </div>
     <div class="three columns">
       &nbsp;
