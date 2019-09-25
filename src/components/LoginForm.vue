@@ -24,7 +24,12 @@ export default {
   
   methods: {
     submitLoginForm (form) {
-      console.log(form);
+      // Hit the API
+      // Get a JSON Web Token as a response
+      // Put the token in Local Storage
+      // Update the state with the token
+      console.log("USERNAME: ", form.userName);
+      console.log("PASSWORD: ", form.password);
     } 
   }
 }
