@@ -19,7 +19,7 @@
           </div>
           <div class="four columns">
             <p class="right">
-              Login Signup
+              <router-link to="/login" v-if="!$store.getters.authorized && !$store.getters.loginPage" class="ntd">Login</router-link> Signup
             </p>
           </div>
         </div>
@@ -70,13 +70,16 @@ export default {
     $route (value, to, from) {
 
       // Fetch the JWT and hydrate the store when a different page is navigated to
-      if (to !== from) {
-        this.fetchJWT();
-      }
+      // if (to !== from) {
+      //   this.fetchJWT();
+      // }
 
       // Clear the JWT if the logout link is hit
       if (value.name === "logout") {
         localStorage.removeItem("user_token");
+      };
+      if (value.name === "login") {
+        this.$store.commit("setLoginPage", true);
       };
     }
   },
@@ -107,4 +110,7 @@ export default {
   text-align: right;
 }
 
+.ntd {
+  text-decoration: none;
+}
 </style>

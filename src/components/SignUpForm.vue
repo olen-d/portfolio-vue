@@ -1,42 +1,45 @@
 <template>
   <form id="signUpForm">
     <label for="firstName">First Name</label>
-    <input type="text" class="u-full-width" id="firstName" placeholder="Your First Name" required>
+    <input v-model="form.firstName" type="text" class="u-full-width" id="firstName" placeholder="Your First Name" required>
     <label for="lastName">Last Name</label>
-    <input type="text" class="u-full-width" id="lastName" placeholder="Your Last Name" required>
+    <input v-model="form.lastName" type="text" class="u-full-width" id="lastName" placeholder="Your Last Name" required>
     <label for="email">Email Address</label>
-    <input type="email" class="u-full-width" id="email" placeholder="Your Email Address" required>
+    <input v-model="form.email" type="email" class="u-full-width" id="email" placeholder="Your Email Address" required>
     <label for="userName">Username</label>
-    <input type="text" class="u-full-width" id="userName" placeholder="Your Username" required>
+    <input v-model="form.userName" type="text" class="u-full-width" id="userName" placeholder="Your Username" required>
     <label for="password">Password</label>
-    <input type="password" class="u-full-width" id="password" placeholder="Your Password" required>
+    <input v-model="form.password" type="password" class="u-full-width" id="password" placeholder="Your Password" required>
     <button v-on:click.prevent="submitSignUpForm" type="submit" class="button-primary" id="signIn">Sign Up</button>
   </form>
 </template>
 
 <script>
-
   export default {
+    data: () => {
+      return {
+        form: {
+          firstName: "",
+          lastName: "",
+          email: "",
+          userName: "",
+          password: ""
+        }
+      }
+    },
+
     methods: {
       submitSignUpForm () {
         localStorage.removeItem("user_token");
-        const jwt = require("jsonwebtoken");
-        const config = require("./../../config");
-        // TODO: Fix this to use v-model
-        const firstName = document.getElementById("firstName").value;
-        const lastName = document.getElementById("lastName").value;
-        const email = document.getElementById("email").value;
-        const userName = document.getElementById("userName").value;
-        const password = document.getElementById("password").value;
- 
+
         // TODO: Validate this mess
-    
-        let data = {
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          userName: userName,
-          password: password
+
+        let formData = {
+          firstName: this.form.firstName,
+          lastName: this.form.lastName,
+          email: this.form.email,
+          userName: this.form.userName,
+          password: this.form.password
         }
 
         fetch("http://localhost:3031/api/user/create", {
@@ -44,7 +47,7 @@
         headers: {
           "Content-Type": "application/json"
         },
-          body: JSON.stringify(data)
+          body: JSON.stringify(formData)
         }).then(response => {
           return response.json();
         }).then(data => {

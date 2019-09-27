@@ -1,17 +1,16 @@
 <template>
   <div id="login-form">
-    <form v-on:submit.prevent="submitLoginForm(form)" id="loginForm">
+    <form id="loginForm">
       <label for="name">Username</label>
       <input v-model="form.userName" type="text" class="u-full-width" id="name" placeholder="Your Username" required>
       <label for="password">Password</label>
       <input v-model="form.password" type="password" class="u-full-width" id="password" placeholder="Your Password" required>
-      <button class="button-primary" id="signIn">Sign In</button>
+      <button v-on:click.prevent="submitLoginForm" class="button-primary" id="signIn">Sign In</button>
     </form>
   </div>
 </template>
 
 <script>
-
 export default {
   data: () => {
     return {
@@ -24,14 +23,26 @@ export default {
   
   methods: {
     submitLoginForm (form) {
-      // Hit the API
-      // Get a JSON Web Token as a response
-      // Put the token in Local Storage
-      // Update the state with the token
-      console.log("USERNAME: ", form.userName);
-      console.log("PASSWORD: ", form.password);
+      const formData = {
+        userName: this.form.userName,
+        password: this.form.password
+      }
+
+      fetch("http://localhost:3031/api/login", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      }).then(response => {
+        return response.json();
+      }).then(dataObj => {
+        this.$store.commit("setJWT", dataObj.token);
+        this.$store.commit("setAuthorized", true);
+        this.$store.commit("setLoginPage", false);
+        this.$router.push({ name: "adminDashboard" });
+      });
     } 
   }
 }
-
 </script>

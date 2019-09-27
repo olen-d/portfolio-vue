@@ -1,11 +1,11 @@
-require("dotenv").config();
-
 const express = require("express");
 const app = express();
 
 // const cors = require("cors");
 // app.use(cors());
 // const corsOptions = { origin: "*" };
+
+const jwt = require("jsonwebtoken");
 
 const nodemailer = require("nodemailer");
 
@@ -19,6 +19,7 @@ const skills = require("../models/skills");
 const skillsTop = require("../models/skillsTop");
 const contactOnly = require("../models/contactOnly");
 const social = require("../models/social");
+const findOneUser = require("../models/findOneUser");
 
 // Admin Side
 const createUser = require("../models/createUser");
@@ -170,16 +171,56 @@ app.post("/api/contact/send", (req, res, next) => {
   });
 });
 
+// Authentication Routes
+
+app.post("/api/login", (req, response) => {
+  const userName = req.body.userName;
+  const password = req.body.password;
+
+  findOneUser.data(userName).then(user => {
+    if (user != null) {
+      bcrypt
+        .checkPass(password, user.password)
+        .then(res => {
+          if (res.status === 200) {
+            delete user.password;
+            jwt.sign(
+              user,
+              process.env.secret,
+              { expiresIn: "24h" },
+              (err, token) => {
+                return response.status(200).json({
+                  token
+                });
+              }
+            );
+          } else {
+            return response.status(500).json({
+              isLoggedIn: false
+            });
+          }
+        })
+        .catch(error => {
+          response.json(error);
+        });
+    } else {
+      return response.status(404).json({
+        isLoggedIn: false
+      });
+    }
+  });
+});
+
 // Administrative Backend
 
 // User related routes
 // Create User
 app.post("/api/user/create", (req, res) => {
-  let firstName = req.body.firstName;
-  let lastName = req.body.lastName;
-  let email = req.body.email;
-  let userName = req.body.userName;
-  let password = req.body.password;
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const email = req.body.email;
+  const userName = req.body.userName;
+  const password = req.body.password;
 
   bcrypt.newPass(password).then(pwdRes => {
     if (pwdRes.status === 200) {
@@ -194,6 +235,7 @@ app.post("/api/user/create", (req, res) => {
       createUser
         .data(userInfo)
         .then(resolve => {
+          console.log("---RESOLVE---", resolve);
           let userObj = {
             status: 200,
             user: resolve

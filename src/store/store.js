@@ -6,7 +6,8 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
   state: {
     currentJWT: "",
-    authorized: false
+    authorized: false,
+    loginPage: false
   },
 
   mutations: {
@@ -16,6 +17,10 @@ export const store = new Vuex.Store({
 
     setAuthorized(state, authorized) {
       state.authorized = authorized;
+    },
+
+    setLoginPage(state, loginPage) {
+      state.loginPage = loginPage;
     }
   },
 
@@ -35,7 +40,8 @@ export const store = new Vuex.Store({
       getters.jwtData ? getters.jwtData.administrator : null,
     editor: (state, getters) =>
       getters.jwtData ? getters.jwtData.editor : null,
-    authorized: state => state.authorized
+    authorized: state => state.authorized,
+    loginPage: state => state.loginPage
   },
 
   actions: {
