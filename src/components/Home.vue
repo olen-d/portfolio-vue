@@ -34,7 +34,7 @@
         &nbsp;
       </div>
       <div class="ten columns">
-        <SkillsTop :msg="message" />
+        <SkillsTop />
       </div>
       <div class="one column">
         &nbsp;

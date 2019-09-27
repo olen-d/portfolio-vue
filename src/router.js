@@ -3,7 +3,6 @@ import Router from "vue-router";
 import Home from "./views/Home.vue";
 
 const Admin = () => import("./views/Admin.vue");
-const AdminLogin = () => import("./views/AdminLogin.vue");
 const AdminDashboard = () => import("./views/AdminDashboard.vue");
 
 Vue.use(Router);
@@ -23,16 +22,9 @@ export default new Router({
       component: Admin,
       children: [
         {
-          path: "",
-          name: "adminLogin",
-          component: AdminLogin,
-          alias: "login"
-        },
-        {
           path: "dashboard",
           name: "adminDashboard",
-          component: AdminDashboard,
-          props: true
+          component: AdminDashboard
         }
       ]
     },
@@ -44,6 +36,20 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       component: () =>
         import(/* webpackChunkName: "about" */ "./views/About.vue")
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: () =>
+        import(/* webpackChunkName: "login" */ "./views/Login.vue")
+    },
+    {
+      path: "/logout",
+      beforeEnter(to, from, next) {
+        localStorage.removeItem("user_token");
+        // Change status to logged out
+        next("/");
+      }
     },
     {
       path: "/projects",

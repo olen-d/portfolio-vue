@@ -128,6 +128,7 @@
                 const $email = document.getElementById("email");
                 const $message = document.getElementById("message");
             
+                // TODO: Fix this to use v-model
                 let name = $name.value;
                 let email = $email.value;
                 let message = $message.value;
@@ -140,6 +141,7 @@
                     message: message
                 }
 
+                // TODO: The below works, but update to use fetch
                 ajax.post("https://www.olen.dev/api/contact/send", data)
                 .then(response => {                 
                     response = JSON.parse(response);
