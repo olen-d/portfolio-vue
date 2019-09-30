@@ -12,6 +12,11 @@
     name: "signUp",
     components: {
       SignUp
+    },
+
+    beforeRouteLeave (to, from, next) {
+      this.$store.commit("setSignupPage", false);
+      next();
     }
   };
 </script>

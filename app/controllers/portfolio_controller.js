@@ -182,7 +182,7 @@ app.post("/api/login", (req, response) => {
       bcrypt
         .checkPass(password, user.password)
         .then(res => {
-          if (res.status === 200) {
+          if (res.status === 200 && res.login) {
             delete user.password;
             jwt.sign(
               user,
@@ -190,6 +190,7 @@ app.post("/api/login", (req, response) => {
               { expiresIn: "24h" },
               (err, token) => {
                 return response.status(200).json({
+                  isLoggedIn: true,
                   token
                 });
               }
@@ -235,12 +236,18 @@ app.post("/api/user/create", (req, res) => {
       createUser
         .data(userInfo)
         .then(resolve => {
-          console.log("---RESOLVE---", resolve);
-          let userObj = {
-            status: 200,
-            user: resolve
-          };
-          res.send(userObj);
+          delete resolve.password;
+          jwt.sign(
+            resolve,
+            process.env.secret,
+            { expiresIn: "24h" },
+            (err, token) => {
+              return res.send({
+                isLoggedIn: true,
+                token
+              });
+            }
+          );
         })
         .catch(err => {
           res.json(err);

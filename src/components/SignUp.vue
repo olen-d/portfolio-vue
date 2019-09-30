@@ -18,6 +18,10 @@
   export default {
     components: {
       SignUpForm
+    },
+
+    mounted() {
+      this.$store.commit("setSignupPage", true);
     }
   }
 </script>

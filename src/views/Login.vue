@@ -12,6 +12,11 @@
     name: "adminLogin",
     components: {
       Login
+    },
+    
+    beforeRouteLeave (to, from, next) {
+      this.$store.commit("setLoginPage", false);
+      next();
     }
   };
 </script>

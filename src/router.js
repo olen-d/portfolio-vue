@@ -44,14 +44,6 @@ export default new Router({
         import(/* webpackChunkName: "login" */ "./views/Login.vue")
     },
     {
-      path: "/logout",
-      beforeEnter(to, from, next) {
-        localStorage.removeItem("user_token");
-        // Change status to logged out
-        next("/");
-      }
-    },
-    {
       path: "/projects",
       name: "projects",
       component: () =>

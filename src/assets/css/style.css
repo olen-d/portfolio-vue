@@ -246,3 +246,9 @@ p:first-child {
     margin-top:-20rem;
     margin-left:5rem;
 }
+
+.fake-link:hover {
+    cursor: pointer;
+    color:#36a0ce;
+  }
+  
