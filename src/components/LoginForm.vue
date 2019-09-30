@@ -37,10 +37,12 @@ export default {
       }).then(response => {
         return response.json();
       }).then(dataObj => {
-        this.$store.commit("setJWT", dataObj.token);
-        this.$store.commit("setAuthorized", true);
-        this.$store.commit("setLoginPage", false);
-        this.$router.push({ name: "adminDashboard" });
+        if(dataObj.isLoggedIn && dataObj.token) {
+          this.$store.commit("setJWT", dataObj.token);
+          this.$store.commit("setAuthorized", true);
+          localStorage.setItem("user_token", dataObj.token); // Needed to persist...
+          this.$router.push({ name: "adminDashboard" });
+        }
       });
     } 
   }

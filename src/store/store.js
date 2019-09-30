@@ -7,7 +7,8 @@ export const store = new Vuex.Store({
   state: {
     currentJWT: "",
     authorized: false,
-    loginPage: false
+    loginPage: false,
+    signupPage: false
   },
 
   mutations: {
@@ -21,6 +22,10 @@ export const store = new Vuex.Store({
 
     setLoginPage(state, loginPage) {
       state.loginPage = loginPage;
+    },
+
+    setSignupPage(state, signupPage) {
+      state.signupPage = signupPage;
     }
   },
 
@@ -41,13 +46,19 @@ export const store = new Vuex.Store({
     editor: (state, getters) =>
       getters.jwtData ? getters.jwtData.editor : null,
     authorized: state => state.authorized,
-    loginPage: state => state.loginPage
+    loginPage: state => state.loginPage,
+    signupPage: state => state.signupPage
   },
 
   actions: {
     async fetchJWT({ commit }) {
       const res = localStorage.getItem("user_token");
       commit("setJWT", res);
+    },
+
+    logout({ commit }) {
+      commit("setJWT", "");
+      commit("setAuthorized", false);
     }
   }
 });

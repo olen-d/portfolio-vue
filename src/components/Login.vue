@@ -18,6 +18,11 @@
   export default {
     components: {
       LoginForm
+    },
+
+    mounted() {
+      this.$store.commit("setLoginPage", true);
     }
+
   }
 </script>
