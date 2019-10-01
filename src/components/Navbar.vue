@@ -1,19 +1,24 @@
 <template>
   <nav id="navigation">
-    <ul id="horizontalNavItem" v-if="showStandard">
-      <li v-for="link in links"><router-link :to="link.uri">{{link.title}}</router-link></li>
+    <ul class="nav-link" v-if="showStandard">
+      <li v-for="link in links" :key="link.id"><router-link :to="link.uri">{{link.title}}</router-link></li>
     </ul>
+    <nav id="adminNavigation" v-if="showStandard && showAdminLinks">
+      <ul class="nav-link">
+        <li v-for="adminLink in adminLinks" :key="adminLink.id"><router-link :to="adminLink.uri">{{adminLink.title}}</router-link></li>
+      </ul>
+    </nav>
     <span v-if="showHamburger" v-on:click="toggleDropDownMenu" id="hamburger" class="fas fa-bars"></span>
     <div id="dropDownContainer">
       <ul v-if="visible && showHamburger">
-        <li v-for="link in links"><router-link :to="link.uri">{{link.title}}</router-link></li>
+        <li v-for="link in links" :key="link.id"><router-link :to="link.uri">{{link.title}}</router-link></li>
       </ul>
     </div>
   </nav>
 </template>
 
 <script>
-module.exports = {
+export default {
   data: () => { // TODO: Set up the DB to include this information. Remember, only the links are coming from the DB. Window and Visible are coded here.
     return {
       links: [
@@ -21,6 +26,9 @@ module.exports = {
         {id: 1, sort: 1, title: "About", uri: "/about"},
         {id: 2, sort: 2, title: "Projects", uri: "/projects"},
         {id: 3, sort: 3, title: "Contact", uri: "/contact"},
+      ],
+
+      adminLinks: [
         {id: 4, sort: 4, title: "Admin", uri: "/admin"}
       ],
 
@@ -38,6 +46,9 @@ module.exports = {
     },
     showHamburger: function() {
       return this.window.width < 500;
+    },
+    showAdminLinks: function() {
+      return this.$store.getters.administrator;
     }
   },
 
@@ -62,7 +73,7 @@ module.exports = {
   destroyed() {
     window.removeEventListener("resize", this.handleResize);
   },
-  
+
   methods: {
     handleResize() {
       this.window.width = window.innerWidth;
@@ -78,6 +89,9 @@ module.exports = {
 
 <style scoped>
 #navigation {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
   position:fixed;
   top:0px;
   left:0px;
@@ -89,17 +103,23 @@ module.exports = {
   overflow:visible;
 }
 
-#horizontalNavItem li {
-  display:inline-block;
-  margin-top:1rem;
-  margin-bottom:1rem;
+.nav-link ul {
+  list-style:none;
 }
 
-#horizontalNavItem li:first-child {
+.nav-link li {
+  /* display:block; */
+  /* align-items:center; */
+  display:inline-block;
+  /* margin-top:1rem;
+  margin-bottom:1rem; */
+}
+
+.nav-link li:first-child {
   margin-left:6rem;
 }
 
-#horizontalNavItem li:not(first-child){
+.nav-link li:not(first-child){
   margin-left:4rem;
 }
 
