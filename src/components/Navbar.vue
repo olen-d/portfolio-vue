@@ -1,10 +1,10 @@
 <template>
   <nav id="navigation">
-    <ul v-if="showStandard">
+    <ul v-if="showStandard && showFrontEnd">
       <li v-for="link in links" :key="link.id"><router-link :to="link.uri">{{link.title}}</router-link></li>
     </ul>
-    <NavbarAdmin  v-if="showStandard && showAdminLinks" />
-    <NavHamburger v-if="showHamburger" v-bind:links="links" v-bind:showHamburger="showHamburger" />
+    <NavbarAdmin  v-if="showStandard && showAdmin" />
+    <NavHamburger v-if="showHamburger && showFrontEnd" v-bind:links="links" v-bind:showHamburger="showHamburger" />
   </nav>
 </template>
 
@@ -35,13 +35,17 @@ export default {
   },
 
   computed: {
+    showFrontEnd: function() {
+      return !this.$store.getters.administrator;
+    },
+
     showStandard: function() {
       return this.window.width >= 500;
     },
     showHamburger: function() {
       return this.window.width < 500;
     },
-    showAdminLinks: function() {
+    showAdmin: function() {
       return this.$store.getters.administrator;
     }
   },
