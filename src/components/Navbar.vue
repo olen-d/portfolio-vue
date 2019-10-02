@@ -1,36 +1,30 @@
 <template>
   <nav id="navigation">
-    <ul class="nav-link" v-if="showStandard">
+    <ul v-if="showStandard">
       <li v-for="link in links" :key="link.id"><router-link :to="link.uri">{{link.title}}</router-link></li>
     </ul>
-    <nav id="adminNavigation" v-if="showStandard && showAdminLinks">
-      <ul class="nav-link">
-        <li v-for="adminLink in adminLinks" :key="adminLink.id"><router-link :to="adminLink.uri">{{adminLink.title}}</router-link></li>
-      </ul>
-    </nav>
+    <NavbarAdmin  v-if="showStandard && showAdminLinks" />
     <NavHamburger v-if="showHamburger" v-bind:links="links" v-bind:showHamburger="showHamburger" />
   </nav>
 </template>
 
 <script>
+import NavbarAdmin from "./NavbarAdmin";
 import NavHamburger from "./NavHamburger";
 
 export default {
   components: {
+    NavbarAdmin,
     NavHamburger
   },
 
-  data: () => { // TODO: Set up the DB to include this information. Remember, only the links are coming from the DB. Window and Visible are coded here.
+  data: () => { // TODO: Set up the DB to include this information. Remember, only the links are coming from the DB. Window is coded here.
     return {
       links: [
         {id: 0, sort: 0, title: "Home", uri: "/home"},
         {id: 1, sort: 1, title: "About", uri: "/about"},
         {id: 2, sort: 2, title: "Projects", uri: "/projects"},
         {id: 3, sort: 3, title: "Contact", uri: "/contact"},
-      ],
-
-      adminLinks: [
-        {id: 4, sort: 4, title: "Admin", uri: "/admin"}
       ],
 
       window: {
@@ -86,21 +80,21 @@ export default {
   overflow:visible;
 }
 
-.nav-link ul {
+#navigation ul {
   list-style:none;
 }
 
-.nav-link li {
+#navigation li {
   display:inline-block;
   margin-top:3rem;
   margin-bottom:1rem;
 }
 
-.nav-link li:first-child {
+#navigation li:first-child {
   margin-left:6rem;
 }
 
-.nav-link li:not(first-child){
+#navigation li:not(first-child){
   margin-left:4rem;
 }
 
