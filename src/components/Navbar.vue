@@ -8,17 +8,18 @@
         <li v-for="adminLink in adminLinks" :key="adminLink.id"><router-link :to="adminLink.uri">{{adminLink.title}}</router-link></li>
       </ul>
     </nav>
-    <span v-if="showHamburger" v-on:click="toggleDropDownMenu" id="hamburger" class="fas fa-bars"></span>
-    <div id="dropDownContainer">
-      <ul v-if="visible && showHamburger">
-        <li v-for="link in links" :key="link.id"><router-link :to="link.uri">{{link.title}}</router-link></li>
-      </ul>
-    </div>
+    <NavHamburger v-if="showHamburger" v-bind:links="links" v-bind:showHamburger="showHamburger" />
   </nav>
 </template>
 
 <script>
+import NavHamburger from "./NavHamburger";
+
 export default {
+  components: {
+    NavHamburger
+  },
+
   data: () => { // TODO: Set up the DB to include this information. Remember, only the links are coming from the DB. Window and Visible are coded here.
     return {
       links: [
@@ -35,11 +36,10 @@ export default {
       window: {
           width: 0,
           height: 0
-      },
-
-      visible: false
+      }
     }
   },
+
   computed: {
     showStandard: function() {
       return this.window.width >= 500;
@@ -55,19 +55,6 @@ export default {
   created() {
     window.addEventListener("resize", this.handleResize);
     this.handleResize();
-
-    let self = this;
-    window.addEventListener("click", function(e) {
-      if(!self.$el.contains(e.target)){
-        self.visible = false;
-      }
-    });
-
-    window.addEventListener("touchstart", function(e) {
-      if(!self.$el.contains(e.targetTouches[0].target)){
-        self.visible = false;
-      }
-    });
   },
 
   destroyed() {
@@ -78,10 +65,6 @@ export default {
     handleResize() {
       this.window.width = window.innerWidth;
       this.window.height = window.innerHeight;
-    },
-
-    toggleDropDownMenu() {
-      this.visible = !this.visible;
     }
   }
 }
@@ -108,11 +91,9 @@ export default {
 }
 
 .nav-link li {
-  /* display:block; */
-  /* align-items:center; */
   display:inline-block;
-  /* margin-top:1rem;
-  margin-bottom:1rem; */
+  margin-top:3rem;
+  margin-bottom:1rem;
 }
 
 .nav-link li:first-child {
@@ -130,34 +111,5 @@ export default {
 
 #navigation li a:hover {
   color:#fcc914;
-}
-
-#hamburger {
-  margin:1.5rem 6rem 1rem 6rem;
-}
-
-#dropDownContainer {
-  position:fixed;
-  top:5rem;
-  left:0px;
-  width:100%;
-  z-index:8950;
-  background-color:#3d3d3d;
-  color:#ffffff;
-  overflow:hidden;
-}
-
-#dropDownContainer ul {
-  list-style:none;
-}
-
-#dropDownContainer li {
-  margin-left:6rem;
-  margin-top:3rem;
-  margin-bottom:3rem;
-}
-
-#dropDownContainer li:last-child {
-  margin-bottom:4.5rem;
 }
 </style>
