@@ -1,13 +1,22 @@
 <template>
   <nav id="adminNavigation">
-    <ul>
+    <ul v-if="showStandard">
       <li v-for="adminLink in adminLinks" :key="adminLink.id"><router-link :to="adminLink.uri">{{adminLink.title}}</router-link></li>
     </ul>
+    <NavHamburger v-if="showHamburger" v-bind:links="adminLinks" v-bind:showHamburger="showHamburger" />
   </nav>
 </template>
 
 <script>
+import NavHamburger from "./NavHamburger";
+
 export default {
+  props: ["showStandard", "showHamburger"],
+
+  components: {
+    NavHamburger
+  },
+
   data: () => { // TODO: Set up the DB to include this information. 
     return {
       adminLinks: [
@@ -55,7 +64,7 @@ export default {
   margin-left:4rem;
 }
 
-#adminNavigation li a:link, #navigation li a:visited {
+#adminNavigation li a:link, #adminNavigation li a:visited {
   text-decoration:none;
   color:#ffffff;
 }
