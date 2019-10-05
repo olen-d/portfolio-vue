@@ -1,26 +1,36 @@
 <template>
-  <nav>
-    <NavbarAdmin
-      v-if="showAdmin"
-      v-bind:showStandard="showStandard"
-      v-bind:showHamburger="showHamburger"
-    />
-    <NavbarFrontEnd
-      v-else
-      v-bind:showStandard="showStandard"
-      v-bind:showHamburger="showHamburger"
-    />
-  </nav>
+  <div>
+    <div id="navbar">
+      <NavbarAdmin
+        v-if="showAdmin"
+        v-bind:showStandard="showStandard"
+        v-bind:showHamburger="showHamburger"
+      >
+      </NavbarAdmin>
+      <NavbarFrontEnd
+        v-else
+        v-bind:showStandard="showStandard"
+        v-bind:showHamburger="showHamburger"
+      >
+      </NavbarFrontEnd>
+    </div>
+    <UserMenu
+      v-if="$store.getters.authorized"
+    >
+    </UserMenu>
+  </div>
 </template>
 
 <script>
 import NavbarFrontEnd from "./NavbarFrontEnd";
 import NavbarAdmin from "./NavbarAdmin";
+import UserMenu from "./UserMenu";
 
 export default {
   components: {
     NavbarFrontEnd,
-    NavbarAdmin
+    NavbarAdmin,
+    UserMenu
   },
 
   data: () => { // TODO: Set up the DB to include this information. Remember, only the links are coming from the DB. Window is coded here.
@@ -66,6 +76,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 
 </style>

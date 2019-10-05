@@ -72,8 +72,7 @@ export default {
   margin-bottom:4.5rem;
 }
 
-#dropDownContainer li a:link, 
-#dropDownContainer li a:visited {
+#dropDownContainer li a:link, #dropDownContainer li a:visited {
   text-decoration:none;
   color:#ffffff;
 }

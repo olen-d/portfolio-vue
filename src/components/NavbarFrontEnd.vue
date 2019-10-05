@@ -1,10 +1,10 @@
 <template>
-  <nav id="navigation">
+  <nav id="navbarFrontEnd">
     <ul v-if="showStandard">
       <li v-for="link in links" :key="link.id"><router-link :to="link.uri">{{link.title}}</router-link></li>
     </ul>
     <NavHamburger v-if="showHamburger" v-bind:links="links" v-bind:showHamburger="showHamburger" />
-  </nav>    
+  </nav>
 </template>
 
 <script>
@@ -31,45 +31,47 @@ export default {
 </script>
 
 <style scoped>
-#navigation {
+#navbarFrontEnd {
   display:flex;
   justify-content:space-between;
   align-items:center;
   position:fixed;
   top:0px;
   left:0px;
-  width:100%;
   height:5rem;
+  width:100%;
   z-index:9000;
+  overflow:visible;
   background-color:#3d3d3d;
   color:#ffffff;
-  overflow:visible;
 }
 
-#navigation ul {
+#navbarFrontEnd ul {
   list-style:none;
 }
 
-#navigation li {
+#navbarFrontEnd li {
   display:inline-block;
   margin-top:3rem;
   margin-bottom:1rem;
 }
 
-#navigation li:first-child {
+#navbarFrontEnd li:first-child {
   margin-left:6rem;
 }
 
-#navigation li:not(first-child){
+#navbarFrontEnd li:not(first-child) {
   margin-left:4rem;
 }
 
-#navigation li a:link, #navigation li a:visited {
-  text-decoration:none;
+#navbarFrontEnd li a:link, 
+#navbarFrontEnd li a:visited {
   color:#ffffff;
+  text-decoration:none;
 }
 
-#navigation li a:hover {
+#navbarFrontEnd li a:hover {
   color:#fcc914;
+  text-decoration:none;
 }
 </style>

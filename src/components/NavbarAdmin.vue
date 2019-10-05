@@ -4,6 +4,7 @@
       <li v-for="adminLink in adminLinks" :key="adminLink.id"><router-link :to="adminLink.uri">{{adminLink.title}}</router-link></li>
     </ul>
     <NavHamburger v-if="showHamburger" v-bind:links="adminLinks" v-bind:showHamburger="showHamburger" />
+    
   </nav>
 </template>
 
