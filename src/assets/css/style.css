@@ -186,5 +186,14 @@ p:first-child {
 .fake-link:hover {
     cursor: pointer;
     color:#36a0ce;
-  }
-  
+}
+
+.fake-menu-link {
+    cursor: pointer;
+    color:#ffffff;
+}
+
+.fake-menu-link:hover {
+    cursor: pointer;
+    color:#fcc914;
+}

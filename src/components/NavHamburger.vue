@@ -1,7 +1,7 @@
 <template>
   <nav>
-    <span v-on:click="toggleDropDownMenu" id="hamburger" class="fas fa-bars"></span>
-    <div id="dropDownContainer">
+    <span v-on:click="toggleDropdownMenu" id="hamburger" class="fas fa-bars"></span>
+    <div id="dropdownContainer">
       <ul v-if="visible && showHamburger">
         <li v-for="link in links" :key="link.id"><router-link :to="link.uri">{{link.title}}</router-link></li>
       </ul>
@@ -20,7 +20,7 @@ export default {
   },
 
   methods: {
-    toggleDropDownMenu() {
+    toggleDropdownMenu() {
       this.visible = !this.visible;
     }
   },
@@ -47,9 +47,9 @@ export default {
   margin:1.5rem 6rem 1rem 6rem;
 }
 
-#dropDownContainer {
+#dropdownContainer {
   position:fixed;
-  top:5rem;
+  top:6rem;
   left:0px;
   width:100%;
   z-index:8950;
@@ -58,26 +58,27 @@ export default {
   overflow:hidden;
 }
 
-#dropDownContainer ul {
+#dropdownContainer ul {
   list-style:none;
 }
 
-#dropDownContainer li {
+#dropdownContainer li {
   margin-left:6rem;
   margin-top:3rem;
   margin-bottom:3rem;
 }
 
-#dropDownContainer li:last-child {
+#dropdownContainer li:last-child {
   margin-bottom:4.5rem;
 }
 
-#dropDownContainer li a:link, #dropDownContainer li a:visited {
+#dropdownContainer li a:link, 
+#dropdownContainer li a:visited {
   text-decoration:none;
   color:#ffffff;
 }
 
-#dropDownContainer li a:hover {
+#dropdownContainer li a:hover {
   color:#fcc914;
 }
 </style>

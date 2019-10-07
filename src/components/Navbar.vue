@@ -1,19 +1,17 @@
 <template>
   <div>
-    <div id="navbar">
-      <NavbarAdmin
-        v-if="showAdmin"
-        v-bind:showStandard="showStandard"
-        v-bind:showHamburger="showHamburger"
-      >
-      </NavbarAdmin>
-      <NavbarFrontEnd
-        v-else
-        v-bind:showStandard="showStandard"
-        v-bind:showHamburger="showHamburger"
-      >
-      </NavbarFrontEnd>
-    </div>
+    <NavbarAdmin
+      v-if="showAdmin"
+      v-bind:showStandard="showStandard"
+      v-bind:showHamburger="showHamburger"
+    >
+    </NavbarAdmin>
+    <NavbarFrontEnd
+      v-else
+      v-bind:showStandard="showStandard"
+      v-bind:showHamburger="showHamburger"
+    >
+    </NavbarFrontEnd>
     <UserMenu
       v-if="$store.getters.authorized"
     >

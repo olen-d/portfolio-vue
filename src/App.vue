@@ -19,7 +19,7 @@
           </div>
           <div class="four columns">
             <p class="right">
-              <router-link to="/login" v-if="!$store.getters.authorized && !$store.getters.loginPage" class="ntd">Login</router-link>&nbsp;<router-link to="/signup" v-if="!$store.getters.authorized && !$store.getters.signupPage" class="ntd">Signup</router-link>&nbsp;<a @click="logout" v-if="$store.getters.authorized" class="fake-link">Logout</a>
+              <router-link to="/login" v-if="!$store.getters.authorized && !$store.getters.loginPage" class="ntd">Login</router-link>&nbsp;<router-link to="/signup" v-if="!$store.getters.authorized && !$store.getters.signupPage" class="ntd">Signup</router-link>
             </p>
           </div>
         </div>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapState, mapActions } from "vuex";
 import { store } from "./store/store";
 import Navbar from "./components/Navbar.vue";
 import Social from "./components/Social.vue";
@@ -57,7 +57,19 @@ export default {
       "lastName",
       "administrator",
       "editor"
+    ]),
+
+    ...mapState([
+      "doLogout"
     ])
+  },
+
+  watch: {
+    doLogout: function(newValue) {
+      if(newValue) {
+        this.logout();
+      }
+    } 
   },
 
   methods: {
