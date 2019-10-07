@@ -9,7 +9,7 @@
           Dashboard
         </h2>
         <p>
-          Welcome {{ $store.getters.firstName }}!
+          Welcome {{ firstName }}!
         </p>
       </div>
       <div class="one columns">
@@ -20,7 +20,13 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "AdminDashboard",
+
+  computed: {
+    ...mapGetters([ "firstName" ])
+  }
 }
 </script>

@@ -35,7 +35,7 @@ import Navbar from "./components/Navbar.vue";
 import Social from "./components/Social.vue";
 
 export default {
-  name: 'app',
+  name: "app",
   store,
   components: {
     Navbar,
