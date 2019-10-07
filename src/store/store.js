@@ -7,6 +7,7 @@ export const store = new Vuex.Store({
   state: {
     currentJWT: "",
     authorized: false,
+    doLogout: false,
     loginPage: false,
     signupPage: false
   },
@@ -18,6 +19,10 @@ export const store = new Vuex.Store({
 
     setAuthorized(state, authorized) {
       state.authorized = authorized;
+    },
+
+    setDoLogout(state, doLogout) {
+      state.doLogout = doLogout;
     },
 
     setLoginPage(state, loginPage) {
@@ -46,6 +51,7 @@ export const store = new Vuex.Store({
     editor: (state, getters) =>
       getters.jwtData ? getters.jwtData.editor : null,
     authorized: state => state.authorized,
+    doLogout: state => state.doLogout,
     loginPage: state => state.loginPage,
     signupPage: state => state.signupPage
   },
@@ -59,6 +65,7 @@ export const store = new Vuex.Store({
     logout({ commit }) {
       commit("setJWT", "");
       commit("setAuthorized", false);
+      commit("setDoLogout", false);
     }
   }
 });

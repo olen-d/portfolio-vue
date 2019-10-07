@@ -41,7 +41,11 @@ export default {
           this.$store.commit("setJWT", dataObj.token);
           this.$store.commit("setAuthorized", true);
           localStorage.setItem("user_token", dataObj.token); // Needed to persist...
-          this.$router.push({ name: "adminDashboard" });
+          if (this.$store.getters.administrator) {
+            this.$router.push({ name: "adminDashboard" });
+          } else {
+            this.$router.push({ name: "home" });
+          }
         }
       });
     } 
