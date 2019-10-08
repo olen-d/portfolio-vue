@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Home from "./views/Home.vue";
+import { store } from "./store/store";
 
 const Admin = () => import("./views/Admin.vue");
 const AdminDashboard = () => import("./views/AdminDashboard.vue");
