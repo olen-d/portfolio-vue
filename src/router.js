@@ -21,6 +21,13 @@ export default new Router({
     {
       path: "/admin",
       component: Admin,
+      beforeEnter(to, from, next) {
+        if (store.getters.administrator) {
+          next();
+        } else {
+          next({ name: "home" });
+        }
+      },
       children: [
         {
           path: "dashboard",
