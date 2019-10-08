@@ -42,7 +42,7 @@
           password: this.form.password
         }
 
-        fetch("https://www.olen.dev/api//user/create", {
+        fetch("https://www.olen.dev/api/user/create", {
         method: "post",
         headers: {
           "Content-Type": "application/json"
