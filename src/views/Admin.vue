@@ -1,5 +1,5 @@
 <template>
-  <div class="admin">
+  <div id="admin-view">
     <Admin />
   </div>
 </template>
