@@ -23,6 +23,7 @@ const findOneUser = require("../models/findOneUser");
 
 // Admin Side
 const createUser = require("../models/createUser");
+const updateHeadline = require("../models/updateHeadline");
 
 // Other stuff
 const bcrypt = require("../helpers/bcrypt-module");
@@ -253,6 +254,23 @@ app.post("/api/user/create", (req, res) => {
           res.json(err);
         });
     }
+  });
+});
+
+// Welcome related routes
+// Update Headline
+
+app.put("/api/welcome/update/headline/:headline_id", (req, res, next) => {
+  let headline_id = req.params.headline_id;
+  let headline = req.body.headline;
+
+  let headlineData = {
+    id: headline_id,
+    headline: headline
+  };
+
+  updateHeadline.data(headlineData).then(resolve => {
+    res.send(resolve);
   });
 });
 

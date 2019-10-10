@@ -53,30 +53,22 @@ export default {
 
   methods: {
     submitHeadlineForm () {
+      const welcomeId = this.welcome._id
       const formData = {
         headline: this.welcome.headline,
       }
 
-      // fetch("http://localhost:3031/api/login", {
-      //   method: "post",
-      //   headers: {
-      //     "Content-Type": "application/json"
-      //   },
-      //   body: JSON.stringify(formData)
-      // }).then(response => {
-      //   return response.json();
-      // }).then(dataObj => {
-        // if(dataObj.isLoggedIn && dataObj.token) {
-        //   this.$store.commit("setJWT", dataObj.token);
-        //   this.$store.commit("setAuthorized", true);
-        //   localStorage.setItem("user_token", dataObj.token); // Needed to persist...
-        //   if (this.$store.getters.administrator) {
-        //     this.$router.push({ name: "adminDashboard" });
-        //   } else {
-        //     this.$router.push({ name: "home" });
-        //   }
-        // }
-      // });
+      fetch(`https://www.olen.dev/api/welcome/update/headline/${welcomeId}`, {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      }).then(response => {
+        return response.json();
+      }).then(dataObj => {
+        console.log("DATA OBJ\n", dataObj);
+      });
     } 
   },
 
