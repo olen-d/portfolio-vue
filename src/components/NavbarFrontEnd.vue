@@ -23,7 +23,7 @@ export default {
   components: {
     NavHamburger
   },
-
+// TODO: Change uri to named path
   data: () => { // TODO: Set up the DB to include this information. Remember, only the links are coming from the DB. Window is coded here.
     return {
       links: [

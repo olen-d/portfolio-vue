@@ -6,7 +6,6 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
   state: {
     currentJWT: "",
-    authorized: false,
     doLogout: false,
     loginPage: false,
     signupPage: false
@@ -50,7 +49,16 @@ export const store = new Vuex.Store({
       getters.jwtData ? getters.jwtData.administrator : null,
     editor: (state, getters) =>
       getters.jwtData ? getters.jwtData.editor : null,
-    authorized: state => state.authorized,
+    expiration: (state, getters) =>
+      getters.jwtData ? getters.jwtData.exp : null,
+    authorized: (state, getters) => {
+      const curTimestamp = Math.floor(new Date().getTime() / 1000);
+      if (getters.jwtData && curTimestamp < getters.expiration) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     doLogout: state => state.doLogout,
     loginPage: state => state.loginPage,
     signupPage: state => state.signupPage

@@ -28,7 +28,7 @@ export default {
         password: this.form.password
       }
 
-      fetch("https://www.olen.dev/api/login", {
+      fetch("http://www.olen.dev/api/login", {
         method: "post",
         headers: {
           "Content-Type": "application/json"
@@ -39,7 +39,6 @@ export default {
       }).then(dataObj => {
         if(dataObj.isLoggedIn && dataObj.token) {
           this.$store.commit("setJWT", dataObj.token);
-          this.$store.commit("setAuthorized", true);
           localStorage.setItem("user_token", dataObj.token); // Needed to persist...
           if (this.$store.getters.administrator) {
             this.$router.push({ name: "adminDashboard" });
