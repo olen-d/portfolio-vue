@@ -5,6 +5,8 @@ import { store } from "./store/store";
 
 const Admin = () => import("./views/Admin.vue");
 const AdminDashboard = () => import("./views/AdminDashboard.vue");
+const AdminPages = () => import("./views/AdminPages.vue");
+const AdminPagesWelcome = () => import("./views/AdminPagesWelcome.vue");
 
 Vue.use(Router);
 
@@ -33,6 +35,18 @@ export default new Router({
           path: "dashboard",
           name: "adminDashboard",
           component: AdminDashboard
+        },
+        {
+          path: "pages",
+          name: "adminPages",
+          component: AdminPages,
+          children: [
+            {
+              path: "welcome",
+              name: "adminPagesWelcome",
+              component: AdminPagesWelcome
+            }
+          ]
         }
       ]
     },
