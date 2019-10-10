@@ -28,7 +28,7 @@ export default {
         password: this.form.password
       }
 
-      fetch("http://www.olen.dev/api/login", {
+      fetch("https://www.olen.dev/api/login", {
         method: "post",
         headers: {
           "Content-Type": "application/json"
