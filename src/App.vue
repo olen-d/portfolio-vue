@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <Navbar />
-      <div class="logo-header">
-        <img src="/assets/images/OD_min_500x500.png" width="200px" height="200px" />
-      </div>
+    <Navbar></Navbar>
+    <div class="logo-header">
+      <img src="/assets/images/OD_min_500x500.png" width="200px" height="200px" />
+    </div>
     <router-view />
     <div class="footer">
 	    <Social />
@@ -56,13 +56,15 @@ export default {
       "firstName",
       "lastName",
       "administrator",
-      "editor"
+      "editor",
+      "expiration",
+      "authorized"
     ]),
 
     ...mapState([
       "doLogout"
     ])
-  },
+   },
 
   watch: {
     doLogout: function(newValue) {
