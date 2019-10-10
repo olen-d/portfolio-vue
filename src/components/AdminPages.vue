@@ -12,6 +12,7 @@
           <nav>
             <ul>
               <li><router-link :to="{ name: 'adminPagesWelcome' }">Welcome</router-link></li>
+              <li><router-link :to="{ name: 'adminPagesSkills' }">Skills</router-link></li>
             </ul>
           </nav>
         </div>

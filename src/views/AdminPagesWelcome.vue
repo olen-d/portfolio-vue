@@ -1,6 +1,6 @@
 <template>
   <div id="admin-pages-welcome-view">
-    <AdminPagesWelcome />
+    <AdminPagesWelcome></AdminPagesWelcome>
   </div>
 </template>
 

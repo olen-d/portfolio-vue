@@ -197,3 +197,21 @@ p:first-child {
     cursor: pointer;
     color:#fcc914;
 }
+
+.table-icon {
+    display: block;
+    font-size: 200%;
+    text-align: center;
+    color: #36a0ce; 
+}
+
+.edit,
+.delete {
+    color:#9c9c9c;
+}
+
+.edit:hover,
+.delete:hover {
+    cursor: pointer;
+    color:#36a0ce;
+}

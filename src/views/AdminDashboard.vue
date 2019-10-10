@@ -1,6 +1,6 @@
 <template>
   <div class="adminDashboard">
-    <AdminDashboard />
+    <AdminDashboard></AdminDashboard>
   </div>
 </template>
 
