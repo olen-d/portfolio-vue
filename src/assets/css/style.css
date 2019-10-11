@@ -215,3 +215,18 @@ p:first-child {
     cursor: pointer;
     color:#36a0ce;
 }
+
+.u-quarter-width {
+    width: 25%;
+    box-sizing: border-box; 
+}
+
+.u-third-width {
+    width: 33%;
+    box-sizing: border-box; 
+}
+
+.u-half-width {
+    width: 50%;
+    box-sizing: border-box; 
+}

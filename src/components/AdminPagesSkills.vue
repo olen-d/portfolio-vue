@@ -50,6 +50,20 @@
           &nbsp;
         </div>
       </div>
+      <div class="row">
+        <div class="one columns">
+          &nbsp;
+        </div>
+        <div class="ten columns">
+          <AdminSkillsForm
+            v-bind:formAction="formAction"
+          >
+          </AdminSkillsForm>
+        </div>
+        <div class="one columns">
+          &nbsp;
+        </div>  
+      </div>
     </div>
   </div>
 </template>
@@ -57,12 +71,19 @@
 <script>
 import { mapGetters } from "vuex";
 
+import AdminSkillsForm from "./AdminSkillsForm";
+
 export default {
   name: "AdminPagesSkills",
+
+  components: {
+    AdminSkillsForm
+  },
 
   data: () => {
     return {
       skills: [],
+      formAction: "Add"
     }
   },
 
