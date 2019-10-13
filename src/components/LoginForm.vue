@@ -40,6 +40,7 @@ export default {
         if(dataObj.isLoggedIn && dataObj.token) {
           this.$store.commit("setJWT", dataObj.token);
           localStorage.setItem("user_token", dataObj.token); // Needed to persist...
+          this.$store.dispatch("start");
           if (this.$store.getters.administrator) {
             this.$router.push({ name: "adminDashboard" });
           } else {

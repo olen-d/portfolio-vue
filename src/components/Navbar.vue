@@ -13,7 +13,7 @@
     >
     </NavbarFrontEnd>
     <UserMenu
-      v-if="$store.getters.authorized"
+      v-if="isAuthorized"
     >
     </UserMenu>
   </div>
@@ -41,6 +41,10 @@ export default {
   },
 
   computed: {
+    isAuthorized: function () {
+      return this.$store.getters.authorized;
+    },
+
     showFrontEnd: function() {
       return !this.$store.getters.administrator;
     },

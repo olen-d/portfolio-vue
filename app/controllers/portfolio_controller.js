@@ -188,7 +188,7 @@ app.post("/api/login", (req, response) => {
             jwt.sign(
               user,
               process.env.secret,
-              { expiresIn: "24h" },
+              { expiresIn: "1h" },
               (err, token) => {
                 return response.status(200).json({
                   isLoggedIn: true,

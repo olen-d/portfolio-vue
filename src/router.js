@@ -25,7 +25,7 @@ export default new Router({
       path: "/admin",
       component: Admin,
       beforeEnter(to, from, next) {
-        if (store.getters.administrator) {
+        if (store.getters.authorized && store.getters.administrator) {
           next();
         } else {
           next({ name: "home" });
