@@ -38,8 +38,7 @@ export const store = new Vuex.Store({
     jwt: state => state.currentJWT,
     jwtData: (state, getters) =>
       state.currentJWT ? JSON.parse(atob(getters.jwt.split(".")[1])) : null,
-    userId: (state, getters) =>
-      getters.jwtData ? getters.jwtData.userId : null,
+    userId: (state, getters) => (getters.jwtData ? getters.jwtData._id : null),
     userName: (state, getters) =>
       getters.jwtData ? getters.jwtData.userName : null,
     firstName: (state, getters) =>

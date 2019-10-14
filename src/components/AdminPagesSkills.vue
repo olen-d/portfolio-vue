@@ -57,6 +57,7 @@
         <div class="ten columns">
           <AdminSkillsForm
             v-bind:formAction="formAction"
+            @update-skills-table="updateSkillsTable"
           >
           </AdminSkillsForm>
         </div>
@@ -92,36 +93,21 @@ export default {
   },
 
   methods: {
-    submitHeadlineForm () {
-      const welcomeId = this.welcome._id
-      const formData = {
-        headline: this.welcome.headline,
-      }
-
-      fetch(`https://www.olen.dev/api/welcome/update/headline/${welcomeId}`, {
-        method: "put",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(formData)
-      }).then(response => {
-        return response.json();
-      }).then(dataObj => {
-        console.log("DATA OBJ\n", dataObj);
-      });
-    },
-    
     formatShow: show => {
       if (show == 1) {
         return "Yes";
       } else {
         return "No";
       }
+    },
+
+    updateSkillsTable(e) {
+      this.skills.push(e);
     }
   },
 
   created() {
-    fetch("https://www.olen.dev/api/skills")
+    fetch("https://www.olen.dev/api/skills/all")
       .then((response) => {
         return response.json();
       })

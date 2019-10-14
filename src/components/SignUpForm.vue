@@ -15,63 +15,64 @@
 </template>
 
 <script>
-  export default {
-    data: () => {
-      return {
-        form: {
-          firstName: "",
-          lastName: "",
-          email: "",
-          userName: "",
-          password: ""
-        }
-      }
-    },
-
-    methods: {
-      submitSignUpForm () {
-        localStorage.removeItem("user_token");
-
-        // TODO: Validate this mess
-
-        let formData = {
-          firstName: this.form.firstName,
-          lastName: this.form.lastName,
-          email: this.form.email,
-          userName: this.form.userName,
-          password: this.form.password
-        }
-
-        fetch("https://www.olen.dev/api/user/create", {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json"
-        },
-          body: JSON.stringify(formData)
-        }).then(response => {
-          return response.json();
-        }).then(dataObj => {
-          if (dataObj.isLoggedIn && dataObj.token) {
-            this.$store.commit("setJWT", dataObj.token);
-            this.$store.commit("setAuthorized", true);
-            localStorage.setItem("user_token", dataObj.token); // Needed to persist...
-            if (this.$store.getters.administrator) {
-              this.$router.push({ name: "adminDashboard" });
-            } else {
-              this.$router.push({ name: "home" });
-            }
-          } else {
-              // Something went horribly wrong
-              // TODO: Provide some sort of intelligent error and update the UI with it
-          }
-        }).catch(error => {
-          return ({
-            errorCode: 500,
-            errorMsg: "Internal Server Error",
-            errorDetail: error
-          })
-        });
+export default {
+  data: () => {
+    return {
+      form: {
+        firstName: "",
+        lastName: "",
+        email: "",
+        userName: "",
+        password: ""
       }
     }
+  },
+
+  methods: {
+    submitSignUpForm () {
+      localStorage.removeItem("user_token");
+
+      // TODO: Destructure form data
+      // TODO: Validate this mess
+
+      let formData = {
+        firstName: this.form.firstName,
+        lastName: this.form.lastName,
+        email: this.form.email,
+        userName: this.form.userName,
+        password: this.form.password
+      }
+
+      fetch("https://www.olen.dev/api/user/create", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+        body: JSON.stringify(formData)
+      }).then(response => {
+        return response.json();
+      }).then(dataObj => {
+        if (dataObj.isLoggedIn && dataObj.token) {
+          this.$store.commit("setJWT", dataObj.token);
+          this.$store.commit("setAuthorized", true);
+          localStorage.setItem("user_token", dataObj.token); // Needed to persist...
+          if (this.$store.getters.administrator) {
+            this.$router.push({ name: "adminDashboard" });
+          } else {
+            this.$router.push({ name: "home" });
+          }
+        } else {
+            // Something went horribly wrong
+            // TODO: Provide some sort of intelligent error and update the UI with it
+        }
+      }).catch(error => {
+        return ({
+          errorCode: 500,
+          errorMsg: "Internal Server Error",
+          errorDetail: error
+        })
+      });
+    }
   }
+}
 </script>

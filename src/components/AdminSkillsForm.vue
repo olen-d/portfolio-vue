@@ -13,7 +13,7 @@
       <label for="priority">Sort Priority</label>
       <input v-model="skillData.priority" type="text" class="u-quarter-width" id="priority" placeholder="Number" />
       <label for="display">Display Skill?</label>
-      <select class="u-quarter-width" id="display">
+      <select v-model="skillData.display" class="u-quarter-width" id="display">
         <option value="1">Yes</option>
         <option value="0">No</option>
       </select>
@@ -30,12 +30,57 @@ export default {
 
   data: () => {
     return {
-      skillData: [],
+      skillData: {
+        name: "",
+        type: "",
+        description: "",
+        icon: "",
+        priority: "",
+        display: ""
+      },
+    }
+  },
+
+  methods: {
+    submitSkillForm() {
+      const userId = this.$store.getters.userId;
+      const { name, type, description, icon, priority, display } = this.skillData;
+      const show = parseInt(display);
+
+      const formData = {
+        userId: userId,
+        type: type,
+        name: name,
+        description: description,
+        show: show,
+        icon: icon,
+        priority: priority
+      }
+
+      fetch("https://www.olen.dev/api/skills/create", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+        body: JSON.stringify(formData)
+      }).then(response => {
+        return response.json();
+      }).then(dataObj => {
+        // TODO: Make this a modal stating great success.
+        // TODO: Probably by emitting that the skill was added successfuly
+        // this.$emit("skill-added", dataObj);
+        // TODO: Clear the form
+        this.$emit("update-skills-table", dataObj);
+      }).catch(error => {
+        return ({
+          errorCode: 500,
+          errorMsg: "Internal Server Error",
+          errorDetail: error
+        })
+      });
     }
   }
 }
-
-
 </script>
 
 <style scoped>

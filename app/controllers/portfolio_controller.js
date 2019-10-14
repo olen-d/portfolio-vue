@@ -15,6 +15,7 @@ const path = require("path");
 const welcome = require("../models/welcome");
 const about = require("../models/about");
 const projects = require("../models/projects");
+const readAllSkills = require("../models/readAllSkills");
 const skills = require("../models/skills");
 const skillsTop = require("../models/skillsTop");
 const contactOnly = require("../models/contactOnly");
@@ -23,6 +24,7 @@ const findOneUser = require("../models/findOneUser");
 
 // Admin Side
 const createUser = require("../models/createUser");
+const createSkill = require("../models/createSkill");
 const updateHeadline = require("../models/updateHeadline");
 
 // Other stuff
@@ -94,6 +96,21 @@ app.get("/api/projects", (req, res, next) => {
 });
 
 // Get all skills
+app.get("/api/skills/all", (req, res, next) => {
+  readAllSkills
+    .data()
+    .then(resolve => {
+      let skillsObj = {
+        skills: resolve
+      };
+      res.send(skillsObj);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+});
+
+// Get all visible skills
 app.get("/api/skills", (req, res, next) => {
   skills
     .data()
@@ -272,6 +289,31 @@ app.put("/api/welcome/update/headline/:headline_id", (req, res, next) => {
   updateHeadline.data(headlineData).then(resolve => {
     res.send(resolve);
   });
+});
+
+// Skills Routes
+
+app.post("/api/skills/create", (req, res, next) => {
+  const { userId, type, name, description, show, icon, priority } = req.body;
+
+  const skillInfo = {
+    userId: userId,
+    type: type,
+    name: name,
+    description: description,
+    show: show,
+    icon: icon,
+    priority: priority
+  };
+
+  createSkill
+    .data(skillInfo)
+    .then(resolve => {
+      return res.json(resolve);
+    })
+    .catch(err => {
+      return res.json(err);
+    });
 });
 
 app.use((req, res) => {
