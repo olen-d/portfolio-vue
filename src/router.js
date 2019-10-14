@@ -7,6 +7,7 @@ const Admin = () => import("./views/Admin.vue");
 const AdminDashboard = () => import("./views/AdminDashboard.vue");
 const AdminPages = () => import("./views/AdminPages.vue");
 const AdminPagesWelcome = () => import("./views/AdminPagesWelcome.vue");
+const AdminPagesSkills = () => import("./views/AdminPagesSkills.vue");
 
 Vue.use(Router);
 
@@ -24,7 +25,7 @@ export default new Router({
       path: "/admin",
       component: Admin,
       beforeEnter(to, from, next) {
-        if (store.getters.administrator) {
+        if (store.getters.authorized && store.getters.administrator) {
           next();
         } else {
           next({ name: "home" });
@@ -45,6 +46,11 @@ export default new Router({
               path: "welcome",
               name: "adminPagesWelcome",
               component: AdminPagesWelcome
+            },
+            {
+              path: "skills",
+              name: "adminPagesSkills",
+              component: AdminPagesSkills
             }
           ]
         }

@@ -6,6 +6,7 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
   state: {
     currentJWT: "",
+    now: new Date(),
     doLogout: false,
     loginPage: false,
     signupPage: false
@@ -16,8 +17,8 @@ export const store = new Vuex.Store({
       state.currentJWT = jwt;
     },
 
-    setAuthorized(state, authorized) {
-      state.authorized = authorized;
+    setNow(state) {
+      state.now = new Date();
     },
 
     setDoLogout(state, doLogout) {
@@ -51,9 +52,10 @@ export const store = new Vuex.Store({
       getters.jwtData ? getters.jwtData.editor : null,
     expiration: (state, getters) =>
       getters.jwtData ? getters.jwtData.exp : null,
+    now: state => state.now,
     authorized: (state, getters) => {
-      const curTimestamp = Math.floor(new Date().getTime() / 1000);
-      if (getters.jwtData && curTimestamp < getters.expiration) {
+      const curTime = Math.floor(getters.now.getTime() / 1000);
+      if (getters.jwtData && curTime < getters.jwtData.exp) {
         return true;
       } else {
         return false;
@@ -70,9 +72,14 @@ export const store = new Vuex.Store({
       commit("setJWT", res);
     },
 
+    start({ commit }) {
+      setInterval(() => {
+        commit("setNow");
+      }, 1000 * 60);
+    },
+
     logout({ commit }) {
       commit("setJWT", "");
-      commit("setAuthorized", false);
       commit("setDoLogout", false);
     }
   }

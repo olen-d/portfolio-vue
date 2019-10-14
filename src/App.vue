@@ -71,7 +71,13 @@ export default {
       if(newValue) {
         this.logout();
       }
-    } 
+    },
+    
+    authorized: function(newValue) {
+      if(!newValue) {
+        this.logout();
+      }
+    }
   },
 
   methods: {
