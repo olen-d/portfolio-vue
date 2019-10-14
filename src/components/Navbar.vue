@@ -1,7 +1,7 @@
 <template>
   <div>
     <NavbarAdmin
-      v-if="showAdmin"
+      v-if="isAuthorized && showAdmin"
       v-bind:showStandard="showStandard"
       v-bind:showHamburger="showHamburger"
     >
