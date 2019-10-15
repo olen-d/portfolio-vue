@@ -1,5 +1,14 @@
 <template>
   <div id="admin-pages-skills">
+    <ModalConfirmCancel
+      v-if="showModalConfirmCancel"
+      v-bind:title = modalConfirmCancelProps.title
+      v-bind:message = modalConfirmCancelProps.message 
+      v-bind:confirm = modalConfirmCancelProps.confirm
+      v-bind:cancel = modalConfirmCancelProps.cancel
+      @cancel-action="cancelAction"
+    >
+    </ModalConfirmCancel>
     <div class="container">
       <div class="row">
         <div class="one columns">
@@ -41,7 +50,7 @@
                 <td>{{ priority }}</td>
                 <td>{{ formatShow(show) }}</td>
                 <td><i class="fas fa-edit edit" :data-id="_id"></i></td>
-                <td><i class="fas fa-times delete" :data-id="_id"></i></td>
+                <td><i @click="deleteSkill" class="fas fa-times delete" :data-id="_id" :data-name="name"></i></td>
               </tr>
             </tbody>
           </table>
@@ -73,18 +82,27 @@
 import { mapGetters } from "vuex";
 
 import AdminSkillsForm from "./AdminSkillsForm";
+import ModalConfirmCancel from "./ModalConfirmCancel";
 
 export default {
   name: "AdminPagesSkills",
 
   components: {
-    AdminSkillsForm
+    AdminSkillsForm,
+    ModalConfirmCancel
   },
 
   data: () => {
     return {
       skills: [],
-      formAction: "Add"
+      formAction: "Add",
+      showModalConfirmCancel: true,
+      modalConfirmCancelProps: {
+        title: "Test",
+        message: "Testing, 1, 2, 3...",
+        confirm: "OK",
+        cancel: "CANCEL"
+      }
     }
   },
 
@@ -103,6 +121,24 @@ export default {
 
     updateSkillsTable(e) {
       this.skills.push(e);
+    },
+
+    deleteSkill(e) {
+      const skillId = e.currentTarget.getAttribute("data-id");
+      const skillName = e.currentTarget.getAttribute("data-name");
+      this.modalConfirmCancelProps.title = "Delete Skill";
+      this.modalConfirmCancelProps.message =  `Do you really want to delete the skill: ${skillName}?`;
+      this.modalConfirmCancelProps.confirm = "delete";
+      this.setShowModalConfirmCancel(true);
+      console.log(skillId);
+    },
+
+    setShowModalConfirmCancel(value) {
+      this.showModalConfirmCancel = value;
+    },
+
+    cancelAction() {
+       this.setShowModalConfirmCancel(false);
     }
   },
 
