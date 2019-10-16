@@ -23,9 +23,15 @@ const social = require("../models/social");
 const findOneUser = require("../models/findOneUser");
 
 // Admin Side
-const createUser = require("../models/createUser");
+// Create
 const createSkill = require("../models/createSkill");
+const createUser = require("../models/createUser");
+
+// Update
 const updateHeadline = require("../models/updateHeadline");
+
+// Delete
+const deleteSkill = require("../models/deleteSkill");
 
 // Other stuff
 const bcrypt = require("../helpers/bcrypt-module");
@@ -308,6 +314,19 @@ app.post("/api/skills/create", (req, res, next) => {
 
   createSkill
     .data(skillInfo)
+    .then(resolve => {
+      return res.json(resolve);
+    })
+    .catch(err => {
+      return res.json(err);
+    });
+});
+
+app.post("/api/skills/delete", (req, res, next) => {
+  const skillId = req.body.skillId;
+
+  deleteSkill
+    .data(skillId)
     .then(resolve => {
       return res.json(resolve);
     })

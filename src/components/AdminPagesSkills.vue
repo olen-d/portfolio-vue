@@ -1,5 +1,17 @@
 <template>
   <div id="admin-pages-skills">
+    <ModalConfirmCancel
+      v-if="showModalConfirmCancel"
+      v-bind:payload = modalConfirmCancelProps.payload
+      v-bind:action = modalConfirmCancelProps.action
+      v-bind:title = modalConfirmCancelProps.title
+      v-bind:message = modalConfirmCancelProps.message 
+      v-bind:confirm = modalConfirmCancelProps.confirm
+      v-bind:cancel = modalConfirmCancelProps.cancel
+      @confirm-action="confirmAction"
+      @cancel-action="cancelAction"
+    >
+    </ModalConfirmCancel>
     <div class="container">
       <div class="row">
         <div class="one columns">
@@ -41,7 +53,7 @@
                 <td>{{ priority }}</td>
                 <td>{{ formatShow(show) }}</td>
                 <td><i class="fas fa-edit edit" :data-id="_id"></i></td>
-                <td><i class="fas fa-times delete" :data-id="_id"></i></td>
+                <td><i @click="confirmDeleteSkill" class="fas fa-times delete" :data-id="_id" :data-name="name"></i></td>
               </tr>
             </tbody>
           </table>
@@ -57,7 +69,7 @@
         <div class="ten columns">
           <AdminSkillsForm
             v-bind:formAction="formAction"
-            @update-skills-table="updateSkillsTable"
+            @create-skills-table-row="createSkillsTableRow"
           >
           </AdminSkillsForm>
         </div>
@@ -73,18 +85,31 @@
 import { mapGetters } from "vuex";
 
 import AdminSkillsForm from "./AdminSkillsForm";
+import ModalConfirmCancel from "./ModalConfirmCancel";
 
 export default {
   name: "AdminPagesSkills",
 
   components: {
-    AdminSkillsForm
+    AdminSkillsForm,
+    ModalConfirmCancel
   },
 
   data: () => {
     return {
       skills: [],
-      formAction: "Add"
+      formAction: "Add",
+      showModalConfirmCancel: false,
+      modalConfirmCancelProps: {
+        payload: {
+          action: "",
+          data: ""
+        },
+        title: "",
+        message: "",
+        confirm: "ok",
+        cancel: "cancel"
+      }
     }
   },
 
@@ -101,8 +126,69 @@ export default {
       }
     },
 
-    updateSkillsTable(e) {
+    createSkillsTableRow(e) {
       this.skills.push(e);
+    },
+
+    deleteSkillsTableRow(skillId) {
+      const index = this.skills.map(item => item._id).indexOf(skillId);
+        if (index > -1) {
+          this.skills.splice(index, 1);
+        }
+    },
+
+    confirmDeleteSkill(e) {
+      const skillId = e.currentTarget.getAttribute("data-id");
+      const skillName = e.currentTarget.getAttribute("data-name");
+      this.modalConfirmCancelProps.payload.action = "delete";
+      this.modalConfirmCancelProps.payload.data = skillId;
+      this.modalConfirmCancelProps.title = "Delete Skill";
+      this.modalConfirmCancelProps.message =  `Do you really want to delete the skill: ${skillName}?`;
+      this.modalConfirmCancelProps.confirm = "delete";
+      this.setShowModalConfirmCancel(true);
+    },
+
+    deleteSkill(skillId) {
+      fetch("https://www.olen.dev/api/skills/delete", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+        body: JSON.stringify({ skillId: skillId })
+      }).then(response => {
+        return response.json();
+      }).then(dataObj => {
+        const { ok, deletedCount } = dataObj;
+        if (ok === 1 && deletedCount === 1) {
+          // TODO: Make this show an update stating great success.
+          this.deleteSkillsTableRow(skillId);
+        } else {
+          // TODO: Return some sort of failure message.
+        }
+      }).catch(error => {
+        return ({
+          errorCode: 500,
+          errorMsg: "Internal Server Error",
+          errorDetail: error
+        })
+      });
+    },
+
+    setShowModalConfirmCancel(value) {
+      this.showModalConfirmCancel = value;
+    },
+
+    cancelAction() {
+       this.setShowModalConfirmCancel(false);
+    },
+
+    confirmAction(v) {
+      switch (v.action) {
+        case "delete":
+          this.deleteSkill(v.data);
+          break;
+      }
+      this.setShowModalConfirmCancel(false);
     }
   },
 
