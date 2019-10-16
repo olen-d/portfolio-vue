@@ -66,11 +66,11 @@ export default {
       }).then(response => {
         return response.json();
       }).then(dataObj => {
-        // TODO: Make this a modal stating great success.
+        // TODO: Make this a return an update stating great success.
         // TODO: Probably by emitting that the skill was added successfuly
         // this.$emit("skill-added", dataObj);
         // TODO: Clear the form
-        this.$emit("update-skills-table", dataObj);
+        this.$emit("create-skills-table-row", dataObj);
       }).catch(error => {
         return ({
           errorCode: 500,

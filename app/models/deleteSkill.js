@@ -1,9 +1,11 @@
 const db = require("../config/connection");
-// TODO: Add CreatedAt and UpdatedAt fields...
-const data = skillInfo => {
+const ObjectID = require("mongodb").ObjectID;
+
+const data = skillId => {
   return new Promise((resolve, reject) => {
     try {
-      db.skills.insert(skillInfo, (error, response) => {
+      const id = ObjectID(skillId);
+      db.skills.remove({ _id: id }, (error, response) => {
         if (error) {
           resolve(error);
         } else {
@@ -13,7 +15,8 @@ const data = skillInfo => {
     } catch (err) {
       reject({
         status: 500,
-        error: "Internal server error. Failed to create new skill."
+        error: `Internal server error. Failed to delete skill id: ${skillId}.`,
+        message: err
       });
     }
   });

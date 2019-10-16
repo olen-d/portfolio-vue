@@ -14,7 +14,7 @@
           </p>
         </div>
         <div class="modal-buttons">
-          <button class="button button-primary confirm-action">{{ confirm }}</button>
+          <button @click="confirmAction" class="button button-primary confirm-action">{{ confirm }}</button>
           <button @click="cancelAction" class="cancel-action">{{ cancel }}</button>
         </div>
       </div>
@@ -24,11 +24,15 @@
 
 <script>
 export default {
-  props: ["title", "message", "confirm", "cancel"],
+  props: ["payload", "title", "message", "confirm", "cancel"],
 
   methods: {
     cancelAction() {
       this.$emit("cancel-action");
+    },
+
+    confirmAction() {
+      this.$emit("confirm-action", this.payload)
     }
   }
 }

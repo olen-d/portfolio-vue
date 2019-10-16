@@ -4,7 +4,7 @@ const ObjectID = require("mongodb").ObjectID;
 const data = headlineData => {
   return new Promise((resolve, reject) => {
     try {
-      let id = ObjectID(headlineData.id);
+      const id = ObjectID(headlineData.id);
       db.welcome.update(
         {
           _id: id
