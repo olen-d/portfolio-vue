@@ -1,4 +1,5 @@
 <template>
+  <!-- HTML & CSS Based on Simple Modal for Skeleton.css by Paul McClean -->
   <div class="modal">
     <div class="modal-inner">
       <div class="modal-content">
