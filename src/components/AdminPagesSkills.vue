@@ -52,7 +52,7 @@
                 <td>{{ description }}</td>
                 <td>{{ priority }}</td>
                 <td>{{ formatShow(show) }}</td>
-                <td><i class="fas fa-edit edit" :data-id="_id"></i></td>
+                <td><i @click="updateSkill" class="fas fa-edit edit" :data-id="_id"></i></td>
                 <td><i @click="confirmDeleteSkill" class="fas fa-times delete" :data-id="_id" :data-name="name"></i></td>
               </tr>
             </tbody>
@@ -69,7 +69,10 @@
         <div class="ten columns">
           <AdminSkillsForm
             v-bind:formAction="formAction"
+            v-bind:editSkillId="editSkillId"
+            v-bind:updateSkillData="updateSkillData"
             @create-skills-table-row="createSkillsTableRow"
+            @update-skills-table-row="updateSkillsTableRow"
           >
           </AdminSkillsForm>
         </div>
@@ -99,6 +102,15 @@ export default {
     return {
       skills: [],
       formAction: "Add",
+      editSkillId: "",
+      updateSkillData: {
+        type: "",
+        name: "",
+        description: "",
+        icon: "",
+        priority: null,
+        show: ""
+      },
       showModalConfirmCancel: false,
       modalConfirmCancelProps: {
         payload: {
@@ -126,30 +138,67 @@ export default {
       }
     },
 
+    findSkillIndexById(skillId) {
+      const index = this.skills.map(item => item._id).indexOf(skillId);
+      return index;
+    },
+
     createSkillsTableRow(e) {
       this.skills.push(e);
     },
 
+    updateSkillsTableRow(skillId) {
+      const index = this.findSkillIndexById(skillId);
+    },
+
     deleteSkillsTableRow(skillId) {
-      const index = this.skills.map(item => item._id).indexOf(skillId);
+      const index = this.findSkillIndexById(skillId);
         if (index > -1) {
           this.skills.splice(index, 1);
         }
     },
 
+    readSkills() {
+      fetch("http://localhost:3031/api/skills/all")
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        this.skills = json.skills;
+      });
+    },
+
     confirmDeleteSkill(e) {
       const skillId = e.currentTarget.getAttribute("data-id");
       const skillName = e.currentTarget.getAttribute("data-name");
+
       this.modalConfirmCancelProps.payload.action = "delete";
       this.modalConfirmCancelProps.payload.data = skillId;
       this.modalConfirmCancelProps.title = "Delete Skill";
       this.modalConfirmCancelProps.message =  `Do you really want to delete the skill: ${skillName}?`;
       this.modalConfirmCancelProps.confirm = "delete";
+
       this.setShowModalConfirmCancel(true);
     },
 
+    updateSkill(e) {
+      const skillId = e.currentTarget.getAttribute("data-id");
+      const skillIndex = this.findSkillIndexById(skillId);
+      const skill = this.skills[skillIndex];
+      const { type, name, description, icon, priority, show } = skill;
+
+      this.updateSkillData.type = type;
+      this.updateSkillData.name = name;
+      this.updateSkillData.description = description;
+      this.updateSkillData.icon = icon;
+      this.updateSkillData.priority = priority;
+      this.updateSkillData.show = show;
+      this.formAction = "Edit";
+      this.editSkillId = skillId;
+    },
+
     deleteSkill(skillId) {
-      fetch("https://www.olen.dev/api/skills/delete", {
+      fetch("http://localhost:3031/api/skills/delete", {
       method: "post",
       headers: {
         "Content-Type": "application/json"
@@ -193,13 +242,7 @@ export default {
   },
 
   created() {
-    fetch("https://www.olen.dev/api/skills/all")
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.skills = json.skills;
-    });
+    this.readSkills();
   }
 }
 </script>

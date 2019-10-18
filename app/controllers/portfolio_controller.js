@@ -29,6 +29,7 @@ const createUser = require("../models/createUser");
 
 // Update
 const updateHeadline = require("../models/updateHeadline");
+const updateSkill = require("../models/updateSkill");
 
 // Delete
 const deleteSkill = require("../models/deleteSkill");
@@ -320,6 +321,26 @@ app.post("/api/skills/create", (req, res, next) => {
     .catch(err => {
       return res.json(err);
     });
+});
+
+app.put("/api/skills/update/:skill_id", (req, res, next) => {
+  let skill_id = req.params.skill_id;
+  const { userId, type, name, description, show, icon, priority } = req.body;
+
+  const skillInfo = {
+    skill_id: skill_id,
+    userId: userId,
+    type: type,
+    name: name,
+    description: description,
+    show: show,
+    icon: icon,
+    priority: priority
+  };
+
+  updateSkill.data(skillInfo).then(resolve => {
+    return res.json(resolve);
+  });
 });
 
 app.post("/api/skills/delete", (req, res, next) => {
