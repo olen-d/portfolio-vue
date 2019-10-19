@@ -148,7 +148,7 @@ export default {
     },
 
     updateSkillsTableRow(skillId) {
-      fetch(`https://www.olen.dev/api/skills/id/${skillId}`)
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/id/${skillId}`)
       .then((response) => {
         return response.json();
       })
@@ -184,7 +184,7 @@ export default {
     },
 
     readSkills() {
-      fetch("https://www.olen.dev/api/skills/all")
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/all`)
       .then((response) => {
         return response.json();
       })
@@ -220,7 +220,7 @@ export default {
     },
 
     deleteSkill(skillId) {
-      fetch("https://www.olen.dev/api/skills/delete", {
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/delete`, {
       method: "post",
       headers: {
         "Content-Type": "application/json"

@@ -53,7 +53,7 @@
         },
 
         created() {
-            fetch("https://www.olen.dev/api/projects")
+            fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects`)
                 .then((response) => {
                     return response.json();
                 })
