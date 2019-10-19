@@ -13,7 +13,7 @@ const data = skillInfo => {
     } catch (err) {
       reject({
         status: 500,
-        error: "Internal server error. Failed to create new skill."
+        error: `Internal server error. Failed to create new skill.\n${err}`
       });
     }
   });

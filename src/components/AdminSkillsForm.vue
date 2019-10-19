@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   props: {
     formAction: String,
@@ -45,6 +47,12 @@ export default {
         show: ""
       },
     }
+  },
+
+  computed: {
+    ...mapGetters([
+      "jwt"
+    ])
   },
 
   watch: {
@@ -80,6 +88,7 @@ export default {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/create`, {
       method: "post",
       headers: {
+        "Authorization": `Bearer ${this.jwt}`,
         "Content-Type": "application/json"
       },
         body: JSON.stringify(formData)

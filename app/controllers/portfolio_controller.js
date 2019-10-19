@@ -35,8 +35,9 @@ const updateSkill = require("../models/updateSkill");
 // Delete
 const deleteSkill = require("../models/deleteSkill");
 
-// Other stuff
+// Other stuff (mostly middleware)
 const bcrypt = require("../helpers/bcrypt-module");
+// const checkJWT = require("../helpers/check-jwt-module");
 
 // TODO: Fix this to serve up index.html
 // TODO: Serve a proper 404 error page when something isn't found
@@ -319,26 +320,50 @@ app.put("/api/welcome/update/headline/:headline_id", (req, res, next) => {
 // Skills Routes
 
 app.post("/api/skills/create", (req, res, next) => {
-  const { userId, type, name, description, show, icon, priority } = req.body;
+  // Check for authorization header
+  console.log("headers\n", req.headers);
+  let token = req.headers["x-access-token"] || req.headers["authorization"];
+  if (token.startsWith("Bearer ")) {
+    token = token.slice(7, token.length);
+  }
 
-  const skillInfo = {
-    userId: userId,
-    type: type,
-    name: name,
-    description: description,
-    show: show,
-    icon: icon,
-    priority: priority
-  };
+  if (token) {
+    jwt.verify(token, process.env.secret, (err, decoded) => {
+      if (err) {
+        //fail
+        console.log("Token Verification Failed");
+      } else {
+        const {
+          userId,
+          type,
+          name,
+          description,
+          show,
+          icon,
+          priority
+        } = req.body;
 
-  createSkill
-    .data(skillInfo)
-    .then(resolve => {
-      return res.json(resolve);
-    })
-    .catch(err => {
-      return res.json(err);
+        const skillInfo = {
+          userId: userId,
+          type: type,
+          name: name,
+          description: description,
+          show: show,
+          icon: icon,
+          priority: priority
+        };
+
+        createSkill
+          .data(skillInfo)
+          .then(resolve => {
+            return res.json(resolve);
+          })
+          .catch(err => {
+            return res.json(err);
+          });
+      }
     });
+  }
 });
 
 app.put("/api/skills/update/:skill_id", (req, res, next) => {
