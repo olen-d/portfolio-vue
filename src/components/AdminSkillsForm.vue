@@ -49,9 +49,7 @@ export default {
 
   watch: {
     editSkillId(newValue) {
-      if(this.formAction === "Edit") {
-        this.skillData = JSON.parse(JSON.stringify(this.updateSkillData));
-      }
+      this.skillData = JSON.parse(JSON.stringify(this.updateSkillData));
     }
   },
 
@@ -79,7 +77,7 @@ export default {
     },
 
     createSkill(formData) {
-      fetch("http://localhost:3031/api/skills/create", {
+      fetch("https://www.olen.dev/api/skills/create", {
       method: "post",
       headers: {
         "Content-Type": "application/json"
@@ -105,7 +103,7 @@ export default {
     updateSkill(formData) {
       const skillId = this.editSkillId;
 
-      fetch(`http://localhost:3031/api/skills/update/${skillId}`, {
+      fetch(`https://www.olen.dev/api/skills/update/${skillId}`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"

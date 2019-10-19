@@ -148,7 +148,32 @@ export default {
     },
 
     updateSkillsTableRow(skillId) {
-      const index = this.findSkillIndexById(skillId);
+      fetch(`https://www.olen.dev/api/skills/id/${skillId}`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        const updatedSkillData = json.skill;
+        const index = this.findSkillIndexById(skillId);
+
+        const { type, name, description, show, icon, priority } = updatedSkillData;
+
+        this.skills[index].type = type;
+        this.skills[index].name = name;
+        this.skills[index].description = description;
+        this.skills[index].show = show;
+        this.skills[index].icon = icon;
+        this.skills[index].priority = priority;
+
+        // Reset the form
+        const keys = Object.keys(this.updateSkillData);
+
+        keys.forEach(e => {
+          this.updateSkillData[e] = null;
+        });
+        this.formAction = "Add";
+        this.editSkillId = "";
+      });
     },
 
     deleteSkillsTableRow(skillId) {
@@ -159,7 +184,7 @@ export default {
     },
 
     readSkills() {
-      fetch("http://localhost:3031/api/skills/all")
+      fetch("https://www.olen.dev/api/skills/all")
       .then((response) => {
         return response.json();
       })
@@ -184,21 +209,18 @@ export default {
     updateSkill(e) {
       const skillId = e.currentTarget.getAttribute("data-id");
       const skillIndex = this.findSkillIndexById(skillId);
-      const skill = this.skills[skillIndex];
-      const { type, name, description, icon, priority, show } = skill;
+      const skill = {...this.skills[skillIndex]}; // Clone the current skill object
 
-      this.updateSkillData.type = type;
-      this.updateSkillData.name = name;
-      this.updateSkillData.description = description;
-      this.updateSkillData.icon = icon;
-      this.updateSkillData.priority = priority;
-      this.updateSkillData.show = show;
+      delete skill._id;
+      delete skill.userId;
+
+      this.updateSkillData = skill;
       this.formAction = "Edit";
       this.editSkillId = skillId;
     },
 
     deleteSkill(skillId) {
-      fetch("http://localhost:3031/api/skills/delete", {
+      fetch("https://www.olen.dev/api/skills/delete", {
       method: "post",
       headers: {
         "Content-Type": "application/json"

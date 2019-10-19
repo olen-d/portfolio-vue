@@ -18,6 +18,7 @@ const projects = require("../models/projects");
 const readAllSkills = require("../models/readAllSkills");
 const skills = require("../models/skills");
 const skillsTop = require("../models/skillsTop");
+const readSkillById = require("../models/readSkillById");
 const contactOnly = require("../models/contactOnly");
 const social = require("../models/social");
 const findOneUser = require("../models/findOneUser");
@@ -142,6 +143,23 @@ app.get("/api/skills/top/:limit", (req, res, next) => {
         skills: resolve
       };
       res.send(skillsTopObj);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+});
+
+// Get a specific skill by id
+app.get("/api/skills/id/:skill_id", (req, res, next) => {
+  let skillId = req.params.skill_id;
+
+  readSkillById
+    .data(skillId)
+    .then(resolve => {
+      let skillObj = {
+        skill: resolve
+      };
+      res.send(skillObj);
     })
     .catch(err => {
       res.json(err);
