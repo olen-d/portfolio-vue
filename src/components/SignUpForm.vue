@@ -43,7 +43,7 @@ export default {
         password: this.form.password
       }
 
-      fetch("https://www.olen.dev/api/user/create", {
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/user/create`, {
       method: "post",
       headers: {
         "Content-Type": "application/json"

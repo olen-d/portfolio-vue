@@ -142,7 +142,7 @@
                 }
 
                 // TODO: The below works, but update to use fetch
-                ajax.post("https://www.olen.dev/api/contact/send", data)
+                ajax.post(`${process.env.VUE_APP_API_BASE_URL}/api/contact/send`, data)
                 .then(response => {                 
                     response = JSON.parse(response);
 
@@ -177,7 +177,7 @@
         },
 
         created() {
-            fetch("https://www.olen.dev/api/about/contact/olen.d")
+            fetch(`${process.env.VUE_APP_API_BASE_URL}/api/about/contact/olen.d`)
                 .then((response) => {
                     return response.json();
                 })

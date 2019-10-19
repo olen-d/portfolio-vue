@@ -58,7 +58,7 @@ export default {
         headline: this.welcome.headline,
       }
 
-      fetch(`https://www.olen.dev/api/welcome/update/headline/${welcomeId}`, {
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/welcome/update/headline/${welcomeId}`, {
         method: "put",
         headers: {
           "Content-Type": "application/json"
@@ -73,7 +73,7 @@ export default {
   },
 
   created() {
-    fetch("https://www.olen.dev/api/welcome")
+    fetch(`${process.env.VUE_APP_API_BASE_URL}/api/welcome`)
       .then((response) => {
         return response.json();
       })

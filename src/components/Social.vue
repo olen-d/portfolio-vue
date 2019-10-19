@@ -16,7 +16,7 @@ module.exports = {
   },
 
   created() {
-    fetch("https://www.olen.dev/api/social/user/olen.d")
+    fetch(`${process.env.VUE_APP_API_BASE_URL}/api/social/user/olen.d`)
       .then((response) => {
         return response.json();
       })

@@ -25,7 +25,7 @@
     },
 
     created() {
-      fetch("https://www.olen.dev/api/skills/top/3")
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/top/3`)
         .then((response) => {
           return response.json();
         })

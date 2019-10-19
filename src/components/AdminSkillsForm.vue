@@ -77,7 +77,7 @@ export default {
     },
 
     createSkill(formData) {
-      fetch("https://www.olen.dev/api/skills/create", {
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/create`, {
       method: "post",
       headers: {
         "Content-Type": "application/json"
@@ -103,7 +103,7 @@ export default {
     updateSkill(formData) {
       const skillId = this.editSkillId;
 
-      fetch(`https://www.olen.dev/api/skills/update/${skillId}`, {
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/update/${skillId}`, {
       method: "put",
       headers: {
         "Content-Type": "application/json"
