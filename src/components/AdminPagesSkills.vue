@@ -52,7 +52,7 @@
                 <td>{{ description }}</td>
                 <td>{{ priority }}</td>
                 <td>{{ formatShow(show) }}</td>
-                <td><i class="fas fa-edit edit" :data-id="_id"></i></td>
+                <td><i @click="updateSkill" class="fas fa-edit edit" :data-id="_id"></i></td>
                 <td><i @click="confirmDeleteSkill" class="fas fa-times delete" :data-id="_id" :data-name="name"></i></td>
               </tr>
             </tbody>
@@ -69,7 +69,10 @@
         <div class="ten columns">
           <AdminSkillsForm
             v-bind:formAction="formAction"
+            v-bind:editSkillId="editSkillId"
+            v-bind:updateSkillData="updateSkillData"
             @create-skills-table-row="createSkillsTableRow"
+            @update-skills-table-row="updateSkillsTableRow"
           >
           </AdminSkillsForm>
         </div>
@@ -99,6 +102,15 @@ export default {
     return {
       skills: [],
       formAction: "Add",
+      editSkillId: "",
+      updateSkillData: {
+        type: "",
+        name: "",
+        description: "",
+        icon: "",
+        priority: null,
+        show: ""
+      },
       showModalConfirmCancel: false,
       modalConfirmCancelProps: {
         payload: {
@@ -126,26 +138,85 @@ export default {
       }
     },
 
+    findSkillIndexById(skillId) {
+      const index = this.skills.map(item => item._id).indexOf(skillId);
+      return index;
+    },
+
     createSkillsTableRow(e) {
       this.skills.push(e);
     },
 
+    updateSkillsTableRow(skillId) {
+      fetch(`https://www.olen.dev/api/skills/id/${skillId}`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        const updatedSkillData = json.skill;
+        const index = this.findSkillIndexById(skillId);
+
+        const { type, name, description, show, icon, priority } = updatedSkillData;
+
+        this.skills[index].type = type;
+        this.skills[index].name = name;
+        this.skills[index].description = description;
+        this.skills[index].show = show;
+        this.skills[index].icon = icon;
+        this.skills[index].priority = priority;
+
+        // Reset the form
+        const keys = Object.keys(this.updateSkillData);
+
+        keys.forEach(e => {
+          this.updateSkillData[e] = null;
+        });
+        this.formAction = "Add";
+        this.editSkillId = "";
+      });
+    },
+
     deleteSkillsTableRow(skillId) {
-      const index = this.skills.map(item => item._id).indexOf(skillId);
+      const index = this.findSkillIndexById(skillId);
         if (index > -1) {
           this.skills.splice(index, 1);
         }
     },
 
+    readSkills() {
+      fetch("https://www.olen.dev/api/skills/all")
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        this.skills = json.skills;
+      });
+    },
+
     confirmDeleteSkill(e) {
       const skillId = e.currentTarget.getAttribute("data-id");
       const skillName = e.currentTarget.getAttribute("data-name");
+
       this.modalConfirmCancelProps.payload.action = "delete";
       this.modalConfirmCancelProps.payload.data = skillId;
       this.modalConfirmCancelProps.title = "Delete Skill";
       this.modalConfirmCancelProps.message =  `Do you really want to delete the skill: ${skillName}?`;
       this.modalConfirmCancelProps.confirm = "delete";
+
       this.setShowModalConfirmCancel(true);
+    },
+
+    updateSkill(e) {
+      const skillId = e.currentTarget.getAttribute("data-id");
+      const skillIndex = this.findSkillIndexById(skillId);
+      const skill = {...this.skills[skillIndex]}; // Clone the current skill object
+
+      delete skill._id;
+      delete skill.userId;
+
+      this.updateSkillData = skill;
+      this.formAction = "Edit";
+      this.editSkillId = skillId;
     },
 
     deleteSkill(skillId) {
@@ -193,13 +264,7 @@ export default {
   },
 
   created() {
-    fetch("https://www.olen.dev/api/skills/all")
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.skills = json.skills;
-    });
+    this.readSkills();
   }
 }
 </script>

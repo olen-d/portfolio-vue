@@ -18,6 +18,7 @@ const projects = require("../models/projects");
 const readAllSkills = require("../models/readAllSkills");
 const skills = require("../models/skills");
 const skillsTop = require("../models/skillsTop");
+const readSkillById = require("../models/readSkillById");
 const contactOnly = require("../models/contactOnly");
 const social = require("../models/social");
 const findOneUser = require("../models/findOneUser");
@@ -29,6 +30,7 @@ const createUser = require("../models/createUser");
 
 // Update
 const updateHeadline = require("../models/updateHeadline");
+const updateSkill = require("../models/updateSkill");
 
 // Delete
 const deleteSkill = require("../models/deleteSkill");
@@ -141,6 +143,23 @@ app.get("/api/skills/top/:limit", (req, res, next) => {
         skills: resolve
       };
       res.send(skillsTopObj);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+});
+
+// Get a specific skill by id
+app.get("/api/skills/id/:skill_id", (req, res, next) => {
+  let skillId = req.params.skill_id;
+
+  readSkillById
+    .data(skillId)
+    .then(resolve => {
+      let skillObj = {
+        skill: resolve
+      };
+      res.send(skillObj);
     })
     .catch(err => {
       res.json(err);
@@ -320,6 +339,26 @@ app.post("/api/skills/create", (req, res, next) => {
     .catch(err => {
       return res.json(err);
     });
+});
+
+app.put("/api/skills/update/:skill_id", (req, res, next) => {
+  let skill_id = req.params.skill_id;
+  const { userId, type, name, description, show, icon, priority } = req.body;
+
+  const skillInfo = {
+    skill_id: skill_id,
+    userId: userId,
+    type: type,
+    name: name,
+    description: description,
+    show: show,
+    icon: icon,
+    priority: priority
+  };
+
+  updateSkill.data(skillInfo).then(resolve => {
+    return res.json(resolve);
+  });
 });
 
 app.post("/api/skills/delete", (req, res, next) => {
