@@ -216,7 +216,7 @@ export default {
 
     deleteSkill(skillId) {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/delete`, {
-      method: "post",
+      method: "delete",
       headers: {
         "Authorization": `Bearer ${this.jwt}`,
         "Content-Type": "application/json"
