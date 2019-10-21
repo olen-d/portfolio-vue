@@ -14,7 +14,9 @@ const checkAuth = headers => {
         jwt.verify(token, process.env.secret, (err, decoded) => {
           if (err) {
             resolve({
-              auth: false
+              auth: false,
+              message: "Internal server error. Token could not be verified.",
+              error: err
             });
           } else {
             resolve({
@@ -25,12 +27,17 @@ const checkAuth = headers => {
           }
         });
       } else {
-        //no token
+        resolve({
+          auth: false,
+          message: "Internal server error. No token was provided.",
+          error: true
+        });
       }
     } catch (err) {
       reject({
         auth: false,
-        error: "Internal server error. Failed to authenticate request"
+        message: "Internal server error. Failed to authenticate request",
+        error: err
       });
     }
   });
