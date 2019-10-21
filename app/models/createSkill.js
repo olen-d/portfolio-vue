@@ -1,5 +1,5 @@
 const db = require("../config/connection");
-// TODO: Add CreatedAt and UpdatedAt fields...
+
 const data = skillInfo => {
   return new Promise((resolve, reject) => {
     try {
@@ -13,7 +13,8 @@ const data = skillInfo => {
     } catch (err) {
       reject({
         status: 500,
-        error: `Internal server error. Failed to create new skill.\n${err}`
+        message: "Internal server error. Failed to create new skill.",
+        error: err
       });
     }
   });

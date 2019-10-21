@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const checkAuth = headers => {
   // Check the user token
-  return new Promise((res, rej) => {
+  return new Promise((resolve, reject) => {
     try {
       let token = headers["x-access-token"] || headers["authorization"];
 
@@ -13,13 +13,14 @@ const checkAuth = headers => {
       if (token) {
         jwt.verify(token, process.env.secret, (err, decoded) => {
           if (err) {
-            //fail
-            console.log("Token Verification Failed");
+            resolve({
+              auth: false
+            });
           } else {
-            console.log("DECODED\n",decoded);
-            // Return the auth ok.
-            res({
-              auth: true
+            resolve({
+              auth: true,
+              editor: decoded.editor,
+              administrator: decoded.administrator
             });
           }
         });
@@ -27,7 +28,7 @@ const checkAuth = headers => {
         //no token
       }
     } catch (err) {
-      rej({
+      reject({
         auth: false,
         error: "Internal server error. Failed to authenticate request"
       });

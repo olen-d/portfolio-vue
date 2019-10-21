@@ -20,7 +20,7 @@
       </select>
       <div class="right">
         <button v-on:click.prevent="submitSkillForm" class="button-primary" id="skill-submit">{{ formAction }} Skill</button>
-        <button v-if="formAction === 'Edit'" class="edit-button-cancel">cancel</button>
+        <button v-if="formAction === 'Edit'" v-on:click.prevent="cancelEditSkill" class="edit-button-cancel">cancel</button>
       </div>
     </form>
   </div>
@@ -57,7 +57,9 @@ export default {
 
   watch: {
     editSkillId(newValue) {
-      this.skillData = JSON.parse(JSON.stringify(this.updateSkillData));
+      if (this.formAction === "Edit") {
+        this.skillData = JSON.parse(JSON.stringify(this.updateSkillData));
+      }
     }
   },
 
@@ -84,6 +86,20 @@ export default {
       }
     },
 
+    cancelEditSkill() {
+      this.clearSkillForm();
+      this.$emit("cancel-edit-skill");
+      },
+
+    clearSkillForm() {
+      // Reset the form
+      const keys = Object.keys(this.skillData);
+
+      keys.forEach(e => {
+        this.skillData[e] = null;
+      });
+    },
+
     createSkill(formData) {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/create`, {
       method: "post",
@@ -98,7 +114,7 @@ export default {
         // TODO: Make this a return an update stating great success.
         // TODO: Probably by emitting that the skill was added successfuly
         // this.$emit("skill-added", dataObj);
-        // TODO: Clear the form
+        this.clearSkillForm();
         this.$emit("create-skills-table-row", dataObj);
       }).catch(error => {
         return ({
@@ -124,7 +140,7 @@ export default {
         // TODO: Make this a return an update stating great success.
         // TODO: Probably by emitting that the skill was added successfuly
         // this.$emit("skill-added", dataObj);
-        // TODO: Clear the form
+        this.clearSkillForm();
         this.$emit("update-skills-table-row", skillId);
       }).catch(error => {
         return ({
