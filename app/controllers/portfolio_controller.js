@@ -301,26 +301,50 @@ app.post("/api/user/create", (req, res) => {
   });
 });
 
-// Welcome related routes
+// Welcome Routes
 // Update Headline
 
 app.put("/api/welcome/update/headline/:headline_id", (req, res, next) => {
-  let headline_id = req.params.headline_id;
-  let headline = req.body.headline;
+  auth
+    .checkAuth(req.headers)
+    .then(response => {
+      if (response.auth && response.administrator) {
+        const headline_id = req.params.headline_id;
+        const headline = req.body.headline;
 
-  let headlineData = {
-    id: headline_id,
-    headline: headline
-  };
+        const headlineData = {
+          id: headline_id,
+          headline: headline
+        };
 
-  updateHeadline.data(headlineData).then(resolve => {
-    res.send(resolve);
-  });
+        updateHeadline
+          .data(headlineData)
+          .then(resolve => {
+            return res.json(resolve);
+          })
+          .catch(err => {
+            res.status(500).json({
+              message: "Internal server error",
+              error: err
+            });
+          });
+      } else {
+        res.status(403).json({
+          message: "You must be logged in to perform this function"
+        });
+      }
+    })
+    .catch(err => {
+      res.status(403).json({
+        message: "Could not update headline",
+        error: err
+      });
+    });
 });
 
 // Skills Routes
-// Create skill
 
+// Create skill
 app.post("/api/skills/create", (req, res, next) => {
   // Check for authorization header
   auth
@@ -378,7 +402,7 @@ app.put("/api/skills/update/:skill_id", (req, res, next) => {
     .checkAuth(req.headers)
     .then(response => {
       if (response.auth && response.administrator) {
-        let skill_id = req.params.skill_id;
+        const skill_id = req.params.skill_id;
         const {
           userId,
           type,
@@ -411,7 +435,6 @@ app.put("/api/skills/update/:skill_id", (req, res, next) => {
               error: err
             });
           });
-        // Need an error check here
       } else {
         res.status(403).json({
           message: "You must be logged in to perform this function"
@@ -428,7 +451,6 @@ app.put("/api/skills/update/:skill_id", (req, res, next) => {
 
 // Delete skill
 app.post("/api/skills/delete", (req, res, next) => {
-  // Check for authorization header
   auth
     .checkAuth(req.headers)
     .then(response => {
