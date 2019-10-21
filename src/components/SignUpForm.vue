@@ -1,15 +1,15 @@
 <template>
   <form id="signUpForm">
     <label for="firstName">First Name</label>
-    <input v-model="form.firstName" type="text" class="u-full-width" id="firstName" placeholder="Your First Name" required>
+    <input v-model="signupData.firstName" type="text" class="u-full-width" id="firstName" placeholder="Your First Name" required>
     <label for="lastName">Last Name</label>
-    <input v-model="form.lastName" type="text" class="u-full-width" id="lastName" placeholder="Your Last Name" required>
+    <input v-model="signupData.lastName" type="text" class="u-full-width" id="lastName" placeholder="Your Last Name" required>
     <label for="email">Email Address</label>
-    <input v-model="form.email" type="email" class="u-full-width" id="email" placeholder="Your Email Address" required>
+    <input v-model="signupData.email" type="email" class="u-full-width" id="email" placeholder="Your Email Address" required>
     <label for="userName">Username</label>
-    <input v-model="form.userName" type="text" class="u-full-width" id="userName" placeholder="Your Username" required>
+    <input v-model="signupData.userName" type="text" class="u-full-width" id="userName" placeholder="Your Username" required>
     <label for="password">Password</label>
-    <input v-model="form.password" type="password" class="u-full-width" id="password" placeholder="Your Password" required>
+    <input v-model="signupData.password" type="password" class="u-full-width" id="password" placeholder="Your Password" required>
     <button v-on:click.prevent="submitSignUpForm" type="submit" class="button-primary" id="signIn">Sign Up</button>
   </form>
 </template>
@@ -18,7 +18,7 @@
 export default {
   data: () => {
     return {
-      form: {
+      signupData: {
         firstName: "",
         lastName: "",
         email: "",
@@ -32,15 +32,15 @@ export default {
     submitSignUpForm () {
       localStorage.removeItem("user_token");
 
-      // TODO: Destructure form data
+      const { firstName, lastName, email, userName, password } = this.signupData;
       // TODO: Validate this mess
 
-      let formData = {
-        firstName: this.form.firstName,
-        lastName: this.form.lastName,
-        email: this.form.email,
-        userName: this.form.userName,
-        password: this.form.password
+      const formData = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        userName: userName,
+        password: password
       }
 
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/user/create`, {
@@ -54,7 +54,6 @@ export default {
       }).then(dataObj => {
         if (dataObj.isLoggedIn && dataObj.token) {
           this.$store.commit("setJWT", dataObj.token);
-          this.$store.commit("setAuthorized", true);
           localStorage.setItem("user_token", dataObj.token); // Needed to persist...
           if (this.$store.getters.administrator) {
             this.$router.push({ name: "adminDashboard" });
