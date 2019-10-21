@@ -92,7 +92,6 @@ export default {
       },
 
     clearSkillForm() {
-      // Reset the form
       const keys = Object.keys(this.skillData);
 
       keys.forEach(e => {
@@ -131,10 +130,12 @@ export default {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/update/${skillId}`, {
       method: "put",
       headers: {
+        "Authorization": `Bearer ${this.jwt}`,
         "Content-Type": "application/json"
       },
         body: JSON.stringify(formData)
       }).then(response => {
+        // TODO: put response.status in the state for the status bar
         return response.json();
       }).then(dataObj => {
         // TODO: Make this a return an update stating great success.

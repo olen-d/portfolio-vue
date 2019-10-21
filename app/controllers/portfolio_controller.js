@@ -228,6 +228,7 @@ app.post("/api/login", (req, response) => {
         .then(res => {
           if (res.status === 200 && res.login) {
             delete user.password;
+            user.iss = "Portfolio Vue";
             jwt.sign(
               user,
               process.env.secret,
@@ -318,6 +319,7 @@ app.put("/api/welcome/update/headline/:headline_id", (req, res, next) => {
 });
 
 // Skills Routes
+// Create skill
 
 app.post("/api/skills/create", (req, res, next) => {
   // Check for authorization header
@@ -370,26 +372,61 @@ app.post("/api/skills/create", (req, res, next) => {
     });
 });
 
+// Update skill
 app.put("/api/skills/update/:skill_id", (req, res, next) => {
-  let skill_id = req.params.skill_id;
-  const { userId, type, name, description, show, icon, priority } = req.body;
+  auth
+    .checkAuth(req.headers)
+    .then(response => {
+      if (response.auth && response.administrator) {
+        let skill_id = req.params.skill_id;
+        const {
+          userId,
+          type,
+          name,
+          description,
+          show,
+          icon,
+          priority
+        } = req.body;
 
-  const skillInfo = {
-    skill_id: skill_id,
-    userId: userId,
-    type: type,
-    name: name,
-    description: description,
-    show: show,
-    icon: icon,
-    priority: priority
-  };
+        const skillInfo = {
+          skill_id: skill_id,
+          userId: userId,
+          type: type,
+          name: name,
+          description: description,
+          show: show,
+          icon: icon,
+          priority: priority
+        };
 
-  updateSkill.data(skillInfo).then(resolve => {
-    return res.json(resolve);
-  });
+        updateSkill
+          .data(skillInfo)
+          .then(resolve => {
+            return res.json(resolve);
+          })
+          .catch(err => {
+            res.status(500).json({
+              message: "Internal server error",
+              error: err
+            });
+          });
+        // Need an error check here
+      } else {
+        res.status(403).json({
+          message: "You must be logged in to perform this function"
+        });
+      }
+    })
+    .catch(err => {
+      res.status(403).json({
+        message: "Could not update skill",
+        error: err
+      });
+    });
 });
 
+// Delete skill
 app.post("/api/skills/delete", (req, res, next) => {
   // Check for authorization header
   auth
