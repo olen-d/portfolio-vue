@@ -450,7 +450,7 @@ app.put("/api/skills/update/:skill_id", (req, res, next) => {
 });
 
 // Delete skill
-app.post("/api/skills/delete", (req, res, next) => {
+app.delete("/api/skills/delete", (req, res, next) => {
   auth
     .checkAuth(req.headers)
     .then(response => {
