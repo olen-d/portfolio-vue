@@ -48,7 +48,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters([ "firstName" ])
+    ...mapGetters([ "jwt" ])
   },
 
   methods: {
@@ -61,13 +61,14 @@ export default {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/welcome/update/headline/${welcomeId}`, {
         method: "put",
         headers: {
+          "Authorization": `Bearer ${this.jwt}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify(formData)
       }).then(response => {
         return response.json();
       }).then(dataObj => {
-        console.log("DATA OBJ\n", dataObj);
+        // console.log("DATA OBJ\n", dataObj);
       });
     } 
   },
