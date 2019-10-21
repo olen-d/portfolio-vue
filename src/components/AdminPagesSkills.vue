@@ -71,7 +71,7 @@
             v-bind:formAction="formAction"
             v-bind:editSkillId="editSkillId"
             v-bind:updateSkillData="updateSkillData"
-            @create-skills-table-row="createSkillsTableRow"
+            @skill-created="skillCreated"
             @update-skills-table-row="updateSkillsTableRow"
             @cancel-edit-skill="cancelEditSkill"
           >
@@ -146,6 +146,11 @@ export default {
 
     createSkillsTableRow(e) {
       this.skills.push(e);
+    },
+
+    skillCreated(e) {
+      // Update status bar with result
+      this.createSkillsTableRow(e);
     },
 
     updateSkillsTableRow(skillId) {

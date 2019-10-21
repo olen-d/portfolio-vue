@@ -114,7 +114,7 @@ export default {
         // TODO: Probably by emitting that the skill was added successfuly
         // this.$emit("skill-added", dataObj);
         this.clearSkillForm();
-        this.$emit("create-skills-table-row", dataObj);
+        this.$emit("skill-created", dataObj);
       }).catch(error => {
         return ({
           errorCode: 500,
