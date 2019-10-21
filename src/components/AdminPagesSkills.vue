@@ -73,6 +73,7 @@
             v-bind:updateSkillData="updateSkillData"
             @create-skills-table-row="createSkillsTableRow"
             @update-skills-table-row="updateSkillsTableRow"
+            @cancel-edit-skill="cancelEditSkill"
           >
           </AdminSkillsForm>
         </div>
@@ -126,7 +127,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters([ "firstName" ])
+    ...mapGetters([ "jwt" ])
   },
 
   methods: {
@@ -165,12 +166,6 @@ export default {
         this.skills[index].icon = icon;
         this.skills[index].priority = priority;
 
-        // Reset the form
-        const keys = Object.keys(this.updateSkillData);
-
-        keys.forEach(e => {
-          this.updateSkillData[e] = null;
-        });
         this.formAction = "Add";
         this.editSkillId = "";
       });
@@ -223,6 +218,7 @@ export default {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/delete`, {
       method: "post",
       headers: {
+        "Authorization": `Bearer ${this.jwt}`,
         "Content-Type": "application/json"
       },
         body: JSON.stringify({ skillId: skillId })
@@ -243,6 +239,10 @@ export default {
           errorDetail: error
         })
       });
+    },
+
+    cancelEditSkill() {
+      this.formAction = "Add";
     },
 
     setShowModalConfirmCancel(value) {

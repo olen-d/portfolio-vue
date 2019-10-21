@@ -35,8 +35,9 @@ const updateSkill = require("../models/updateSkill");
 // Delete
 const deleteSkill = require("../models/deleteSkill");
 
-// Other stuff
+// Other stuff (mostly middleware)
 const bcrypt = require("../helpers/bcrypt-module");
+const auth = require("../helpers/auth-module");
 
 // TODO: Fix this to serve up index.html
 // TODO: Serve a proper 404 error page when something isn't found
@@ -319,25 +320,53 @@ app.put("/api/welcome/update/headline/:headline_id", (req, res, next) => {
 // Skills Routes
 
 app.post("/api/skills/create", (req, res, next) => {
-  const { userId, type, name, description, show, icon, priority } = req.body;
+  // Check for authorization header
+  auth
+    .checkAuth(req.headers)
+    .then(response => {
+      if (response.auth && response.administrator) {
+        const {
+          userId,
+          type,
+          name,
+          description,
+          show,
+          icon,
+          priority
+        } = req.body;
 
-  const skillInfo = {
-    userId: userId,
-    type: type,
-    name: name,
-    description: description,
-    show: show,
-    icon: icon,
-    priority: priority
-  };
+        const skillInfo = {
+          userId: userId,
+          type: type,
+          name: name,
+          description: description,
+          show: show,
+          icon: icon,
+          priority: priority
+        };
 
-  createSkill
-    .data(skillInfo)
-    .then(resolve => {
-      return res.json(resolve);
+        createSkill
+          .data(skillInfo)
+          .then(response => {
+            res.json(response);
+          })
+          .catch(err => {
+            res.status(500).json({
+              message: "Internal server error",
+              error: err
+            });
+          });
+      } else {
+        res.status(403).json({
+          message: "You must be logged in to perform this function"
+        });
+      }
     })
     .catch(err => {
-      return res.json(err);
+      res.status(403).json({
+        message: "Could not create skill",
+        error: err
+      });
     });
 });
 
@@ -362,15 +391,32 @@ app.put("/api/skills/update/:skill_id", (req, res, next) => {
 });
 
 app.post("/api/skills/delete", (req, res, next) => {
-  const skillId = req.body.skillId;
+  // Check for authorization header
+  auth
+    .checkAuth(req.headers)
+    .then(response => {
+      if (response.auth && response.administrator) {
+        const skillId = req.body.skillId;
 
-  deleteSkill
-    .data(skillId)
-    .then(resolve => {
-      return res.json(resolve);
+        deleteSkill
+          .data(skillId)
+          .then(resolve => {
+            return res.json(resolve);
+          })
+          .catch(err => {
+            return res.json(err);
+          });
+      } else {
+        res.status(403).json({
+          message: "You must be logged in to perform this function"
+        });
+      }
     })
     .catch(err => {
-      return res.json(err);
+      res.status(403).json({
+        message: "Could not delete skill",
+        error: err
+      });
     });
 });
 

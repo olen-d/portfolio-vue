@@ -1,6 +1,6 @@
 const db = require("../config/connection");
 const ObjectID = require("mongodb").ObjectID;
-// TODO: Add CreatedAt and UpdatedAt fields...
+
 const data = skillInfo => {
   return new Promise((resolve, reject) => {
     try {
@@ -15,6 +15,7 @@ const data = skillInfo => {
         priority
       } = skillInfo;
       const id = ObjectID(skill_id);
+      const now = Date.now();
 
       db.skills.update(
         {
@@ -28,7 +29,8 @@ const data = skillInfo => {
             description: description,
             show: show,
             icon: icon,
-            priority: priority
+            priority: priority,
+            updatedAt: now
           }
         },
         (error, response) => {
@@ -42,7 +44,8 @@ const data = skillInfo => {
     } catch (err) {
       reject({
         status: 500,
-        error: "Internal server error. Failed to create new user."
+        message: "Internal server error. Failed to update skill.",
+        error: err
       });
     }
   });
