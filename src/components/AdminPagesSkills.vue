@@ -72,7 +72,7 @@
             v-bind:editSkillId="editSkillId"
             v-bind:updateSkillData="updateSkillData"
             @skill-created="skillCreated"
-            @update-skills-table-row="updateSkillsTableRow"
+            @skill-updated="skillUpdated"
             @cancel-edit-skill="cancelEditSkill"
           >
           </AdminSkillsForm>
@@ -149,8 +149,12 @@ export default {
     },
 
     skillCreated(e) {
-      // Update status bar with result
-      this.createSkillsTableRow(e);
+      if (e._id) {
+        this.createSkillsTableRow(e);
+        // TODO: Update status bar with success result
+      } else {
+        // TODO: Update status bar with fail result
+      }
     },
 
     updateSkillsTableRow(skillId) {
@@ -174,6 +178,11 @@ export default {
         this.formAction = "Add";
         this.editSkillId = "";
       });
+    },
+
+    skillUpdated(skillId) {
+      this.updateSkillsTableRow(skillId);
+      // Update status bar with result
     },
 
     deleteSkillsTableRow(skillId) {

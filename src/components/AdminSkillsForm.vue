@@ -45,7 +45,7 @@ export default {
         icon: "",
         priority: null,
         show: ""
-      },
+      }
     }
   },
 
@@ -110,16 +110,15 @@ export default {
       }).then(response => {
         return response.json();
       }).then(dataObj => {
-        // TODO: Make this a return an update stating great success.
-        // TODO: Probably by emitting that the skill was added successfuly
-        // this.$emit("skill-added", dataObj);
-        this.clearSkillForm();
+        if (dataObj._id) {
+          this.clearSkillForm();
+        }
         this.$emit("skill-created", dataObj);
       }).catch(error => {
         return ({
-          errorCode: 500,
-          errorMsg: "Internal Server Error",
-          errorDetail: error
+          type: "error",
+          message: "Internal server error.",
+          error: error
         })
       });
     },
@@ -135,14 +134,12 @@ export default {
       },
         body: JSON.stringify(formData)
       }).then(response => {
-        // TODO: put response.status in the state for the status bar
         return response.json();
       }).then(dataObj => {
-        // TODO: Make this a return an update stating great success.
-        // TODO: Probably by emitting that the skill was added successfuly
-        // this.$emit("skill-added", dataObj);
-        this.clearSkillForm();
-        this.$emit("update-skills-table-row", skillId);
+        if(dataObj.n === 1 && dataObj.ok === 1) {
+          this.clearSkillForm();
+        }
+        this.$emit("skill-updated", skillId);
       }).catch(error => {
         return ({
           errorCode: 500,

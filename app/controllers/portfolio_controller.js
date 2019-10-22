@@ -384,7 +384,9 @@ app.post("/api/skills/create", (req, res, next) => {
           });
       } else {
         res.status(403).json({
-          message: "You must be logged in to perform this function"
+          type: "error",
+          message:
+            "You must be logged in and have administrator privileges to perform this function"
         });
       }
     })
@@ -437,7 +439,9 @@ app.put("/api/skills/update/:skill_id", (req, res, next) => {
           });
       } else {
         res.status(403).json({
-          message: "You must be logged in to perform this function"
+          type: "error",
+          message:
+            "You must be logged in and have administrator privileges to perform this function"
         });
       }
     })
