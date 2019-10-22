@@ -71,8 +71,8 @@
             v-bind:formAction="formAction"
             v-bind:editSkillId="editSkillId"
             v-bind:updateSkillData="updateSkillData"
-            @create-skills-table-row="createSkillsTableRow"
-            @update-skills-table-row="updateSkillsTableRow"
+            @skill-created="skillCreated"
+            @skill-updated="skillUpdated"
             @cancel-edit-skill="cancelEditSkill"
           >
           </AdminSkillsForm>
@@ -148,6 +148,15 @@ export default {
       this.skills.push(e);
     },
 
+    skillCreated(e) {
+      if (e._id) {
+        this.createSkillsTableRow(e);
+        // TODO: Update status bar with success result
+      } else {
+        // TODO: Update status bar with fail result
+      }
+    },
+
     updateSkillsTableRow(skillId) {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/id/${skillId}`)
       .then((response) => {
@@ -169,6 +178,11 @@ export default {
         this.formAction = "Add";
         this.editSkillId = "";
       });
+    },
+
+    skillUpdated(skillId) {
+      this.updateSkillsTableRow(skillId);
+      // Update status bar with result
     },
 
     deleteSkillsTableRow(skillId) {
