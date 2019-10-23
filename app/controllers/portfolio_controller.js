@@ -12,7 +12,7 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 
 // Models
-const welcome = require("../models/welcome");
+const readWelcome = require("../models/readWelcome");
 const about = require("../models/about");
 const readProjects = require("../models/readProjects");
 const readSkills = require("../models/readSkills");
@@ -43,7 +43,7 @@ const auth = require("../helpers/auth-module");
 
 // Get the welcome information
 app.get("/api/welcome", (req, res, next) => {
-  welcome
+  readWelcome
     .data()
     .then(resolve => {
       let welcomeObj = {
