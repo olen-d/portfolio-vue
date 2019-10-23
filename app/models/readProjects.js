@@ -3,8 +3,16 @@ const db = require("../config/connection");
 const data = () => {
   return new Promise((resolve, reject) => {
     try {
-      db.projects.find({ show: 1 }, (err, data) => {
-        resolve(data);
+      db.projects.find((err, data) => {
+        if (err) {
+          resolve({
+            type: "error",
+            message: "Database error. Failed to get projects.",
+            error: err
+          });
+        } else {
+          resolve(data);
+        }
       });
     } catch (err) {
       reject({

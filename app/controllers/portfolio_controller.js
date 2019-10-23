@@ -14,9 +14,8 @@ const path = require("path");
 // Models
 const welcome = require("../models/welcome");
 const about = require("../models/about");
-const projects = require("../models/projects");
-const readAllSkills = require("../models/readAllSkills");
-const skills = require("../models/skills");
+const readProjects = require("../models/readProjects");
+const readSkills = require("../models/readSkills");
 const skillsTop = require("../models/skillsTop");
 const readSkillById = require("../models/readSkillById");
 const contactOnly = require("../models/contactOnly");
@@ -91,7 +90,7 @@ app.get("/api/about/contact/:username", (req, res, next) => {
 
 // Get the list of projects
 app.get("/api/projects", (req, res, next) => {
-  projects
+  readProjects
     .data()
     .then(resolve => {
       let projectsObj = {
@@ -105,23 +104,8 @@ app.get("/api/projects", (req, res, next) => {
 });
 
 // Get all skills
-app.get("/api/skills/all", (req, res, next) => {
-  readAllSkills
-    .data()
-    .then(resolve => {
-      let skillsObj = {
-        skills: resolve
-      };
-      res.send(skillsObj);
-    })
-    .catch(err => {
-      res.json(err);
-    });
-});
-
-// Get all visible skills
 app.get("/api/skills", (req, res, next) => {
-  skills
+  readSkills
     .data()
     .then(resolve => {
       let skillsObj = {
