@@ -193,7 +193,7 @@ export default {
     },
 
     readSkills() {
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/all`)
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills`)
       .then((response) => {
         return response.json();
       })

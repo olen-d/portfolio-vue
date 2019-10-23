@@ -1,10 +1,7 @@
 <template>
   <div id="app">
     <Navbar></Navbar>
-    <div class="logo-header">
-      <img src="/assets/images/OD_min_500x500.png" width="200px" height="200px" />
-    </div>
-    <router-view />
+    <router-view></router-view>
     <div class="footer">
 	    <Social />
       <div class="container">	
