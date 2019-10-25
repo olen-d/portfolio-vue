@@ -12,14 +12,12 @@ const nodemailer = require("nodemailer");
 const path = require("path");
 
 // Models
-const readWelcome = require("../models/readWelcome");
 const about = require("../models/about");
 const readProjects = require("../models/readProjects");
 const readSkills = require("../models/readSkills");
 const skillsTop = require("../models/skillsTop");
 const readSkillById = require("../models/readSkillById");
 const contactOnly = require("../models/contactOnly");
-const social = require("../models/social");
 const findOneUser = require("../models/findOneUser");
 
 // Admin Side
@@ -40,21 +38,6 @@ const auth = require("../helpers/auth-module");
 
 // TODO: Fix this to serve up index.html
 // TODO: Serve a proper 404 error page when something isn't found
-
-// Get the welcome information
-app.get("/api/welcome", (req, res, next) => {
-  readWelcome
-    .data()
-    .then(resolve => {
-      let welcomeObj = {
-        welcome: resolve
-      };
-      res.send(welcomeObj);
-    })
-    .catch(err => {
-      res.json(err);
-    });
-});
 
 // Get information about a specific user
 app.get("/api/about/user/:username", (req, res, next) => {
@@ -145,22 +128,6 @@ app.get("/api/skills/id/:skill_id", (req, res, next) => {
         skill: resolve
       };
       res.send(skillObj);
-    })
-    .catch(err => {
-      res.json(err);
-    });
-});
-
-// Get social media links for a specific user
-app.get("/api/social/user/:username", (req, res, next) => {
-  let userName = req.params.username;
-  social
-    .data(userName)
-    .then(resolve => {
-      let socialObj = {
-        social: resolve
-      };
-      res.send(socialObj);
     })
     .catch(err => {
       res.json(err);
