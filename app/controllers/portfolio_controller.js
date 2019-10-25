@@ -26,7 +26,7 @@ const createSkill = require("../models/createSkill");
 const createUser = require("../models/createUser");
 
 // Update
-const updateHeadline = require("../models/updateHeadline");
+// const updateHeadline = require("../models/updateHeadline");
 const updateSkill = require("../models/updateSkill");
 
 // Delete
@@ -250,47 +250,6 @@ app.post("/api/user/create", (req, res) => {
         });
     }
   });
-});
-
-// Welcome Routes
-// Update Headline
-
-app.put("/api/welcome/update/headline/:headline_id", (req, res, next) => {
-  auth
-    .checkAuth(req.headers)
-    .then(response => {
-      if (response.auth && response.administrator) {
-        const headline_id = req.params.headline_id;
-        const headline = req.body.headline;
-
-        const headlineData = {
-          id: headline_id,
-          headline: headline
-        };
-
-        updateHeadline
-          .data(headlineData)
-          .then(resolve => {
-            return res.json(resolve);
-          })
-          .catch(err => {
-            res.status(500).json({
-              message: "Internal server error",
-              error: err
-            });
-          });
-      } else {
-        res.status(403).json({
-          message: "You must be logged in to perform this function"
-        });
-      }
-    })
-    .catch(err => {
-      res.status(403).json({
-        message: "Could not update headline",
-        error: err
-      });
-    });
 });
 
 // Skills Routes
