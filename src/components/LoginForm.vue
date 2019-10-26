@@ -28,7 +28,7 @@ export default {
         password: this.form.password
       }
 
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/login`, {
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/users/login`, {
         method: "post",
         headers: {
           "Content-Type": "application/json"

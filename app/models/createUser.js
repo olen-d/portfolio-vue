@@ -1,5 +1,5 @@
 const db = require("../config/connection");
-// TODO: Add CreatedAt and UpdatedAt fields...
+
 const data = userInfo => {
   return new Promise((resolve, reject) => {
     try {

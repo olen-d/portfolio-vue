@@ -14,10 +14,10 @@
           <div class="main-header-wrapper">
             <div class="main-header">
               <h1>
-                {{about.firstName}}&nbsp;{{about.lastName}}
+                {{user.firstName}}&nbsp;{{user.lastName}}
               </h1>
               <h4 class="title">
-                {{about.title}}
+                {{profile.title}}
               </h4>
             </div>
           </div>
@@ -28,7 +28,7 @@
           &nbsp;
         </div>
         <div class="ten columns">
-          <span v-html="about.bio"></span>
+          <span v-html="profile.bio"></span>
         </div>
         <div class="one column">
           &nbsp;
@@ -48,18 +48,27 @@ export default {
 
   data: () => {
     return {
-      about: [],
+      user: [],
+      profile: []
     }
   },
 
 created() {
-    fetch(`${process.env.VUE_APP_API_BASE_URL}/api/about/user/olen.d`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.about = json.about[0];
-      });
+  fetch(`${process.env.VUE_APP_API_BASE_URL}/api/users/olen.d`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((json) => {
+      this.user = json.user;
+    });
+  
+  fetch(`${process.env.VUE_APP_API_BASE_URL}/api/profiles/olen.d`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((json) => {
+      this.profile = json.profile;
+    });
   }
 }
 </script>

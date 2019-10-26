@@ -3,7 +3,7 @@ const db = require("../config/connection");
 const data = userName => {
   return new Promise((resolve, reject) => {
     try {
-      db.about.find({ userName: userName }, (err, data) => {
+      db.profiles.findOne({ userName: userName }, (err, data) => {
         resolve(data);
       });
     } catch (err) {
