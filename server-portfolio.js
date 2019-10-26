@@ -19,9 +19,10 @@ app.use(express.json());
 // app.use(express.static("public"));
 
 // Modular Routes
+app.use("/api", require("./app/routes/projects"));
+app.use("/api", require("./app/routes/skills"));
 app.use("/api", require("./app/routes/social"));
 app.use("/api", require("./app/routes/welcome"));
-
 
 // Import routes and give the server access to them.
 const routes = require("./app/controllers/portfolio_controller.js");

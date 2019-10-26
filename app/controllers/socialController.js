@@ -6,7 +6,7 @@ exports.read_social = (req, res) => {
   readSocial
     .data(userName)
     .then(resolve => {
-      let socialObj = {
+      const socialObj = {
         social: resolve
       };
       res.send(socialObj);

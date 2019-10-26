@@ -13,24 +13,14 @@ const path = require("path");
 
 // Models
 const about = require("../models/about");
-const readProjects = require("../models/readProjects");
-const readSkills = require("../models/readSkills");
-const skillsTop = require("../models/skillsTop");
-const readSkillById = require("../models/readSkillById");
+
 const contactOnly = require("../models/contactOnly");
 const findOneUser = require("../models/findOneUser");
 
 // Admin Side
 // Create
-const createSkill = require("../models/createSkill");
+
 const createUser = require("../models/createUser");
-
-// Update
-// const updateHeadline = require("../models/updateHeadline");
-const updateSkill = require("../models/updateSkill");
-
-// Delete
-const deleteSkill = require("../models/deleteSkill");
 
 // Other stuff (mostly middleware)
 const bcrypt = require("../helpers/bcrypt-module");
@@ -65,69 +55,6 @@ app.get("/api/about/contact/:username", (req, res, next) => {
         contact: resolve
       };
       res.send(contactObj);
-    })
-    .catch(err => {
-      res.json(err);
-    });
-});
-
-// Get the list of projects
-app.get("/api/projects", (req, res, next) => {
-  readProjects
-    .data()
-    .then(resolve => {
-      let projectsObj = {
-        projects: resolve
-      };
-      res.send(projectsObj);
-    })
-    .catch(err => {
-      res.json(err);
-    });
-});
-
-// Get all skills
-app.get("/api/skills", (req, res, next) => {
-  readSkills
-    .data()
-    .then(resolve => {
-      let skillsObj = {
-        skills: resolve
-      };
-      res.send(skillsObj);
-    })
-    .catch(err => {
-      res.json(err);
-    });
-});
-
-// Get the top skills
-app.get("/api/skills/top/:limit", (req, res, next) => {
-  let limit = parseInt(req.params.limit);
-  skillsTop
-    .data(limit)
-    .then(resolve => {
-      let skillsTopObj = {
-        skills: resolve
-      };
-      res.send(skillsTopObj);
-    })
-    .catch(err => {
-      res.json(err);
-    });
-});
-
-// Get a specific skill by id
-app.get("/api/skills/id/:skill_id", (req, res, next) => {
-  let skillId = req.params.skill_id;
-
-  readSkillById
-    .data(skillId)
-    .then(resolve => {
-      let skillObj = {
-        skill: resolve
-      };
-      res.send(skillObj);
     })
     .catch(err => {
       res.json(err);
@@ -250,147 +177,6 @@ app.post("/api/user/create", (req, res) => {
         });
     }
   });
-});
-
-// Skills Routes
-
-// Create skill
-app.post("/api/skills/create", (req, res, next) => {
-  // Check for authorization header
-  auth
-    .checkAuth(req.headers)
-    .then(response => {
-      if (response.auth && response.administrator) {
-        const {
-          userId,
-          type,
-          name,
-          description,
-          show,
-          icon,
-          priority
-        } = req.body;
-
-        const skillInfo = {
-          userId: userId,
-          type: type,
-          name: name,
-          description: description,
-          show: show,
-          icon: icon,
-          priority: priority
-        };
-
-        createSkill
-          .data(skillInfo)
-          .then(response => {
-            res.json(response);
-          })
-          .catch(err => {
-            res.status(500).json({
-              message: "Internal server error",
-              error: err
-            });
-          });
-      } else {
-        res.status(403).json({
-          type: "error",
-          message:
-            "You must be logged in and have administrator privileges to perform this function"
-        });
-      }
-    })
-    .catch(err => {
-      res.status(403).json({
-        message: "Could not create skill",
-        error: err
-      });
-    });
-});
-
-// Update skill
-app.put("/api/skills/update/:skill_id", (req, res, next) => {
-  auth
-    .checkAuth(req.headers)
-    .then(response => {
-      if (response.auth && response.administrator) {
-        const skill_id = req.params.skill_id;
-        const {
-          userId,
-          type,
-          name,
-          description,
-          show,
-          icon,
-          priority
-        } = req.body;
-
-        const skillInfo = {
-          skill_id: skill_id,
-          userId: userId,
-          type: type,
-          name: name,
-          description: description,
-          show: show,
-          icon: icon,
-          priority: priority
-        };
-
-        updateSkill
-          .data(skillInfo)
-          .then(resolve => {
-            return res.json(resolve);
-          })
-          .catch(err => {
-            res.status(500).json({
-              message: "Internal server error",
-              error: err
-            });
-          });
-      } else {
-        res.status(403).json({
-          type: "error",
-          message:
-            "You must be logged in and have administrator privileges to perform this function"
-        });
-      }
-    })
-    .catch(err => {
-      res.status(403).json({
-        message: "Could not update skill",
-        error: err
-      });
-    });
-});
-
-// Delete skill
-app.delete("/api/skills/delete", (req, res, next) => {
-  auth
-    .checkAuth(req.headers)
-    .then(response => {
-      if (response.auth && response.administrator) {
-        const skillId = req.body.skillId;
-
-        deleteSkill
-          .data(skillId)
-          .then(resolve => {
-            return res.json(resolve);
-          })
-          .catch(err => {
-            return res.json(err);
-          });
-      } else {
-        res.status(403).json({
-          message: "You must be logged in to perform this function"
-        });
-      }
-    })
-    .catch(err => {
-      res.status(403).json({
-        message: "Could not delete skill",
-        error: err
-      });
-    });
 });
 
 app.use((req, res) => {

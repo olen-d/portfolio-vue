@@ -9,7 +9,7 @@ exports.read_welcome = (req, res) => {
   readWelcome
     .data()
     .then(resolve => {
-      let welcomeObj = {
+      const welcomeObj = {
         welcome: resolve
       };
       res.send(welcomeObj);
