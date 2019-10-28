@@ -4,6 +4,8 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
+const path = require("path");
+
 if (process.env.ENVIRONMENT === "dev") {
   const cors = require("cors");
   app.use(cors());
@@ -18,8 +20,20 @@ app.use(express.json());
 // Set up the css, js, and images directories
 // app.use(express.static("public"));
 
-// Import routes and give the server access to them.
-const routes = require("./app/controllers/portfolio_controller.js");
-app.use(routes);
+// Modular Routes
+app.use("/api", require("./app/routes/mail"));
+app.use("/api", require("./app/routes/profiles"));
+app.use("/api", require("./app/routes/projects"));
+app.use("/api", require("./app/routes/skills"));
+app.use("/api", require("./app/routes/social"));
+app.use("/api", require("./app/routes/users"));
+app.use("/api", require("./app/routes/welcome"));
+
+// Serve a 404 if none of the routes match
+app.use((req, res) => {
+  // Fail
+  // TODO - update this to send a fail JSON
+  res.sendFile(path.join(__dirname, "../public", "404.html"));
+});
 
 app.listen(port, () => console.log(`Portfolio API listening on port ${port}!`));

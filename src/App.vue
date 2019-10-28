@@ -91,6 +91,7 @@ export default {
 
   mounted() {
     this.fetchJWT();
+    this.$store.dispatch("start");
   }
 }
 

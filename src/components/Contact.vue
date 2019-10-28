@@ -1,69 +1,69 @@
 <template>
-    <div id="front-end">
-        <Header></Header>
-        <div id="contact" class="container">
-            <div class="row">
-                <div class="one column">
-                    &nbsp;
-                </div>
-                <div class="ten columns">
-                    <h1>
-                        Get in Touch
-                    </h1>
-                    <p v-if="contact.tel">
-                        You've made it this far, so please take the time to reach out and start discussing your project with me. I can be contacted at {{contact.tel | toPhoneUS}}, or send an email to <a :href="`mailto:${contact.email}`">{{contact.email}}</a>.
-                    </p>
-                </div>
-                <div class="one column">
-                    &nbsp;
-                </div>
-            </div>
-            <div class="row">
-                <div class="one column">
-                    &nbsp;
-                </div>
-                <div class="five columns">
-                    <form id="contactForm">
-                        <label for="name">Name</label>
-                        <input type="text" class="u-full-width" id="name" placeholder="Your Name" required>
-                    </form>
-                </div>
-                <div class="five columns">
-                        <label for="title">Email Address</label>
-                        <input type="email" class="u-full-width" id="email" placeholder="Your Email Address" required>
-                </div>
-                <div class="one column">
-                    &nbsp;
-                </div>  
-            </div>
-            <div class="row">
-                <div class="one column">
-                    &nbsp;
-                </div>
-                <div class="ten columns">
-                        <label for="message">Message</label>
-                        <textarea class="u-full-width" id="message" placeholder="Let me know what you need..." ></textarea>
-                        <div id="message-status">
-                        </div>
-                </div>
-                <div class = "one column">
-                    &nbsp;
-                </div>
-            </div>
-            <div class="row">
-                <div class="one column">
-                    &nbsp;
-                </div>
-                <div class="ten columns">
-                        <button v-on:click.prevent="submitMessage" type="submit" class="button-primary" id="submitMessage">Send a Message</button>
-                </div>
-                <div class="one column">
-                    &nbsp;
-                </div>
-                    </form>
-            </div>
+  <div id="front-end">
+    <Header></Header>
+    <div id="contact" class="container">
+      <div class="row">
+        <div class="one column">
+          &nbsp;
         </div>
+        <div class="ten columns">
+          <h1>
+            Get in Touch
+          </h1>
+          <p v-if="contact.tel">
+            You've made it this far, so please take the time to reach out and start discussing your project with me. I can be contacted at {{contact.tel | toPhoneUS}}, or send an email to <a :href="`mailto:${contact.email}`">{{contact.email}}</a>.
+          </p>
+        </div>
+        <div class="one column">
+          &nbsp;
+        </div>
+      </div>
+      <div class="row">
+        <div class="one column">
+          &nbsp;
+        </div>
+        <div class="five columns">
+          <form id="contactForm">
+            <label for="name">Name</label>
+            <input type="text" class="u-full-width" id="name" placeholder="Your Name" required>
+          </form>
+        </div>
+        <div class="five columns">
+          <label for="title">Email Address</label>
+          <input type="email" class="u-full-width" id="email" placeholder="Your Email Address" required>
+        </div>
+        <div class="one column">
+          &nbsp;
+        </div>  
+      </div>
+      <div class="row">
+        <div class="one column">
+          &nbsp;
+        </div>
+        <div class="ten columns">
+          <label for="message">Message</label>
+          <textarea class="u-full-width" id="message" placeholder="Let me know what you need..." ></textarea>
+          <div id="message-status">
+          </div>
+        </div>
+        <div class = "one column">
+            &nbsp;
+        </div>
+      </div>
+      <div class="row">
+        <div class="one column">
+          &nbsp;
+        </div>
+        <div class="ten columns">
+          <button v-on:click.prevent="submitMessage" type="submit" class="button-primary" id="submitMessage">Send a Message</button>
+        </div>
+        <div class="one column">
+          &nbsp;
+        </div>
+        </form>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -150,7 +150,7 @@ import Header from "./Header.vue";
                 }
 
                 // TODO: The below works, but update to use fetch
-                ajax.post(`${process.env.VUE_APP_API_BASE_URL}/api/contact/send`, data)
+                ajax.post(`${process.env.VUE_APP_API_BASE_URL}/api/mail/send`, data)
                 .then(response => {                 
                     response = JSON.parse(response);
 
@@ -178,19 +178,19 @@ import Header from "./Header.vue";
                     $msgStatus.style.display = "block";
                 })
                 .catch(err => {
-                    console.log("Something went horribly awry.");
+                    console.log("Something went horribly awry.\n", err);
                     // TODO: Fix this to return something useful to the user. 
                 });
             }
         },
 
         created() {
-            fetch(`${process.env.VUE_APP_API_BASE_URL}/api/about/contact/olen.d`)
+            fetch(`${process.env.VUE_APP_API_BASE_URL}/api/profiles/contact/olen.d`)
                 .then((response) => {
                     return response.json();
                 })
                 .then((json) => {
-                    this.contact = json.contact[0];
+                    this.contact = json.contact;
                 });
         },
 
