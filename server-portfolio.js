@@ -20,7 +20,7 @@ app.use(express.json());
 // Set up the css, js, and images directories
 // app.use(express.static("public"));
 
-// Modular Routes
+// Routes
 app.use("/api", require("./app/routes/mail"));
 app.use("/api", require("./app/routes/profiles"));
 app.use("/api", require("./app/routes/projects"));

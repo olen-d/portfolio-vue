@@ -10,11 +10,7 @@ const auth = require("../helpers/auth-module");
 const bcrypt = require("../helpers/bcrypt-module");
 
 exports.create_user = (req, res) => {
-  const firstName = req.body.firstName;
-  const lastName = req.body.lastName;
-  const email = req.body.email;
-  const userName = req.body.userName;
-  const password = req.body.password;
+  const { firstName, lastName, email, userName, password } = req.body;
 
   bcrypt.newPass(password).then(pwdRes => {
     if (pwdRes.status === 200) {
@@ -66,8 +62,7 @@ exports.read_one_user = (req, res) => {
 };
 
 exports.read_login = (req, response) => {
-  const userName = req.body.userName;
-  const password = req.body.password;
+  const { userName, password } = req.body;
 
   readOneUser.data(userName).then(user => {
     if (user != null) {
