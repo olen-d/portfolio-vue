@@ -77,10 +77,6 @@ a:hover {
     color: #36a0ce; 
 }
 
-#message-status {
-    display:none;
-}
-
 .hexa, .hexa div {
     margin: 0;
     transform-origin: 50% 50%;
