@@ -42,7 +42,10 @@
           <div class="ten columns">
             <label for="message">Message</label>
             <textarea v-model="contactData.message" class="u-full-width" id="message" placeholder="Let me know what you need..." ></textarea>
-            <div id="message-status">
+            <div v-if="messageStatus" id="message-status">
+              <p>
+                {{ messageStatus }}
+              </p>
             </div>
           </div>
           <div class = "one column">
@@ -54,7 +57,7 @@
             &nbsp;
           </div>
           <div class="ten columns">
-            <button v-on:click.prevent="submitMessage" type="submit" class="button-primary" id="submitMessage">Send a Message</button>
+            <button v-on:click.prevent="submitContactForm" type="submit" class="button-primary" id="submitMessage">Send a Message</button>
           </div>
           <div class="one column">
             &nbsp;
@@ -68,138 +71,92 @@
 <script>
 import Header from "./Header.vue";
 
-    const ajax = {
-        post(url, data) {
-            //console.log("------\n",url,data);
-            return new Promise ((resolve, reject) => {
-                let xhr = new XMLHttpRequest();
-                xhr.open("POST", url);
-                xhr.setRequestHeader("Content-Type", "application/json");
-                xhr.onload = () => { 
-                    if (xhr.status === 200) {
-                        // console.log("---",xhr.status);
-                        let res = xhr.responseText;
-                        resolve(res);
-                    } else {
-                        reject({
-                            status: 500,
-                            error: "Internal server error. Failed to post http:// request."
-                        });
-                    }
-                }
-                xhr.send(JSON.stringify({
-                    data
-                }));
-            })
-        },
+export default {
+  components: {
+    Header
+  },
 
-        get(url) {
-            return new Promise ((resolve, reject) => {
-                let xhr = new XMLHttpRequest();
-                xhr.open("GET", url);
-                xhr.onload = () => {
-                    if (xhr.status === 200) {
-                        let data = xhr.responseText;
-                        resolve(data);
-                    } else {
-                        reject({
-                            status: 500,
-                            login: false,
-                            error: "Internal server error. Failed to get http:// request."
-                        });
-                    }
-                }
-                xhr.send();
-            });
-        }
+  data: () => {
+    return {
+      contact: [],
+      contactData: {
+        name: "",
+        email: "",
+        message: "",
+      },
+      messageStatus: ""
     }
+  },
 
-  export default {
-    components: {
-      Header
-    },
+  filters: {
+    toPhoneUS(value) {
+      const areaCode = value.substr(0, 3);
+      const prefix = value.substr(3, 3);
+      const lineNumber = value.substr(6);
+      return `(${areaCode}) ${prefix}-${lineNumber}`;
+    }
+  },
+  
+  methods: {
+    submitContactForm() {
+      // TODO: Validate this mess
+      const { name, email, message } = this.contactData;
 
-    data: () => {
-      return {
-        contact: [],
-        contactData: {
-          name: "",
-          email: "",
-          message: ""
-        }
+      const formData = {
+        name: name,
+        email: email,
+        message: message
       }
+
+      this.sendMail(formData);
     },
 
-        methods: {
-            submitMessage() {
-                const $msgStatus = document.getElementById("message-status");
-                $msgStatus.innerHTML = "<p>Sending your message...</p>";
-                $msgStatus.style.display = "block";
+    clearContactForm() {
+      const keys = Object.keys(this.contactData);
 
-              const { name, email, message } = this.contactData;
-            
-                
-                // TODO: Validate this mess
-            
-              const formData = {
-                name: name,
-                email: email,
-                message: message
-              }
+      keys.forEach(e => {
+        this.contactData[e] = null;
+      });
+    },
+    
+    sendMail(formData) {
+      this.messageStatus = "Sending your message...";
 
-                // TODO: The below works, but update to use fetch
-                ajax.post(`${process.env.VUE_APP_API_BASE_URL}/api/mail/send`, formData)
-                .then(response => {    
-                    response = JSON.parse(response);
-
-                    // Set up the status area
-                    $msgStatus.innerHTML = "";
-                    let p = document.createElement("p");
-
-                    if(!response.error && response.rejected.length === 0) {
-                      // Clear the form fields
-                      this.contactData.name = "";
-                      this.contactData.email = "";
-                      this.contactData.message = "";
-
-                        // Build the success message
-                        p.setAttribute("class", "success");
-                        p.innerText = `Thank you for getting in touch, your message was successfully sent to ${response.accepted}. You can expect a response within 24 hours.`;
-                    } else {
-                        // Build the fail message
-                        p.setAttribute("class", "fail");
-                        p.innerText = `Something has gone terribly wrong and your message was not sent. Please try again.`;
-                    }
-
-                    // Output the success or fail message
-                    $msgStatus.appendChild(p);
-                    $msgStatus.style.display = "block";
-                })
-                .catch(err => {
-                    console.log("Something went horribly awry.\n", err, "\n", response);
-                    // TODO: Fix this to return something useful to the user. 
-                });
-            }
-        },
-
-        created() {
-            fetch(`${process.env.VUE_APP_API_BASE_URL}/api/profiles/contact/olen.d`)
-                .then((response) => {
-                    return response.json();
-                })
-                .then((json) => {
-                    this.contact = json.contact;
-                });
-        },
-
-        filters: {
-            toPhoneUS(value) {
-                const areaCode = value.substr(0, 3);
-                const prefix = value.substr(3, 3);
-                const lineNumber = value.substr(6);
-                return `(${areaCode}) ${prefix}-${lineNumber}`;
-            }
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/mail/send`, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json"
+      },
+        body: JSON.stringify(formData)
+      }).then(response => {
+        return response.json();
+      }).then(response => {
+        if (!response.error) {
+          this.messageStatus = `Thank you for getting in touch, your message was successfully sent to ${response.accepted}. You can expect a response within 24 hours.`;
+          this.clearContactForm();
+        } else {
+          this.messageStatus = "Something has gone terribly wrong and your message was not sent. Please try again.";
+          // TODO, parse response.error and provide a more useful error message
         }
+      }).catch(error => {
+        return ({
+          type: "error",
+          message: "Internal server error.",
+          error: error
+        })
+      });
     }
+  },
+
+  created() {
+    fetch(`${process.env.VUE_APP_API_BASE_URL}/api/profiles/contact/olen.d`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        this.contact = json.contact;
+      });
+  }
+}
 
 </script>

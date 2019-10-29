@@ -2,7 +2,7 @@
 const nodemailer = require("nodemailer");
 
 exports.send_mail = (req, res) => {
-  const { name, email, message } = req.body.data;
+  const { name, email, message } = req.body;
 
   const transporter = nodemailer.createTransport({
     host: "mail.gandi.net",
