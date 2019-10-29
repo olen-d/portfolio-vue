@@ -11,57 +11,56 @@
             Get in Touch
           </h1>
           <p v-if="contact.tel">
-            You've made it this far, so please take the time to reach out and start discussing your project with me. I can be contacted at {{contact.tel | toPhoneUS}}, or send an email to <a :href="`mailto:${contact.email}`">{{contact.email}}</a>.
+            You've made it this far, so please take the time to reach out and start discussing your project with me. I can be contacted at {{ contact.tel | toPhoneUS }}, or send an email to <a :href="`mailto:${contact.email}`">{{contact.email}}</a>.
           </p>
         </div>
         <div class="one column">
           &nbsp;
         </div>
       </div>
-      <div class="row">
-        <div class="one column">
-          &nbsp;
-        </div>
-        <div class="five columns">
-          <form id="contactForm">
+      <form id="contactForm">
+        <div class="row">
+          <div class="one column">
+            &nbsp;
+          </div>
+          <div class="five columns">
             <label for="name">Name</label>
-            <input type="text" class="u-full-width" id="name" placeholder="Your Name" required>
-          </form>
+            <input v-model="contactData.name" type="text" class="u-full-width" id="name" placeholder="Your Name" required>
+          </div>
+          <div class="five columns">
+            <label for="title">Email Address</label>
+            <input v-model="contactData.email" type="email" class="u-full-width" id="email" placeholder="Your Email Address" required>
+          </div>
+          <div class="one column">
+            &nbsp;
+          </div>  
         </div>
-        <div class="five columns">
-          <label for="title">Email Address</label>
-          <input type="email" class="u-full-width" id="email" placeholder="Your Email Address" required>
-        </div>
-        <div class="one column">
-          &nbsp;
-        </div>  
-      </div>
-      <div class="row">
-        <div class="one column">
-          &nbsp;
-        </div>
-        <div class="ten columns">
-          <label for="message">Message</label>
-          <textarea class="u-full-width" id="message" placeholder="Let me know what you need..." ></textarea>
-          <div id="message-status">
+        <div class="row">
+          <div class="one column">
+            &nbsp;
+          </div>
+          <div class="ten columns">
+            <label for="message">Message</label>
+            <textarea v-model="contactData.message" class="u-full-width" id="message" placeholder="Let me know what you need..." ></textarea>
+            <div id="message-status">
+            </div>
+          </div>
+          <div class = "one column">
+              &nbsp;
           </div>
         </div>
-        <div class = "one column">
+        <div class="row">
+          <div class="one column">
             &nbsp;
+          </div>
+          <div class="ten columns">
+            <button v-on:click.prevent="submitMessage" type="submit" class="button-primary" id="submitMessage">Send a Message</button>
+          </div>
+          <div class="one column">
+            &nbsp;
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="one column">
-          &nbsp;
-        </div>
-        <div class="ten columns">
-          <button v-on:click.prevent="submitMessage" type="submit" class="button-primary" id="submitMessage">Send a Message</button>
-        </div>
-        <div class="one column">
-          &nbsp;
-        </div>
-        </form>
-      </div>
+      </form>
     </div>
   </div>
 </template>
@@ -115,54 +114,53 @@ import Header from "./Header.vue";
         }
     }
 
-    export default {
-        components: {
-            Header
-        },
+  export default {
+    components: {
+      Header
+    },
 
-        data: () => {
-            return {
-                contact: []
-            }
-        },
+    data: () => {
+      return {
+        contact: [],
+        contactData: {
+          name: "",
+          email: "",
+          message: ""
+        }
+      }
+    },
 
         methods: {
-            submitMessage: () => {
+            submitMessage() {
                 const $msgStatus = document.getElementById("message-status");
                 $msgStatus.innerHTML = "<p>Sending your message...</p>";
                 $msgStatus.style.display = "block";
 
-                const $name = document.getElementById("name");
-                const $email = document.getElementById("email");
-                const $message = document.getElementById("message");
+              const { name, email, message } = this.contactData;
             
-                // TODO: Fix this to use v-model
-                let name = $name.value;
-                let email = $email.value;
-                let message = $message.value;
                 
                 // TODO: Validate this mess
             
-                let data = {
-                    name: name,
-                    email: email,
-                    message: message
-                }
+              const formData = {
+                name: name,
+                email: email,
+                message: message
+              }
 
                 // TODO: The below works, but update to use fetch
-                ajax.post(`${process.env.VUE_APP_API_BASE_URL}/api/mail/send`, data)
-                .then(response => {                 
+                ajax.post(`${process.env.VUE_APP_API_BASE_URL}/api/mail/send`, formData)
+                .then(response => {    
                     response = JSON.parse(response);
 
                     // Set up the status area
                     $msgStatus.innerHTML = "";
                     let p = document.createElement("p");
 
-                    if(response.rejected.length === 0) {
-                        // Clear the form fields
-                        $name.value = "";
-                        $email.value = "";
-                        $message.value = "";
+                    if(!response.error && response.rejected.length === 0) {
+                      // Clear the form fields
+                      this.contactData.name = "";
+                      this.contactData.email = "";
+                      this.contactData.message = "";
 
                         // Build the success message
                         p.setAttribute("class", "success");
@@ -178,7 +176,7 @@ import Header from "./Header.vue";
                     $msgStatus.style.display = "block";
                 })
                 .catch(err => {
-                    console.log("Something went horribly awry.\n", err);
+                    console.log("Something went horribly awry.\n", err, "\n", response);
                     // TODO: Fix this to return something useful to the user. 
                 });
             }
