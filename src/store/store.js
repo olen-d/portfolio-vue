@@ -9,7 +9,10 @@ export const store = new Vuex.Store({
     now: new Date(),
     doLogout: false,
     loginPage: false,
-    signupPage: false
+    signupPage: false,
+    statusCategory: "",
+    statusMessage: "",
+    statusAction: ""
   },
 
   mutations: {
@@ -31,6 +34,22 @@ export const store = new Vuex.Store({
 
     setSignupPage(state, signupPage) {
       state.signupPage = signupPage;
+    },
+
+    setStatusCategory(state, statusCategory) {
+      state.statusCategory = statusCategory;
+    },
+
+    setStatusIcon(state, statusIcon) {
+      state.statusIcon = statusIcon;
+    },
+
+    setStatusMessage(state, statusMessage) {
+      state.statusMessage = statusMessage;
+    },
+
+    setStatusAction(state, statusAction) {
+      state.statusAction = statusAction;
     }
   },
 
@@ -62,7 +81,11 @@ export const store = new Vuex.Store({
     },
     doLogout: state => state.doLogout,
     loginPage: state => state.loginPage,
-    signupPage: state => state.signupPage
+    signupPage: state => state.signupPage,
+    statusCategory: state => state.statusCategory,
+    statusIcon: state => state.statusIcon,
+    statusMessage: state => state.statusMessage,
+    statusAction: state => state.statusAction
   },
 
   actions: {
