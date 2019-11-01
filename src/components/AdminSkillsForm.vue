@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   props: {
@@ -52,6 +52,11 @@ export default {
   computed: {
     ...mapGetters([
       "jwt"
+    ]),
+
+    ...mapState([
+      "statusCategory",
+      "statusMessage"
     ])
   },
 
@@ -111,10 +116,17 @@ export default {
         return response.json();
       }).then(dataObj => {
         if (dataObj._id) {
+          this.$store.commit("setStatusCategory", "success");
+          this.$store.commit("setStatusMessage", "Skill created successfully.");
+          this.$emit("skill-created", dataObj);
           this.clearSkillForm();
+        } else {
+          this.$store.commit("setStatusCategory", "error");
+          this.$store.commit("setStatusMessage", "Skill was not created. Database error. ");          
         }
-        this.$emit("skill-created", dataObj);
       }).catch(error => {
+        this.$store.commit("setStatusCategory", "error");
+        this.$store.commit("setStatusMessage", "Skill was not created. " + error);
         return ({
           type: "error",
           message: "Internal server error.",
@@ -137,10 +149,17 @@ export default {
         return response.json();
       }).then(dataObj => {
         if(dataObj.n === 1 && dataObj.ok === 1) {
+          this.$store.commit("setStatusCategory", "success");
+          this.$store.commit("setStatusMessage", "Skill updated successfully.");
+          this.$emit("skill-updated", skillId);
           this.clearSkillForm();
+        } else {
+          this.$store.commit("setStatusCategory", "error");
+          this.$store.commit("setStatusMessage", "Skill was not updated. Database error. ");
         }
-        this.$emit("skill-updated", skillId);
       }).catch(error => {
+        this.$store.commit("setStatusCategory", "error");
+        this.$store.commit("setStatusMessage", "Skill was not updated. " + error);
         return ({
           errorCode: 500,
           errorMsg: "Internal Server Error",

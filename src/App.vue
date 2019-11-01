@@ -1,6 +1,8 @@
 <template>
   <div id="app">
     <Navbar></Navbar>
+    <StatusBar v-if="statusCategory && statusMessage">
+    </StatusBar>
     <router-view></router-view>
     <div class="footer">
 	    <Social />
@@ -16,7 +18,7 @@
           </div>
           <div class="four columns">
             <p class="right">
-              <router-link to="/login" v-if="!$store.getters.authorized && !$store.getters.loginPage" class="ntd">Login</router-link>&nbsp;<router-link to="/signup" v-if="!$store.getters.authorized && !$store.getters.signupPage" class="ntd">Signup</router-link>
+              <router-link to="/login" v-if="!authorized && !$store.getters.loginPage" class="ntd">Login</router-link>&nbsp;<router-link to="/signup" v-if="!$store.getters.authorized && !$store.getters.signupPage" class="ntd">Signup</router-link>
             </p>
           </div>
         </div>
@@ -30,13 +32,15 @@ import { mapGetters, mapState, mapActions } from "vuex";
 import { store } from "./store/store";
 import Navbar from "./components/Navbar.vue";
 import Social from "./components/Social.vue";
+import StatusBar from "./components/StatusBar.vue";
 
 export default {
   name: "app",
   store,
   components: {
     Navbar,
-    Social
+    Social,
+    StatusBar
   },
 
   data: () => {
@@ -59,7 +63,9 @@ export default {
     ]),
 
     ...mapState([
-      "doLogout"
+      "doLogout",
+      "statusCategory",
+      "statusMessage"
     ])
    },
 

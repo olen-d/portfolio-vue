@@ -241,12 +241,16 @@ export default {
       }).then(dataObj => {
         const { ok, deletedCount } = dataObj;
         if (ok === 1 && deletedCount === 1) {
-          // TODO: Make this show an update stating great success.
+          this.$store.commit("setStatusCategory", "success");
+          this.$store.commit("setStatusMessage", "Skill deleted successfully.");
           this.deleteSkillsTableRow(skillId);
         } else {
-          // TODO: Return some sort of failure message.
+          this.$store.commit("setStatusCategory", "error");
+          this.$store.commit("setStatusMessage", "Skill was not deleted. Database error. ");
         }
       }).catch(error => {
+        this.$store.commit("setStatusCategory", "error");
+        this.$store.commit("setStatusMessage", "Skill was not deleted. " + error);
         return ({
           errorCode: 500,
           errorMsg: "Internal Server Error",
