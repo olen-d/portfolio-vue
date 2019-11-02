@@ -11,6 +11,7 @@
         <p>
           Welcome {{ firstName }}!
         </p>
+        <SkillsTypes></SkillsTypes>
       </div>
       <div class="one columns">
         &nbsp;
@@ -21,8 +22,13 @@
 
 <script>
 import { mapGetters } from "vuex";
+import SkillsTypes from "./SkillsTypes";
 
 export default {
+  components: {
+    SkillsTypes
+  },
+
   name: "AdminDashboard",
 
   computed: {
