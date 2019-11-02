@@ -1,7 +1,7 @@
 <template>
-  <select v-model="skillNameSelect" class="u-quarter-width" :id="parent">
+  <select v-model="skillSelected" class="u-half-width" :id="parent">
     <option disabled value="">Select one...</option>
-    <option v-for="item in skillNames" :value="item.name" :key="item._id">{{ item.name }}</option>
+    <option v-for="{ _id, name } in skillNames" :value="{ parent, _id, name }" :key="_id">{{ name }}</option>
   </select>
 </template>
 
@@ -9,13 +9,20 @@
 export default {
   props: {
     parent: String,
-    type: String
+    type: String,
+    value: String
   },
 
   data: () => {
     return {
-      skillNames: "",
-      skillNameSelect: "",
+      skillNames: ""
+    }
+  },
+
+  computed: {
+    skillSelected: {
+      get() { return this.value },
+      set(v) { this.$emit("upsert-skill", v) }
     }
   },
 

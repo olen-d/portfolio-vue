@@ -1,10 +1,17 @@
 <template>
   <div id="skills-types">
+    <pre>
+            {{ skills }}
+    </pre>
     <div id="skill-type" v-for="skillType in skillsTypes" :key="skillType">
-      {{ skillType }}
+      <div class="u-quarter-width skill-type">
+        {{ skillType }}
+      </div>
       <SkillNamesbyType
         v-bind:parent="skillType"
         v-bind:type="skillType"
+        v-bind:value="''"
+        @upsert-skill="upsertSkill"
       >
       </SkillNamesbyType>
     </div>
@@ -21,7 +28,8 @@ export default {
 
   data: () => {
     return {
-      skillsTypes: ""
+      skillsTypes: "",
+      skills: []
     }
   },
 
@@ -34,6 +42,23 @@ export default {
       .then((json) => {
         this.skillsTypes = json.skillsTypes;
       });
+    },
+
+    findSkillIndexByParent(parent) {
+      const index = this.skills.map(item => item.parent).indexOf(parent);
+      return index;
+    },
+
+    upsertSkill(v) {
+      // Check to see if the parent exists in skills
+      const index = this.findSkillIndexByParent(v.parent)
+      if (index > -1) {
+        // If it does, update the skill with the new value
+        this.skills.splice(index, 1, v);
+      } else {
+        // If it doesn't, push the skill onto skills
+        this.skills.push(v);
+      }
     }
   },
 
@@ -44,5 +69,10 @@ export default {
 </script>
 
 <style scoped>
-
+.skill-type {
+  float:left;
+  padding-top:0.75rem;
+  padding-right:2rem;
+  text-align:right;
+}
 </style>
