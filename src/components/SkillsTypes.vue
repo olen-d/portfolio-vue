@@ -70,9 +70,10 @@ export default {
 
 <style scoped>
 .skill-type {
-  float:left;
-  padding-top:0.75rem;
-  padding-right:2rem;
-  text-align:right;
+  float: left;
+  padding-top: 0.75rem;
+  padding-right: 2rem;
+  text-transform: capitalize;
+  text-align: right;
 }
 </style>
