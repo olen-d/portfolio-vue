@@ -31,36 +31,14 @@
           &nbsp;
         </div>
         <div class="ten columns">
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Screenshot</th>
-                <th scope="col">Title</th>
-                <th scope="col">Description</th>
-                <th scope="col">Skills</th>
-                <th scope="col">Deployed Link</th>
-                <th scope="col">Repository Link</th>
-                <th scope="col">Sort Priority</th>
-                <th scope="col">Display</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody id="projects">
-              <tr v-for="{ _id, deployedLink, description, projectTitle, repoLink, screenshot, priority, show } in projects" :key="_id" :id="_id">
-                <td><img :src="`${publicPath}${screenshot}`" width="100" height="auto" :alt="`Screenshot of ${projectTitle}`"></td>
-                <td>{{ projectTitle }}</td>
-                <td>{{ description }}</td>
-                <td>&nbsp;</td>
-                <td class="url">{{ formatUrl(deployedLink) }}</td>
-                <td class="url">{{ formatUrl(repoLink) }}</td>
-                <td>{{ priority }}</td>
-                <td>{{ formatShow(show) }}</td>
-                <td><i @click="updateProject" class="fas fa-edit edit" :data-id="_id"></i></td>
-                <td><i @click="confirmDeleteProject" class="fas fa-times delete" :data-id="_id" :data-title="projectTitle"></i></td>
-              </tr>
-            </tbody>
-          </table>
+          <div v-for="{ _id, deployedLink, description, projectTitle, repoLink, screenshot, priority, show } in projects" :key="_id" :id="_id">
+            <i @click="updateProject" class="fas fa-edit edit" :data-id="_id"></i>
+            <i @click="confirmDeleteProject" class="fas fa-times delete" :data-id="_id" :data-title="projectTitle"></i>
+            <AdminProjectsCard
+              v-bind="{ _id, deployedLink, description, projectTitle, repoLink, screenshot, priority, show }"
+            >
+            </AdminProjectsCard>
+          </div>
         </div>
         <div class="one columns">
           &nbsp;
@@ -82,12 +60,14 @@
 </template>
 
 <script>
+import AdminProjectsCard from "./AdminProjectsCard";
 import ModalConfirmCancel from "./ModalConfirmCancel";
 
 export default {
   name: "AdminPagesProjects",
 
   components: {
+    AdminProjectsCard,
     ModalConfirmCancel
   },
 
