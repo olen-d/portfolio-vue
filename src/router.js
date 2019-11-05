@@ -6,8 +6,9 @@ import { store } from "./store/store";
 const Admin = () => import("./views/Admin.vue");
 const AdminDashboard = () => import("./views/AdminDashboard.vue");
 const AdminPages = () => import("./views/AdminPages.vue");
-const AdminPagesWelcome = () => import("./views/AdminPagesWelcome.vue");
+const AdminPagesProjects = () => import("./views/AdminPagesProjects.vue");
 const AdminPagesSkills = () => import("./views/AdminPagesSkills.vue");
+const AdminPagesWelcome = () => import("./views/AdminPagesWelcome.vue");
 
 Vue.use(Router);
 
@@ -43,14 +44,19 @@ export default new Router({
           component: AdminPages,
           children: [
             {
-              path: "welcome",
-              name: "adminPagesWelcome",
-              component: AdminPagesWelcome
+              path: "projects",
+              name: "adminPagesProjects",
+              component: AdminPagesProjects
             },
             {
               path: "skills",
               name: "adminPagesSkills",
               component: AdminPagesSkills
+            },
+            {
+              path: "welcome",
+              name: "adminPagesWelcome",
+              component: AdminPagesWelcome
             }
           ]
         }
