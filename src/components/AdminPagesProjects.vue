@@ -31,9 +31,11 @@
           &nbsp;
         </div>
         <div class="ten columns">
-          <div v-for="{ _id, deployedLink, description, projectTitle, repoLink, screenshot, priority, show } in projects" :key="_id" :id="_id">
-            <i @click="updateProject" class="fas fa-edit edit" :data-id="_id"></i>
-            <i @click="confirmDeleteProject" class="fas fa-times delete" :data-id="_id" :data-title="projectTitle"></i>
+          <div v-for="{ _id, deployedLink, description, projectTitle, repoLink, screenshot, priority, show } in projects" :key="_id" :id="_id" class="card-container">
+            <div class="card-actions">
+              <i @click="updateProject" class="fas fa-edit edit" :data-id="_id"></i>
+              <i @click="confirmDeleteProject" class="fas fa-times delete" :data-id="_id" :data-title="projectTitle"></i>
+            </div>
             <AdminProjectsCard
               v-bind="{ _id, deployedLink, description, projectTitle, repoLink, screenshot, priority, show }"
             >
@@ -132,8 +134,20 @@ export default {
 </script>
 
 <style scoped>
+.card-actions {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.card-container {
+  margin-top: 6rem;
+  padding: 0rem;
+  /* background-color:#aaa; */
+}
+
 .url {
   word-break: break-word;
   /* overflow: hidden; */
 }
+
 </style>
