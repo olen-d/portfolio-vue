@@ -51,7 +51,13 @@
           &nbsp;
         </div>
         <div class="ten columns">
-          <!-- Project form goes here -->
+          <AdminProjectsForm
+            v-bind:formAction="formAction"
+            v-bind:editProjectId="editProjectId"
+            v-bind:updateProjectData="updateProjectData"
+            @cancel-edit-project="cancelEditProject"
+          >
+          </AdminProjectsForm>
         </div>
         <div class="one columns">
           &nbsp;
@@ -63,13 +69,16 @@
 
 <script>
 import AdminProjectsCard from "./AdminProjectsCard";
+import AdminProjectsForm from "./AdminProjectsForm";
 import ModalConfirmCancel from "./ModalConfirmCancel";
+
 
 export default {
   name: "AdminPagesProjects",
 
   components: {
     AdminProjectsCard,
+    AdminProjectsForm,
     ModalConfirmCancel
   },
 
@@ -115,6 +124,10 @@ export default {
       }
     },
 
+    cancelEditProject() {
+      this.formAction = "Add";
+    },
+
     readProjects() {
         fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects`)
         .then((response) => {
@@ -124,6 +137,14 @@ export default {
           this.projects = json.projects;
         });
       },
+
+    updateProject(e) {
+      // 
+    },
+
+    confirmDeleteProject(e) {
+      //
+    }
   },
 
   created() {

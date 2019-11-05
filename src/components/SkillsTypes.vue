@@ -1,12 +1,6 @@
 <template>
   <div id="skills-types">
-    <pre>
-            {{ skills }}
-    </pre>
     <div id="skill-type" v-for="skillType in skillsTypes" :key="skillType">
-      <div class="u-quarter-width skill-type">
-        {{ skillType }}
-      </div>
       <SkillNamesbyType
         v-bind:parent="skillType"
         v-bind:type="skillType"
@@ -59,6 +53,7 @@ export default {
         // If it doesn't, push the skill onto skills
         this.skills.push(v);
       }
+      this.$emit("update-skills", this.skills);
     }
   },
 
@@ -69,11 +64,5 @@ export default {
 </script>
 
 <style scoped>
-.skill-type {
-  float: left;
-  padding-top: 0.75rem;
-  padding-right: 2rem;
-  text-transform: capitalize;
-  text-align: right;
-}
+
 </style>

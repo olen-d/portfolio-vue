@@ -11,7 +11,7 @@
       <label for="icon">Icon</label>
       <input v-model="skillData.icon" type="text" class="u-half-width" id="icon" placeholder="Icon style and name" />
       <label for="priority">Sort Priority</label>
-      <input v-model="skillData.priority" type="text" class="u-quarter-width" id="priority" placeholder="Number" />
+      <input v-model="skillData.priority" type="number" class="u-quarter-width" id="priority" placeholder="Number" />
       <label for="show">Display Skill?</label>
       <select v-model="skillData.show" class="u-quarter-width" id="show">
         <option disabled value="">Select one...</option>

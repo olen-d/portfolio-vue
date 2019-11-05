@@ -1,8 +1,11 @@
 <template>
-  <select v-model="skillSelected" class="u-half-width" :id="parent">
-    <option disabled value="">Select one...</option>
-    <option v-for="{ _id, name } in skillNames" :value="{ parent, _id, name }" :key="_id">{{ name }}</option>
-  </select>
+  <span class="fragment">
+    <label :for="parent" class="capitalize">{{ parent }}</label>
+    <select v-model="skillSelected" class="u-half-width" :id="parent">
+      <option disabled value="">Select one...</option>
+      <option v-for="{ _id, name } in skillNames" :value="{ parent, _id, name }" :key="_id">{{ name }}</option>
+    </select>
+  </span>
 </template>
 
 <script>
@@ -45,5 +48,7 @@ export default {
 </script>
 
 <style scoped>
-
+.capitalize {
+  text-transform: capitalize;
+}
 </style>
