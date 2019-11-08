@@ -4,7 +4,7 @@
       <img :src="`${publicPath}assets/images/${screenshot}`" width="200" height="auto" :alt="`Screenshot of ${title}`">
     </div>
     <div class="title">
-      {{ title }}
+      {{ title }} PUBLIC PATH: {{publicPath}}
     </div>
     <div class="description">
       {{ description }}
