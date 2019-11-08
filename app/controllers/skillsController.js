@@ -34,7 +34,7 @@ exports.create_skill = (req, res) => {
           type: type,
           name: name,
           description: description,
-          show: show,
+          show: parseInt(show),
           icon: icon,
           priority: parseInt(priority)
         };

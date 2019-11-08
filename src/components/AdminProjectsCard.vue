@@ -1,10 +1,10 @@
 <template>
   <div class="admin-projects-card">
     <div class="screenshot">
-      <img :src="`${publicPath}${screenshot}`" width="200" height="auto" :alt="`Screenshot of ${projectTitle}`">
+      <img :src="`${publicPath}assets/images/${screenshot}`" width="200" height="auto" :alt="`Screenshot of ${title}`">
     </div>
     <div class="title">
-      {{ projectTitle }}
+      {{ title }}
     </div>
     <div class="description">
       {{ description }}
@@ -36,7 +36,7 @@ export default {
     _id: String, 
     deployedLink: String, 
     description: String, 
-    projectTitle: String, 
+    title: String, 
     repoLink: String, 
     screenshot: String,
     priority: Number, 

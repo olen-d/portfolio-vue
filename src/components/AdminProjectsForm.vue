@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import { mapGetters, mapState } from "vuex";
+
 import SkillsTypes from "./SkillsTypes";
 
 export default {
@@ -67,7 +69,41 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters([
+      "jwt"
+    ]),
+
+    ...mapState([
+      "statusCategory",
+      "statusMessage"
+    ])
+  },
+
   methods: {
+    submitProjectForm() {
+      const userId = this.$store.getters.userId;
+      const { title, description, deployedLink, repoLink, priority, skills, show } = this.projectData;
+      const skillsArray = skills.map(skill => skill._id);
+      const priorityInt = parseInt(priority);
+      const showInt = parseInt(show);
+
+      const formInputs = {
+        userId,
+        title,
+        description,
+        deployedLink,
+        repoLink,
+        priority: priorityInt,
+        skills: JSON.stringify(skillsArray),
+        show: showInt
+      }
+
+      if (this.formAction === "Add") {
+        this.createProject(formInputs);
+      }
+    },
+
     onFileChange(e) {
       this.projectData.file = e.target.files[0];
     },
@@ -85,7 +121,48 @@ export default {
       });
     },
 
-    updateSkills(newSkills) {
+    createProject(formInputs) {
+      const entries = Object.entries(formInputs);
+      const file = this.projectData.file;
+
+      const formData = new FormData();
+
+      for (const [key, value] of entries) {
+        formData.append(key, value);
+      }
+
+      formData.append("file", file);
+
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects/create`, {
+      method: "post",
+      headers: {
+        "Authorization": `Bearer ${this.jwt}`
+      },
+        body: formData
+      }).then(response => {
+        return response.json();
+      }).then(dataObj => {
+        if (dataObj._id) {
+          this.$store.commit("setStatusCategory", "success");
+          this.$store.commit("setStatusMessage", "Project created successfully.");
+          this.$emit("skill-created", dataObj);
+          this.clearSkillForm();
+        } else {
+          this.$store.commit("setStatusCategory", "error");
+          this.$store.commit("setStatusMessage", "Project was not created. Database error. ");          
+        }
+      }).catch(error => {
+        this.$store.commit("setStatusCategory", "error");
+        this.$store.commit("setStatusMessage", "Project was not created. " + error);
+        return ({
+          type: "error",
+          message: "Internal server error.",
+          error: error
+        })
+      });
+    },
+
+    updateSkills(newSkills) { // DON'T CHANGE THIS SKILLS
       this.projectData.skills = newSkills;
     }
   }
