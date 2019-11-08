@@ -10,14 +10,55 @@ exports.create_project = (req, res) => {
     .checkAuth(req.headers)
     .then(response => {
       if (response.auth && response.administrator) {
-        console.log("NINJAS\n", req.body);
+        const {
+          userId,
+          title,
+          description,
+          deployedLink,
+          repoLink,
+          skills,
+          priority,
+          show
+        } = req.body;
+
+        const screenshot = req.file.filename;
+
+        const projectInfo = {
+          userId,
+          title,
+          description,
+          deployedLink,
+          repoLink,
+          screenshot,
+          skills: JSON.parse(skills),
+          priority: parseInt(priority),
+          show: parseInt(show)
+        };
+
+        createProject
+          .data(projectInfo)
+          .then(response => {
+            res.json(response);
+          })
+          .catch(err => {
+            res.status(500).json({
+              message: "Internal server error",
+              error: err
+            });
+          });
       } else {
-        // Not Authorized
-        // TODO: Remove the uploaded file and kick out an error.
+        res.status(403).json({
+          type: "error",
+          message:
+            "You must be logged in and have administrator privileges to perform this function"
+        });
       }
     })
     .catch(err => {
-      // Err
+      res.status(403).json({
+        message: "Could not create skill",
+        error: err
+      });
     });
 };
 

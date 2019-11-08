@@ -1,25 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
-// Middleware
-const multer = require("multer");
-
-// Set Storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/assets/images");
-  }, // TODO - FIX THIS TO FILTER FOR IMAGE FILES
-  filename: (req, file, cb) => {
-    cb(null, "fsf" + "-" + Date.now() + "-" + file.originalname);
-  }
-});
-const upload = multer({ storage: storage });
+const imageUpload = require("../helpers/upload-image");
 
 const projects_controller = require("../controllers/projectsController");
 
 router.post(
   "/projects/create",
-  upload.single("file"),
+  imageUpload,
   projects_controller.create_project
 );
 
