@@ -113,7 +113,7 @@ export default {
       this.$emit("cancel-edit-project");
     },
 
-    clearSkillForm() {
+    clearProjectForm() {
       const keys = Object.keys(this.projectData);
 
       keys.forEach(e => {
@@ -145,8 +145,8 @@ export default {
         if (dataObj._id) {
           this.$store.commit("setStatusCategory", "success");
           this.$store.commit("setStatusMessage", "Project created successfully.");
-          this.$emit("skill-created", dataObj);
-          this.clearSkillForm();
+          this.$emit("project-created", dataObj);
+          this.clearProjectForm();
         } else {
           this.$store.commit("setStatusCategory", "error");
           this.$store.commit("setStatusMessage", "Project was not created. Database error. ");          

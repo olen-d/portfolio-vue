@@ -55,6 +55,7 @@
             v-bind:formAction="formAction"
             v-bind:editProjectId="editProjectId"
             v-bind:updateProjectData="updateProjectData"
+            @project-created="projectCreated"
             @cancel-edit-project="cancelEditProject"
           >
           </AdminProjectsForm>
@@ -121,6 +122,19 @@ export default {
         return "Yes";
       } else {
         return "No";
+      }
+    },
+
+    createProjectsAddCard(e) {
+      this.projects.push(e);
+    },
+
+    projectCreated(e) {
+      if (e._id) {
+        this.createProjectsAddCard(e);
+        // TODO: Update status bar with success result
+      } else {
+        // TODO: Update status bar with fail result
       }
     },
 
