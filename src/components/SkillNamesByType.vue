@@ -2,7 +2,7 @@
   <span class="fragment">
     <label :for="parent" class="capitalize">{{ parent }}</label>
     <select v-model="skillSelected" class="u-half-width" :id="parent">
-      <option disabled value="">Select one...</option>
+      <option disabled :value="value">Select one...</option>
       <option v-for="{ _id, name } in skillNames" :value="{ parent, _id }" :key="_id">{{ name }}</option>
     </select>
   </span>

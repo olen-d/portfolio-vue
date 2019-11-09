@@ -4,7 +4,7 @@
       <SkillNamesbyType
         v-bind:parent="skillType"
         v-bind:type="skillType"
-        v-bind:value="''"
+        v-bind:value="value"
         @upsert-skill="upsertSkill"
       >
       </SkillNamesbyType>
@@ -20,7 +20,11 @@ export default {
     SkillNamesbyType
   },
 
-  data: () => {
+  props: {
+    value: String
+  },
+
+  data() {
     return {
       skillsTypes: "",
       skills: []
