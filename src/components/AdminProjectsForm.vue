@@ -81,6 +81,14 @@ export default {
     ])
   },
 
+  watch: {
+    editProjectId(newValue) {
+      if (this.formAction === "Edit") {
+        this.projectData = JSON.parse(JSON.stringify(this.updateProjectData));
+      }
+    }
+  },
+
   methods: {
     submitProjectForm() {
       const userId = this.$store.getters.userId;

@@ -125,6 +125,11 @@ export default {
       }
     },
 
+    findProjectIndexById(projectId) {
+      const index = this.projects.map(item => item._id).indexOf(projectId);
+      return index;
+    },
+
     createProjectsAddCard(e) {
       this.projects.push(e);
     },
@@ -152,12 +157,21 @@ export default {
         });
       },
 
-    updateProject(e) {
-      // 
-    },
-
     confirmDeleteProject(e) {
       //
+    },
+
+    updateProject(e) {
+      const projectId = e.currentTarget.getAttribute("data-id");
+      const projectIndex = this.findProjectIndexById(projectId);
+      const project = {...this.projects[projectIndex]}; // Clone the current project object
+
+      delete project._id;
+      delete project.userId;
+
+      this.updateProjectData = project;
+      this.formAction = "Edit";
+      this.editProjectId = projectId;
     }
   },
 
