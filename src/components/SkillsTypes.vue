@@ -2,7 +2,6 @@
   <div id="skills-types">
     <div id="skill-type" v-for="skillType in skillsTypes" :key="skillType">
       <SkillNamesbyType
-        v-bind:parent="skillType"
         v-bind:type="skillType"
         v-bind:value="value"
         @upsert-skill="upsertSkill"
@@ -42,20 +41,20 @@ export default {
       });
     },
 
-    findSkillIndexByParent(parent) {
-      const index = this.skills.map(item => item.parent).indexOf(parent);
+    findSkillIndexByType(type) {
+      const index = this.skills.map(item => item.type).indexOf(type);
       return index;
     },
 
-    upsertSkill(v) {
-      // Check to see if the parent exists in skills
-      const index = this.findSkillIndexByParent(v.parent)
+    upsertSkill(payload) {
+      // Check to see if the type exists in skills
+      const index = this.findSkillIndexByType(payload.type)
       if (index > -1) {
         // If it does, update the skill with the new value
-        this.skills.splice(index, 1, v);
+        this.skills.splice(index, 1, payload);
       } else {
         // If it doesn't, push the skill onto skills
-        this.skills.push(v);
+        this.skills.push(payload);
       }
       this.$emit("update-skills", this.skills);
     }

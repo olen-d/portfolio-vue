@@ -1,9 +1,9 @@
 <template>
   <span class="fragment">
-    <label :for="parent" class="capitalize">{{ parent }}</label>
-    <select v-model="skillSelected" class="u-half-width" :id="parent">
+    <label :for="type" class="capitalize">{{ type }}</label>
+    <select v-model="skillSelected" class="u-half-width" :id="type">
       <option disabled :value="value">Select one...</option>
-      <option v-for="{ _id, name } in skillNames" :value="{ parent, _id }" :key="_id">{{ name }}</option>
+      <option v-for="{ _id, name } in skillNames" :value="_id" :key="_id">{{ name }}</option>
     </select>
   </span>
 </template>
@@ -11,7 +11,6 @@
 <script>
 export default {
   props: {
-    parent: String,
     type: String,
     value: String
   },
@@ -25,7 +24,12 @@ export default {
   computed: {
     skillSelected: {
       get() { return this.value },
-      set(v) { this.$emit("upsert-skill", v) }
+      set(v) { 
+        const payload = new Object(); 
+        payload.type = this.type;
+        payload._id = v;
+        this.$emit("upsert-skill", payload) 
+      }
     }
   },
 
