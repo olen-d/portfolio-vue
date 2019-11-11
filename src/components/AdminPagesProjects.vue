@@ -57,6 +57,7 @@
             v-bind:updateProjectData="updateProjectData"
             @project-created="projectCreated"
             @cancel-edit-project="cancelEditProject"
+            @clear-dropdowns="clearDropdowns"
           >
           </AdminProjectsForm>
         </div>
@@ -89,14 +90,7 @@ export default {
       publicPath: process.env.BASE_URL,
       formAction: "Add",
       editProjectId: "",
-      updateProjectData: {
-        type: "",
-        name: "",
-        description: "",
-        icon: "",
-        priority: null,
-        show: ""
-      },
+      updateProjectData: { skills: [0] },
       showModalConfirmCancel: false,
       modalConfirmCancelProps: {
         payload: {
@@ -170,8 +164,13 @@ export default {
       delete project.userId;
 
       this.updateProjectData = project;
+
       this.formAction = "Edit";
       this.editProjectId = projectId;
+    },
+
+    clearDropdowns() {
+      this.updateProjectData.skills = [0];
     }
   },
 

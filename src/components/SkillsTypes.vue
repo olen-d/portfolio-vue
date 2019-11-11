@@ -3,7 +3,7 @@
     <div id="skill-type" v-for="skillType in skillsTypes" :key="skillType">
       <SkillNamesbyType
         v-bind:type="skillType"
-        v-bind:value="value"
+        v-bind:updateProjectDataSkills="updateProjectDataSkills"
         @upsert-skill="upsertSkill"
       >
       </SkillNamesbyType>
@@ -20,13 +20,14 @@ export default {
   },
 
   props: {
-    value: String
+    updateProjectDataSkills: Array
   },
 
   data() {
     return {
-      skillsTypes: "",
-      skills: []
+      skillsTypes: {},
+      skills: [],
+      skillsByType: {},
     }
   },
 

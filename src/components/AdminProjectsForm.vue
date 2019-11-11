@@ -18,7 +18,7 @@
         <label for="repoLink">Repository Link</label>
         <input v-model="projectData.repoLink" type="text" class="u-full-width" id="repoLink" placeholder="Enter a link to the repository where the project source code is hosted" required />
         <SkillsTypes
-          v-bind:value="value"
+          v-bind:updateProjectDataSkills="updateProjectData.skills"
           @update-skills="updateSkills"
         >
         </SkillsTypes>
@@ -65,8 +65,7 @@ export default {
         priority: null,
         skills: [],
         show: ""
-      },
-      value: "0"
+      }
     }
   },
 
@@ -133,7 +132,7 @@ export default {
       this.$refs.screenshotFileInput.type = 'file'
 
       // Clear the dropdowns
-      this.value = "";
+      this.$emit("clear-dropdowns","");
     },
 
     createProject(formInputs) {

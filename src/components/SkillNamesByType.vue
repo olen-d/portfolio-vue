@@ -2,7 +2,7 @@
   <span class="fragment">
     <label :for="type" class="capitalize">{{ type }}</label>
     <select v-model="skillSelected" class="u-half-width" :id="type">
-      <option disabled :value="value">Select one...</option>
+      <option disabled value="0">Select one...</option>
       <option v-for="{ _id, name } in skillNames" :value="_id" :key="_id">{{ name }}</option>
     </select>
   </span>
@@ -12,18 +12,31 @@
 export default {
   props: {
     type: String,
-    value: String
+    updateProjectDataSkills: Array
   },
 
   data: () => {
     return {
-      skillNames: ""
+      skillNames: "",
     }
   },
 
   computed: {
     skillSelected: {
-      get() { return this.value },
+      get() { 
+        if(this.updateProjectDataSkills[0] === 0) {
+        return "0";
+        } else {
+          const allSkills = this.skillNames.map(skill => skill._id);
+          const matches = this.updateProjectDataSkills.filter(v => allSkills.includes(v));
+          if (typeof(matches[0]) === "undefined") {
+            return "0";
+          } else {
+            return matches[0];
+          }
+        }
+      },
+
       set(v) { 
         const payload = new Object(); 
         payload.type = this.type;
