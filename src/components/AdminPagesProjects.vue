@@ -160,6 +160,8 @@ export default {
       const projectIndex = this.findProjectIndexById(projectId);
       const project = {...this.projects[projectIndex]}; // Clone the current project object
 
+      project.file = "";
+
       delete project._id;
       delete project.userId;
 

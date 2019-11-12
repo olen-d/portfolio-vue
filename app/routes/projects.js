@@ -13,4 +13,10 @@ router.post(
 
 router.get("/projects", projects_controller.read_projects);
 
+router.put(
+  "/projects/update/:project_id",
+  imageUpload,
+  projects_controller.update_project
+);
+
 module.exports = router;

@@ -11,7 +11,7 @@
         <p>
           Welcome {{ firstName }}!
         </p>
-        <SkillsTypes></SkillsTypes>
+        <SkillsTypes v-bind:updateProjectDataSkills="[0]"></SkillsTypes>
       </div>
       <div class="one columns">
         &nbsp;
