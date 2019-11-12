@@ -213,9 +213,9 @@ export default {
       }).then(dataObj => {
         if(dataObj.n === 1 && dataObj.ok === 1) {
           this.$store.commit("setStatusCategory", "success");
-          this.$store.commit("setStatusMessage", "Skill updated successfully.");
-          this.$emit("skill-updated", skillId);
-          this.clearSkillForm();
+          this.$store.commit("setStatusMessage", "Project updated successfully.");
+          this.$emit("project-updated", projectId);
+          this.clearProjectForm();
         } else {
           this.$store.commit("setStatusCategory", "error");
           this.$store.commit("setStatusMessage", "Project was not updated. Database error. ");
