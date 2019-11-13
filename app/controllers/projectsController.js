@@ -1,6 +1,9 @@
 // Models
 const createProject = require("../models/createProject");
+
 const readProjects = require("../models/readProjects");
+const readProjectById = require("../models/readProjectById");
+
 const updateProject = require("../models/updateProject");
 
 // Helpers
@@ -71,6 +74,22 @@ exports.read_projects = (req, res) => {
         projects: resolve
       };
       res.send(projectsObj);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+};
+
+exports.read_project_by_id = (req, res) => {
+  const projectId = req.params.project_id;
+
+  readProjectById
+    .data(projectId)
+    .then(resolve => {
+      const projectObj = {
+        project: resolve
+      };
+      res.send(projectObj);
     })
     .catch(err => {
       res.json(err);

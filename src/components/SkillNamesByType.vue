@@ -1,5 +1,5 @@
 <template>
-  <span class="fragment">
+  <span class="fragment">SKILL NAMES {{ skillNames }}
     <label :for="type" class="capitalize">{{ type }}</label>
     <select v-model="skillSelected" class="u-half-width" :id="type">
       <option disabled value="0">Select one...</option>

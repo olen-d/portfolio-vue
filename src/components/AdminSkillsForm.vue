@@ -100,7 +100,7 @@ export default {
       const keys = Object.keys(this.skillData);
 
       keys.forEach(e => {
-        this.skillData[e] = null;
+        this.skillData[e] = "";
       });
     },
 

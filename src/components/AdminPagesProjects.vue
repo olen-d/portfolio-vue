@@ -1,5 +1,5 @@
 <template>
-  <div id="admin-pages-projects">
+  <div id="admin-pages-projects"><pre>{{ updateProjectData }}</pre>
     <ModalConfirmCancel
       v-if="showModalConfirmCancel"
       v-bind:payload = modalConfirmCancelProps.payload
@@ -56,6 +56,7 @@
             v-bind:editProjectId="editProjectId"
             v-bind:updateProjectData="updateProjectData"
             @project-created="projectCreated"
+            @project-updated="projectUpdated"
             @cancel-edit-project="cancelEditProject"
             @clear-dropdowns="clearDropdowns"
           >
@@ -137,6 +138,43 @@ export default {
       }
     },
 
+    updateProjectCard(projectId) {
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects/id/${projectId}`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        const updatedProjectData = json.project;
+        const index = this.findProjectIndexById(projectId);
+
+        const { _id, userId, title, description, deployedLink, repoLink, screenshot, skills, priority, show, updatedAt } = updatedProjectData;
+
+        const updatedProjectObj = {
+          _id,
+          userId,
+          title,
+          description,
+          deployedLink,
+          repoLink,
+          screenshot,
+          skills,
+          priority,
+          show,
+          updatedAt
+        };
+
+        this.projects.splice(index, 1, updatedProjectObj);
+
+        this.formAction = "Add";
+        this.projectSkillId = "";
+      });
+    },
+
+    projectUpdated(projectId) {
+      this.updateProjectCard(projectId);
+      // Update status bar with result
+    },
+
     cancelEditProject() {
       this.formAction = "Add";
     },
@@ -157,14 +195,17 @@ export default {
 
     updateProject(e) {
       const projectId = e.currentTarget.getAttribute("data-id");
+console.log("PROJECT ID:\n", projectId);
       const projectIndex = this.findProjectIndexById(projectId);
+console.log("INDEX\n",projectIndex);
       const project = {...this.projects[projectIndex]}; // Clone the current project object
 
       project.file = "";
 
       delete project._id;
       delete project.userId;
-
+      // TODO IMPORTANT - UPDATE PROJECT SKILLS TO MAP { type and _id }
+console.log("PROJECT\n", project);
       this.updateProjectData = project;
 
       this.formAction = "Edit";

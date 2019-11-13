@@ -168,12 +168,16 @@ export default {
 
         const { type, name, description, show, icon, priority } = updatedSkillData;
 
-        this.skills[index].type = type;
-        this.skills[index].name = name;
-        this.skills[index].description = description;
-        this.skills[index].show = show;
-        this.skills[index].icon = icon;
-        this.skills[index].priority = priority;
+        const updatedSkillsObj = {
+          type,
+          name,
+          description,
+          show,
+          icon,
+          priority
+        }
+
+        this.skills.splice(index, 1, updatedSkillsObj);
 
         this.formAction = "Add";
         this.editSkillId = "";
