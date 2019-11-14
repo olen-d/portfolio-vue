@@ -1,11 +1,5 @@
 <template>
   <div id="admin-projects-form">
-    <div>
-      <pre>
-        PROJ DATA {{ projectData }}
-        {{ projectData.skills}}
-      </pre>
-    </div>
     <h3>{{ formAction }} a Project</h3>
       <form id="projects-form" enctype="multipart/form-data">
         <label for="name">Title</label>
@@ -97,9 +91,7 @@ export default {
     submitProjectForm() {
       const userId = this.$store.getters.userId;
       const { title, description, deployedLink, repoLink, priority, screenshot, skills, show } = this.projectData;
-console.log("ORIGINAL SKILLS\n",skills);
-      skillsArray = skills.map(skill => skill._id);
-console.log("SKILLS ARRAY\n",skillsArray);
+      const skillsArray = skills.map(skill => skill._id);
       const priorityInt = parseInt(priority);
       const showInt = parseInt(show);
 
@@ -114,7 +106,6 @@ console.log("SKILLS ARRAY\n",skillsArray);
         skills: JSON.stringify(skillsArray),
         show: showInt
       }
-console.log("ORIGINAL\n", formInputs);
       if (this.formAction === "Add") {
         this.createProject(formInputs);
       } else if (this.formAction === "Edit") {
@@ -189,11 +180,9 @@ console.log("ORIGINAL\n", formInputs);
     updateProject(formInputs) {
       const entries = Object.entries(formInputs);
       const file = this.projectData.file;
-console.log("FORM INPUTS\n",formInputs);
       const formData = new FormData();
 
       for (const [key, value] of entries) {
-        console.log(key, value, "\n");
         formData.append(key, value);
       }
 
@@ -235,7 +224,6 @@ console.log("FORM INPUTS\n",formInputs);
     },
 
     updateSkills(newSkills) { // DON'T CHANGE THIS SKILLS
-    console.log("NEW SKILLS TYPE\n", typeof newSkills, "\nNEW SKILLS\n",newSkills);
       this.projectData.skills = newSkills;
     }
   }

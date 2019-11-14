@@ -10,6 +10,7 @@ router.get(
   "/skills/names/:skill_type",
   skills_controller.read_skill_names_by_type
 );
+router.get("/skills/to/type", skills_controller.read_skills_to_type);
 router.get("/skills/top/:limit", skills_controller.read_skills_top);
 router.get("/skills/types", skills_controller.read_skills_types);
 router.get("/skills/id/:skill_id", skills_controller.read_skill_by_id);

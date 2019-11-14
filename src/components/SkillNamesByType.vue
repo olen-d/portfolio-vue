@@ -1,5 +1,5 @@
 <template>
-  <span class="fragment">SKILL NAMES {{ skillNames }}
+  <span class="fragment">
     <label :for="type" class="capitalize">{{ type }}</label>
     <select v-model="skillSelected" class="u-half-width" :id="type">
       <option disabled value="0">Select one...</option>
@@ -27,8 +27,9 @@ export default {
         if(this.updateProjectDataSkills[0] === 0) {
         return "0";
         } else {
-          const allSkills = this.skillNames.map(skill => skill._id);
-          const matches = this.updateProjectDataSkills.filter(v => allSkills.includes(v));
+          const allSkillIds = this.skillNames.map(skill => skill._id);
+          const projectSkillIds = this.updateProjectDataSkills.map(skill => skill._id);
+          const matches = projectSkillIds.filter(v => allSkillIds.includes(v));
           if (typeof(matches[0]) === "undefined") {
             return "0";
           } else {
@@ -38,9 +39,9 @@ export default {
       },
 
       set(v) { 
-        const payload = new Object(); 
-        payload.type = this.type;
+        const payload = new Object();
         payload._id = v;
+        payload.type = this.type;
         this.$emit("upsert-skill", payload) 
       }
     }

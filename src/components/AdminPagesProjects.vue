@@ -1,5 +1,5 @@
 <template>
-  <div id="admin-pages-projects"><pre>{{ updateProjectData }}</pre>
+  <div id="admin-pages-projects">
     <ModalConfirmCancel
       v-if="showModalConfirmCancel"
       v-bind:payload = modalConfirmCancelProps.payload
@@ -88,6 +88,7 @@ export default {
   data: () => {
     return {
       projects: [],
+      skillsTypes: [],
       publicPath: process.env.BASE_URL,
       formAction: "Add",
       editProjectId: "",
@@ -189,23 +190,35 @@ export default {
         });
       },
 
+    readSkillsToType() {
+        fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/to/type`)
+        .then((response) => {
+          return response.json();
+        })
+        .then((json) => {
+          this.skillsTypes = json.skills;
+        });
+    },
+
     confirmDeleteProject(e) {
       //
     },
 
     updateProject(e) {
       const projectId = e.currentTarget.getAttribute("data-id");
-console.log("PROJECT ID:\n", projectId);
       const projectIndex = this.findProjectIndexById(projectId);
-console.log("INDEX\n",projectIndex);
       const project = {...this.projects[projectIndex]}; // Clone the current project object
 
       project.file = "";
 
       delete project._id;
-      delete project.userId;
-      // TODO IMPORTANT - UPDATE PROJECT SKILLS TO MAP { type and _id }
-console.log("PROJECT\n", project);
+      // delete project.userId;
+ 
+      project.skills.forEach((skill, i) => {
+        const index = this.skillsTypes.map(item => item._id).indexOf(skill);
+        project.skills[i] = this.skillsTypes[index];
+      });
+
       this.updateProjectData = project;
 
       this.formAction = "Edit";
@@ -219,6 +232,7 @@ console.log("PROJECT\n", project);
 
   created() {
     this.readProjects();
+    this.readSkillsToType();
   }
 }
 
