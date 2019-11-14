@@ -2,8 +2,10 @@
 const createSkill = require("../models/createSkill");
 
 const readSkills = require("../models/readSkills");
+
 const readSkillNamesByType = require("../models/readSkillNamesByType");
 const readSkillsTop = require("../models/readSkillsTop");
+const readSkillsToType = require("../models/readSkillsToType");
 const readSkillsTypes = require("../models/readSkillsTypes");
 const readSkillById = require("../models/readSkillById");
 
@@ -105,6 +107,20 @@ exports.read_skills_top = (req, res) => {
         skills: resolve
       };
       res.send(skillsTopObj);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+};
+
+exports.read_skills_to_type = (req, res) => {
+  readSkillsToType
+    .data()
+    .then(resolve => {
+      const skillsObj = {
+        skills: resolve
+      };
+      res.send(skillsObj);
     })
     .catch(err => {
       res.json(err);

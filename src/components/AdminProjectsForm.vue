@@ -1,10 +1,5 @@
 <template>
   <div id="admin-projects-form">
-    <div>
-      <pre>
-        {{ projectData }}
-      </pre>
-    </div>
     <h3>{{ formAction }} a Project</h3>
       <form id="projects-form" enctype="multipart/form-data">
         <label for="name">Title</label>
@@ -18,7 +13,7 @@
         <label for="repoLink">Repository Link</label>
         <input v-model="projectData.repoLink" type="text" class="u-full-width" id="repoLink" placeholder="Enter a link to the repository where the project source code is hosted" required />
         <SkillsTypes
-          v-bind:value="value"
+          v-bind:updateProjectDataSkills="updateProjectData.skills"
           @update-skills="updateSkills"
         >
         </SkillsTypes>
@@ -32,7 +27,7 @@
         </select>
         <div class="right">
           <button v-on:click.prevent="submitProjectForm" class="button-primary" id="project-submit">{{ formAction }} Project</button>
-          <button v-if="formAction === 'Edit'" v-on:click.prevent="cancelProjectSkill" class="edit-button-cancel">cancel</button>
+          <button v-if="formAction === 'Edit'" v-on:click.prevent="cancelEditProject" class="edit-button-cancel">cancel</button>
       </div>
       </form>
   </div>
@@ -59,14 +54,13 @@ export default {
       projectData: {
         title: "",
         description: "",
-        file: null,
+        file: "",
         deployedLink: "",
         repoLink: "",
-        priority: null,
+        priority: "",
         skills: [],
         show: ""
-      },
-      value: "0"
+      }
     }
   },
 
@@ -78,13 +72,25 @@ export default {
     ...mapState([
       "statusCategory",
       "statusMessage"
-    ])
+    ]),
+
+    fl() {
+      return typeof(this.projectData.file);
+    }
+  },
+
+  watch: {
+    editProjectId(newValue) {
+      if (this.formAction === "Edit") {
+        this.projectData = JSON.parse(JSON.stringify(this.updateProjectData));
+      }
+    }
   },
 
   methods: {
     submitProjectForm() {
       const userId = this.$store.getters.userId;
-      const { title, description, deployedLink, repoLink, priority, skills, show } = this.projectData;
+      const { title, description, deployedLink, repoLink, priority, screenshot, skills, show } = this.projectData;
       const skillsArray = skills.map(skill => skill._id);
       const priorityInt = parseInt(priority);
       const showInt = parseInt(show);
@@ -96,12 +102,14 @@ export default {
         deployedLink,
         repoLink,
         priority: priorityInt,
+        screenshot,
         skills: JSON.stringify(skillsArray),
         show: showInt
       }
-
       if (this.formAction === "Add") {
         this.createProject(formInputs);
+      } else if (this.formAction === "Edit") {
+        this.updateProject(formInputs);
       }
     },
 
@@ -109,8 +117,8 @@ export default {
       this.projectData.file = e.target.files[0];
     },
 
-    cancelEditSkill() {
-      this.clearSkillForm();
+    cancelEditProject() {
+      this.clearProjectForm();
       this.$emit("cancel-edit-project");
     },
 
@@ -118,14 +126,14 @@ export default {
       const keys = Object.keys(this.projectData);
 
       keys.forEach(e => {
-        this.projectData[e] = null;
+        this.projectData[e] = "";
       });
 
       this.$refs.screenshotFileInput.type = 'text'
       this.$refs.screenshotFileInput.type = 'file'
 
       // Clear the dropdowns
-      this.value = "";
+      this.$emit("clear-dropdowns","");
     },
 
     createProject(formInputs) {
@@ -169,6 +177,52 @@ export default {
       });
     },
 
+    updateProject(formInputs) {
+      const entries = Object.entries(formInputs);
+      const file = this.projectData.file;
+      const formData = new FormData();
+
+      for (const [key, value] of entries) {
+        formData.append(key, value);
+      }
+
+      if (typeof(file) === "object") {
+        formData.append("file", file);
+      } else {
+        // Multer None...
+      }
+      
+      const projectId = this.editProjectId;
+
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects/update/${projectId}`, {
+      method: "put",
+      headers: {
+        "Authorization": `Bearer ${this.jwt}`
+      },
+        body: formData
+      }).then(response => {
+        return response.json();
+      }).then(dataObj => {
+        if(dataObj.n === 1 && dataObj.ok === 1) {
+          this.$store.commit("setStatusCategory", "success");
+          this.$store.commit("setStatusMessage", "Project updated successfully.");
+          this.$emit("project-updated", projectId);
+          this.clearProjectForm();
+        } else {
+          this.$store.commit("setStatusCategory", "error");
+          this.$store.commit("setStatusMessage", "Project was not updated. Database error. ");
+        }
+      }).catch(error => {
+        this.$store.commit("setStatusCategory", "error");
+        this.$store.commit("setStatusMessage", "Project was not updated. " + error);
+        return ({
+          errorCode: 500,
+          errorMsg: "Internal Server Error",
+          errorDetail: error
+        })
+      });
+    },
+
     updateSkills(newSkills) { // DON'T CHANGE THIS SKILLS
       this.projectData.skills = newSkills;
     }
@@ -177,5 +231,7 @@ export default {
 </script>
 
 <style scoped>
-
+.edit-button-cancel {
+  margin-left:1rem;
+}
 </style>

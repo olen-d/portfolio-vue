@@ -1,9 +1,9 @@
 <template>
   <span class="fragment">
-    <label :for="parent" class="capitalize">{{ parent }}</label>
-    <select v-model="skillSelected" class="u-half-width" :id="parent">
-      <option disabled :value="value">Select one...</option>
-      <option v-for="{ _id, name } in skillNames" :value="{ parent, _id }" :key="_id">{{ name }}</option>
+    <label :for="type" class="capitalize">{{ type }}</label>
+    <select v-model="skillSelected" class="u-half-width" :id="type">
+      <option disabled value="0">Select one...</option>
+      <option v-for="{ _id, name } in skillNames" :value="_id" :key="_id">{{ name }}</option>
     </select>
   </span>
 </template>
@@ -11,21 +11,39 @@
 <script>
 export default {
   props: {
-    parent: String,
     type: String,
-    value: String
+    updateProjectDataSkills: Array
   },
 
   data: () => {
     return {
-      skillNames: ""
+      skillNames: "",
     }
   },
 
   computed: {
     skillSelected: {
-      get() { return this.value },
-      set(v) { this.$emit("upsert-skill", v) }
+      get() { 
+        if(this.updateProjectDataSkills[0] === 0) {
+        return "0";
+        } else {
+          const allSkillIds = this.skillNames.map(skill => skill._id);
+          const projectSkillIds = this.updateProjectDataSkills.map(skill => skill._id);
+          const matches = projectSkillIds.filter(v => allSkillIds.includes(v));
+          if (typeof(matches[0]) === "undefined") {
+            return "0";
+          } else {
+            return matches[0];
+          }
+        }
+      },
+
+      set(v) { 
+        const payload = new Object();
+        payload._id = v;
+        payload.type = this.type;
+        this.$emit("upsert-skill", payload) 
+      }
     }
   },
 

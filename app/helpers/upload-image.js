@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
   const upload = multer({ storage: storage });
   upload.single("file")(req, res, err => {
     if (err) {
-      return err;
+      return next(err);
     } else {
       next();
     }

@@ -56,7 +56,9 @@
             v-bind:editProjectId="editProjectId"
             v-bind:updateProjectData="updateProjectData"
             @project-created="projectCreated"
+            @project-updated="projectUpdated"
             @cancel-edit-project="cancelEditProject"
+            @clear-dropdowns="clearDropdowns"
           >
           </AdminProjectsForm>
         </div>
@@ -86,17 +88,11 @@ export default {
   data: () => {
     return {
       projects: [],
+      skillsTypes: [],
       publicPath: process.env.BASE_URL,
       formAction: "Add",
       editProjectId: "",
-      updateProjectData: {
-        type: "",
-        name: "",
-        description: "",
-        icon: "",
-        priority: null,
-        show: ""
-      },
+      updateProjectData: { skills: [0] },
       showModalConfirmCancel: false,
       modalConfirmCancelProps: {
         payload: {
@@ -125,6 +121,11 @@ export default {
       }
     },
 
+    findProjectIndexById(projectId) {
+      const index = this.projects.map(item => item._id).indexOf(projectId);
+      return index;
+    },
+
     createProjectsAddCard(e) {
       this.projects.push(e);
     },
@@ -136,6 +137,43 @@ export default {
       } else {
         // TODO: Update status bar with fail result
       }
+    },
+
+    updateProjectCard(projectId) {
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects/id/${projectId}`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        const updatedProjectData = json.project;
+        const index = this.findProjectIndexById(projectId);
+
+        const { _id, userId, title, description, deployedLink, repoLink, screenshot, skills, priority, show, updatedAt } = updatedProjectData;
+
+        const updatedProjectObj = {
+          _id,
+          userId,
+          title,
+          description,
+          deployedLink,
+          repoLink,
+          screenshot,
+          skills,
+          priority,
+          show,
+          updatedAt
+        };
+
+        this.projects.splice(index, 1, updatedProjectObj);
+
+        this.formAction = "Add";
+        this.projectSkillId = "";
+      });
+    },
+
+    projectUpdated(projectId) {
+      this.updateProjectCard(projectId);
+      // Update status bar with result
     },
 
     cancelEditProject() {
@@ -152,17 +190,49 @@ export default {
         });
       },
 
-    updateProject(e) {
-      // 
+    readSkillsToType() {
+        fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/to/type`)
+        .then((response) => {
+          return response.json();
+        })
+        .then((json) => {
+          this.skillsTypes = json.skills;
+        });
     },
 
     confirmDeleteProject(e) {
       //
+    },
+
+    updateProject(e) {
+      const projectId = e.currentTarget.getAttribute("data-id");
+      const projectIndex = this.findProjectIndexById(projectId);
+      const project = {...this.projects[projectIndex]}; // Clone the current project object
+
+      project.file = "";
+
+      delete project._id;
+      // delete project.userId;
+ 
+      project.skills.forEach((skill, i) => {
+        const index = this.skillsTypes.map(item => item._id).indexOf(skill);
+        project.skills[i] = this.skillsTypes[index];
+      });
+
+      this.updateProjectData = project;
+
+      this.formAction = "Edit";
+      this.editProjectId = projectId;
+    },
+
+    clearDropdowns() {
+      this.updateProjectData.skills = [0];
     }
   },
 
   created() {
     this.readProjects();
+    this.readSkillsToType();
   }
 }
 
