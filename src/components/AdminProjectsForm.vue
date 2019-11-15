@@ -12,11 +12,11 @@
         <input v-model="projectData.deployedLink" type="text" class="u-full-width" id="deployedLink" placeholder="Enter a link to the deployed project" required />
         <label for="repoLink">Repository Link</label>
         <input v-model="projectData.repoLink" type="text" class="u-full-width" id="repoLink" placeholder="Enter a link to the repository where the project source code is hosted" required />
-        <SkillsTypes
+        <Skills
           v-bind:updateProjectDataSkills="updateProjectData.skills"
           @update-skills="updateSkills"
         >
-        </SkillsTypes>
+        </Skills>
         <label for="priority">Sort Priority</label>
         <input v-model="projectData.priority" type="number" class="u-quarter-width" id="priority" placeholder="Number" />
         <label for="show">Display Project?</label>
@@ -36,11 +36,11 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 
-import SkillsTypes from "./SkillsTypes";
+import Skills from "./Skills";
 
 export default {
   components: {
-    SkillsTypes
+    Skills
   },
   
   props: {
