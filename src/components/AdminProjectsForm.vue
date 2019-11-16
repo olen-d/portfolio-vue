@@ -91,7 +91,7 @@ export default {
     submitProjectForm() {
       const userId = this.$store.getters.userId;
       const { title, description, deployedLink, repoLink, priority, screenshot, skills, show } = this.projectData;
-      const skillsArray = skills.map(skill => skill._id);
+      // const skillsArray = skills.map(skill => skill._id);
       const priorityInt = parseInt(priority);
       const showInt = parseInt(show);
 
@@ -103,7 +103,7 @@ export default {
         repoLink,
         priority: priorityInt,
         screenshot,
-        skills: JSON.stringify(skillsArray),
+        skills: JSON.stringify(skills),
         show: showInt
       }
       if (this.formAction === "Add") {

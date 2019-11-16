@@ -1,6 +1,6 @@
 <template>
   <span class="fragment">
-    <label :for="'skill'+selectNumber" class="capitalize">Skill</label>
+    <label :for="'skill'+selectNumber">Skill</label>
     <select v-model="selectedOption" class="u-half-width" :id="'skill'+selectNumber">
       <option disabled value="0">Select a skill...</option>
       <option v-for="{ _id, name } in remainingSkills" :value="_id" :key="_id">{{ name }}</option>
@@ -89,7 +89,5 @@ export default {
 </script>
 
 <style scoped>
-.capitalize {
-  text-transform: capitalize;
-}
+
 </style>

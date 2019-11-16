@@ -1,5 +1,5 @@
 <template>
-  <div id="skills-types">SKILLS: <pre>{{ skills }}</pre>
+  <div id="skills-types">
     <div id="skill-type" v-for="(n, index) in skillCount" :key="n">
       <SkillNames
         v-bind:skillsSelected="skills"
