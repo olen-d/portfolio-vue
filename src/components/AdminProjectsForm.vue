@@ -1,6 +1,6 @@
 <template>
   <div id="admin-projects-form">
-    <h3>{{ formAction }} a Project</h3>
+    <h3>{{ formAction }} a Project</h3>AdminProjectsForm.vue: <br /><pre>{{ projectData }}</pre>
       <form id="projects-form" enctype="multipart/form-data">
         <label for="name">Title</label>
         <input v-model="projectData.title" type="text" class="u-full-width" id="title" placeholder="The project title" required />
@@ -12,11 +12,12 @@
         <input v-model="projectData.deployedLink" type="text" class="u-full-width" id="deployedLink" placeholder="Enter a link to the deployed project" required />
         <label for="repoLink">Repository Link</label>
         <input v-model="projectData.repoLink" type="text" class="u-full-width" id="repoLink" placeholder="Enter a link to the repository where the project source code is hosted" required />
-        <Skills
-          v-bind:updateProjectDataSkills="updateProjectData.skills"
+        <SkillsCheckboxes
+          v-bind:clearSkills="clearSkills"
           @update-skills="updateSkills"
+          @reset-clear-skills="resetClearSkills"
         >
-        </Skills>
+        </SkillsCheckboxes>
         <label for="priority">Sort Priority</label>
         <input v-model="projectData.priority" type="number" class="u-quarter-width" id="priority" placeholder="Number" />
         <label for="show">Display Project?</label>
@@ -36,11 +37,11 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 
-import Skills from "./Skills";
+import SkillsCheckboxes from "./SkillsCheckboxes";
 
 export default {
   components: {
-    Skills
+    SkillsCheckboxes
   },
   
   props: {
@@ -60,7 +61,8 @@ export default {
         priority: "",
         skills: [],
         show: ""
-      }
+      },
+      clearSkills: false
     }
   },
 
@@ -91,7 +93,6 @@ export default {
     submitProjectForm() {
       const userId = this.$store.getters.userId;
       const { title, description, deployedLink, repoLink, priority, screenshot, skills, show } = this.projectData;
-      // const skillsArray = skills.map(skill => skill._id);
       const priorityInt = parseInt(priority);
       const showInt = parseInt(show);
 
@@ -132,8 +133,12 @@ export default {
       this.$refs.screenshotFileInput.type = 'text'
       this.$refs.screenshotFileInput.type = 'file'
 
-      // Clear the dropdowns
-      this.$emit("clear-dropdowns","");
+      // Clear the checkboxes
+      this.clearSkills = true;
+    },
+
+    resetClearSkills(status) {
+      this.clearSkills = status;
     },
 
     createProject(formInputs) {

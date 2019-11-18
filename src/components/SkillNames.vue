@@ -34,8 +34,8 @@ export default {
         if(this.updateProjectDataSkills[0] === 0) {
         return "0";
         } else {
-          const projectSkillIds = this.updateProjectDataSkills.map(skill => skill._id);
-          const matches = projectSkillIds.filter(v => this.allSkillIds.includes(v));
+          // const projectSkillIds = this.updateProjectDataSkills.map(skill => skill._id);
+          const matches = this.updateProjectDataSkills.filter(v => this.allSkillIds.includes(v));
           if (typeof(matches[0]) === "undefined") {
             return "0";
           } else {
@@ -48,7 +48,7 @@ export default {
         const sc = this.skillCount + 1;
         const payload = new Object();
         payload._id = v;
-        
+        console.log("PAYLOAD\n",payload);
         this.$emit("upsert-skill", payload);
         this.$emit("add-skill-select", sc);
       }
