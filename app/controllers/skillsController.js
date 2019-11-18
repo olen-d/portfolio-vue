@@ -2,6 +2,7 @@
 const createSkill = require("../models/createSkill");
 
 const readSkills = require("../models/readSkills");
+const readSkillsSorted = require("../models/readSkillsSorted");
 
 const readSkillNamesByType = require("../models/readSkillNamesByType");
 const readSkillsTop = require("../models/readSkillsTop");
@@ -71,6 +72,29 @@ exports.create_skill = (req, res) => {
 exports.read_skills = (req, res) => {
   readSkills
     .data()
+    .then(resolve => {
+      const skillsObj = {
+        skills: resolve
+      };
+      res.send(skillsObj);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+};
+
+exports.read_skills_sorted = (req, res) => {
+  const skillSort = req.params.skill_sort;
+  const sortFields = skillSort.split("+");
+
+  const aggregation = new Object();
+
+  sortFields.forEach(i => {
+    aggregation[i] = 1;
+  });
+
+  readSkillsSorted
+    .data(aggregation)
     .then(resolve => {
       const skillsObj = {
         skills: resolve
@@ -239,3 +263,4 @@ exports.delete_skill = (req, res) => {
       });
     });
 };
+
