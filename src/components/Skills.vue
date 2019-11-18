@@ -1,5 +1,5 @@
 <template>
-  <div id="skills-types">
+  <div id="skills-types">skills.vue: {{ skills }}
     <div id="skill-type" v-for="(n, index) in skillCount" :key="n">
       <SkillNames
         v-bind:skillsSelected="skills"
@@ -29,29 +29,29 @@ export default {
   data() {
     return {
       skillCount: 1,
-      skillsTypes: {},
+      // skillsTypes: {},
       skills: [],
-      skillsByType: {}
+      // skillsByType: {}
     }
   },
 
   methods: {
-    readSkillsTypes() {
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/types`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.skillsTypes = json.skillsTypes;
-      });
-    },
+    // readSkillsTypes() {
+    //   fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/types`)
+    //   .then((response) => {
+    //     return response.json();
+    //   })
+    //   .then((json) => {
+    //     this.skillsTypes = json.skillsTypes;
+    //   });
+    // },
 
     findSkillIndexById(_id) {
       const index = this.skills.indexOf(_id);
       return index;
     },
 
-    upsertSkill(payload) {
+    upsertSkill(payload) { console.log("SKILLS.VUE -- UPSERT PAYLOAD\n", payload);
       // Check to see if the skill exists in skills
       const index = this.findSkillIndexById(payload._id)
       if (index === -1) {
@@ -71,7 +71,8 @@ export default {
   },
 
   created() {
-    this.readSkillsTypes();
+    // this.readSkillsTypes();
+    
   }
 }
 </script>

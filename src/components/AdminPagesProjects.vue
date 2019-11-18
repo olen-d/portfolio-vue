@@ -88,7 +88,7 @@ export default {
   data: () => {
     return {
       projects: [],
-      skillsTypes: [],
+      // skillsTypes: [],
       publicPath: process.env.BASE_URL,
       formAction: "Add",
       editProjectId: "",
@@ -190,15 +190,15 @@ export default {
         });
       },
 
-    readSkillsToType() {
-        fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/to/type`)
-        .then((response) => {
-          return response.json();
-        })
-        .then((json) => {
-          this.skillsTypes = json.skills;
-        });
-    },
+    // readSkillsToType() {
+    //     fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/to/type`)
+    //     .then((response) => {
+    //       return response.json();
+    //     })
+    //     .then((json) => {
+    //       this.skillsTypes = json.skills;
+    //     });
+    // },
 
     confirmDeleteProject(e) {
       //
@@ -208,16 +208,16 @@ export default {
       const projectId = e.currentTarget.getAttribute("data-id");
       const projectIndex = this.findProjectIndexById(projectId);
       const project = {...this.projects[projectIndex]}; // Clone the current project object
-
+console.log("PROJECT\n", project);
       project.file = "";
 
       delete project._id;
       // delete project.userId;
  
-      project.skills.forEach((skill, i) => {
-        const index = this.skillsTypes.map(item => item._id).indexOf(skill);
-        project.skills[i] = this.skillsTypes[index];
-      });
+      // project.skills.forEach((skill, i) => {
+      //   const index = this.skillsTypes.map(item => item._id).indexOf(skill);
+      //   project.skills[i] = this.skillsTypes[index];
+      // });
 
       this.updateProjectData = project;
 
@@ -232,7 +232,7 @@ export default {
 
   created() {
     this.readProjects();
-    this.readSkillsToType();
+    // this.readSkillsToType();
   }
 }
 
