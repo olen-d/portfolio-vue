@@ -20,4 +20,6 @@ router.put(
   projects_controller.update_project
 );
 
+router.delete("/projects/delete", projects_controller.delete_project);
+
 module.exports = router;
