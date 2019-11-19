@@ -58,7 +58,7 @@
             @project-created="projectCreated"
             @project-updated="projectUpdated"
             @cancel-edit-project="cancelEditProject"
-            @clear-dropdowns="clearDropdowns"
+            @clear-selected-skills="clearSelectedSkills"
           >
           </AdminProjectsForm>
         </div>
@@ -208,7 +208,6 @@ export default {
       const projectId = e.currentTarget.getAttribute("data-id");
       const projectIndex = this.findProjectIndexById(projectId);
       const project = {...this.projects[projectIndex]}; // Clone the current project object
-console.log("PROJECT\n", project);
       project.file = "";
 
       delete project._id;
@@ -225,7 +224,7 @@ console.log("PROJECT\n", project);
       this.editProjectId = projectId;
     },
 
-    clearDropdowns() {
+    clearSelectedSkills() {
       this.updateProjectData.skills = [0];
     }
   },

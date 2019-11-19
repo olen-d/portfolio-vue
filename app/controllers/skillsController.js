@@ -263,4 +263,3 @@ exports.delete_skill = (req, res) => {
       });
     });
 };
-

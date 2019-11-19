@@ -21,4 +21,3 @@ router.put("/skills/update/:skill_id", skills_controller.update_skill);
 router.delete("/skills/delete", skills_controller.delete_skill);
 
 module.exports = router;
-

@@ -13,9 +13,8 @@
         <label for="repoLink">Repository Link</label>
         <input v-model="projectData.repoLink" type="text" class="u-full-width" id="repoLink" placeholder="Enter a link to the repository where the project source code is hosted" required />
         <SkillsCheckboxes
-          v-bind:clearSkills="clearSkills"
+          v-bind:initialCheckedSkills="updateProjectData.skills"
           @update-skills="updateSkills"
-          @reset-clear-skills="resetClearSkills"
         >
         </SkillsCheckboxes>
         <label for="priority">Sort Priority</label>
@@ -133,8 +132,7 @@ export default {
       this.$refs.screenshotFileInput.type = 'text'
       this.$refs.screenshotFileInput.type = 'file'
 
-      // Clear the checkboxes
-      this.clearSkills = true;
+      this.$emit("clear-selected-skills");
     },
 
     resetClearSkills(status) {
