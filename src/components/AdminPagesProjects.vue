@@ -71,6 +71,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 import AdminProjectsCard from "./AdminProjectsCard";
 import AdminProjectsForm from "./AdminProjectsForm";
 import ModalConfirmCancel from "./ModalConfirmCancel";
@@ -106,6 +108,10 @@ export default {
     }
   },
 
+  computed: {
+    ...mapGetters([ "jwt" ])
+  },
+
   methods: {
     formatUrl: url => {
       const urlPieces = url.split("://");
@@ -120,6 +126,16 @@ export default {
       }
     },
 
+    readProjects() {
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        this.projects = json.projects;
+      });
+    },
+
     findProjectIndexById(projectId) {
       const index = this.projects.map(item => item._id).indexOf(projectId);
       return index;
@@ -127,6 +143,13 @@ export default {
 
     createProjectsAddCard(e) {
       this.projects.push(e);
+    },
+
+    deleteProjectsRemoveCard(projectId) {
+      const index = this.findProjectIndexById(projectId);
+        if (index > -1) {
+          this.projects.splice(index, 1);
+        }
     },
 
     projectCreated(e) {
@@ -175,24 +198,6 @@ export default {
       // Update status bar with result
     },
 
-    cancelEditProject() {
-      this.formAction = "Add";
-    },
-
-    readProjects() {
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.projects = json.projects;
-      });
-    },
-
-    confirmDeleteProject(e) {
-      //
-    },
-
     updateProject(e) {
       const projectId = e.currentTarget.getAttribute("data-id");
       const projectIndex = this.findProjectIndexById(projectId);
@@ -205,6 +210,71 @@ export default {
 
       this.formAction = "Edit";
       this.editProjectId = projectId;
+    },
+
+    cancelEditProject() {
+      this.formAction = "Add";
+    },
+
+    deleteProject(projectId) {
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects/delete`, {
+      method: "delete",
+      headers: {
+        "Authorization": `Bearer ${this.jwt}`,
+        "Content-Type": "application/json"
+      },
+        body: JSON.stringify({ projectId: projectId })
+      }).then(response => {
+        return response.json();
+      }).then(dataObj => {
+        const { ok, deletedCount } = dataObj;
+        if (ok === 1 && deletedCount === 1) {
+          this.$store.commit("setStatusCategory", "success");
+          this.$store.commit("setStatusMessage", "Project deleted successfully.");
+          this.deleteProjectsRemoveCard(projectId);
+        } else {
+          this.$store.commit("setStatusCategory", "error");
+          this.$store.commit("setStatusMessage", "Project was not deleted. Database error. ");
+        }
+      }).catch(error => {
+        this.$store.commit("setStatusCategory", "error");
+        this.$store.commit("setStatusMessage", "Project was not deleted. " + error);
+        return ({
+          errorCode: 500,
+          errorMsg: "Internal Server Error",
+          errorDetail: error
+        })
+      });
+    },
+
+    confirmDeleteProject(e) {
+      const projectId = e.currentTarget.getAttribute("data-id");
+      const projectName = e.currentTarget.getAttribute("data-title");
+
+      this.modalConfirmCancelProps.payload.action = "delete";
+      this.modalConfirmCancelProps.payload.data = projectId;
+      this.modalConfirmCancelProps.title = "Delete Project";
+      this.modalConfirmCancelProps.message =  `Do you really want to delete the project: ${projectName}?`;
+      this.modalConfirmCancelProps.confirm = "delete";
+
+      this.setShowModalConfirmCancel(true);
+    },
+
+    setShowModalConfirmCancel(value) {
+      this.showModalConfirmCancel = value;
+    },
+
+    cancelAction() {
+       this.setShowModalConfirmCancel(false);
+    },
+
+    confirmAction(v) {
+      switch (v.action) {
+        case "delete":
+          this.deleteProject(v.data);
+          break;
+      }
+      this.setShowModalConfirmCancel(false);
     },
 
     clearSelectedSkills() {

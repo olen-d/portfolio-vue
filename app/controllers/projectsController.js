@@ -6,6 +6,8 @@ const readProjectById = require("../models/readProjectById");
 
 const updateProject = require("../models/updateProject");
 
+const deleteProject = require("../models/deleteProject");
+
 // Helpers
 const auth = require("../helpers/auth-module");
 
@@ -156,6 +158,35 @@ exports.update_project = (req, res) => {
     .catch(err => {
       res.status(403).json({
         message: "Could not update project",
+        error: err
+      });
+    });
+};
+
+exports.delete_project = (req, res) => {
+  auth
+    .checkAuth(req.headers)
+    .then(response => {
+      if (response.auth && response.administrator) {
+        const projectId = req.body.projectId;
+
+        deleteProject
+          .data(projectId)
+          .then(resolve => {
+            return res.json(resolve);
+          })
+          .catch(err => {
+            return res.json(err);
+          });
+      } else {
+        res.status(403).json({
+          message: "You must be logged in to perform this function"
+        });
+      }
+    })
+    .catch(err => {
+      res.status(403).json({
+        message: "Could not delete project",
         error: err
       });
     });

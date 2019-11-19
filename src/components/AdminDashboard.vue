@@ -11,7 +11,6 @@
         <p>
           Welcome {{ firstName }}!
         </p>
-        <SkillsTypes v-bind:updateProjectDataSkills="[0]"></SkillsTypes>
       </div>
       <div class="one columns">
         &nbsp;
@@ -22,11 +21,9 @@
 
 <script>
 import { mapGetters } from "vuex";
-import SkillsTypes from "./SkillsTypes";
 
 export default {
   components: {
-    SkillsTypes
   },
 
   name: "AdminDashboard",

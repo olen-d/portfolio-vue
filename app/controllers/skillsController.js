@@ -2,13 +2,10 @@
 const createSkill = require("../models/createSkill");
 
 const readSkills = require("../models/readSkills");
-const readSkillsSorted = require("../models/readSkillsSorted");
-
-const readSkillNamesByType = require("../models/readSkillNamesByType");
-const readSkillsTop = require("../models/readSkillsTop");
-const readSkillsToType = require("../models/readSkillsToType");
-const readSkillsTypes = require("../models/readSkillsTypes");
 const readSkillById = require("../models/readSkillById");
+const readSkillsSorted = require("../models/readSkillsSorted");
+const readSkillsTop = require("../models/readSkillsTop");
+const readSkillsTypes = require("../models/readSkillsTypes");
 
 const updateSkill = require("../models/updateSkill");
 
@@ -106,22 +103,6 @@ exports.read_skills_sorted = (req, res) => {
     });
 };
 
-exports.read_skill_names_by_type = (req, res) => {
-  const skillType = req.params.skill_type;
-
-  readSkillNamesByType
-    .data(skillType)
-    .then(resolve => {
-      const skillNamesObj = {
-        skillNames: resolve
-      };
-      res.send(skillNamesObj);
-    })
-    .catch(err => {
-      res.json(err);
-    });
-};
-
 exports.read_skills_top = (req, res) => {
   const limit = parseInt(req.params.limit);
   readSkillsTop
@@ -131,20 +112,6 @@ exports.read_skills_top = (req, res) => {
         skills: resolve
       };
       res.send(skillsTopObj);
-    })
-    .catch(err => {
-      res.json(err);
-    });
-};
-
-exports.read_skills_to_type = (req, res) => {
-  readSkillsToType
-    .data()
-    .then(resolve => {
-      const skillsObj = {
-        skills: resolve
-      };
-      res.send(skillsObj);
     })
     .catch(err => {
       res.json(err);
