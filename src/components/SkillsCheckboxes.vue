@@ -1,8 +1,13 @@
 <template>
-  <div class="skills">SkillsCheckboxes.vue: InitialCheckedSkills<pre>{{ initialCheckedSkills }}</pre>checkedSkills<pre>{{ checkedSkills }}</pre>
-    <div class="skill u-third-width" v-for="{ _id, type, name } in skills" :key="_id">
-      <input type="checkbox" :id="name" :value ="_id" v-model="checkedSkills" @change="onChange">
-      <label class="skill-label" :for="name">{{ name }}</label>
+  <div class="fragment">
+    <div class="skills-heading">
+      Skills
+    </div>
+    <div class="skills">
+      <div class="skill u-third-width" v-for="{ _id, type, name } in skills" :key="_id">
+        <input type="checkbox" :id="name" :value ="_id" v-model="checkedSkills" @change="onChange">
+        <label class="skill-label" :for="name">{{ name }}</label>
+      </div>
     </div>
   </div>
 </template>
@@ -21,11 +26,6 @@ export default {
   },
 
   watch: {
-  //   clearSkills: function(newValue) {
-  //     if(newValue) {
-  //       this.doClearSkills();
-  //     }
-  //   }
     initialCheckedSkills(newValue) {
       this.checkedSkills = this.initialCheckedSkills;
     }
@@ -45,11 +45,6 @@ export default {
     onChange(event) {
       this.$emit("update-skills", this.checkedSkills);
     }
-
-    // doClearSkills() {
-    //   this.checkedSkills = [];
-    //   this.$emit("reset-clear-skills", false);
-    // }
   },
 
   created() {
@@ -59,8 +54,12 @@ export default {
 </script>
 
 <style scoped>
-.capitalize {
-  text-transform: capitalize;
+.fragment {
+  margin-bottom: 1.5rem;
+}
+
+.skills-heading {
+  font-weight: 600;
 }
 
 .skills {
@@ -74,6 +73,7 @@ export default {
 .skill input,
 .skill label {
   display: inline-block;
+  font-weight: 400;
   margin-bottom: 0rem;
   vertical-align: middle;
   text-align: left;

@@ -1,6 +1,6 @@
 <template>
   <div id="admin-projects-form">
-    <h3>{{ formAction }} a Project</h3>AdminProjectsForm.vue: <br /><pre>{{ projectData }}</pre>
+    <h3>{{ formAction }} a Project</h3>
       <form id="projects-form" enctype="multipart/form-data">
         <label for="name">Title</label>
         <input v-model="projectData.title" type="text" class="u-full-width" id="title" placeholder="The project title" required />
@@ -60,8 +60,7 @@ export default {
         priority: "",
         skills: [],
         show: ""
-      },
-      clearSkills: false
+      }
     }
   },
 
@@ -133,10 +132,6 @@ export default {
       this.$refs.screenshotFileInput.type = 'file'
 
       this.$emit("clear-selected-skills");
-    },
-
-    resetClearSkills(status) {
-      this.clearSkills = status;
     },
 
     createProject(formInputs) {
@@ -226,7 +221,7 @@ export default {
       });
     },
 
-    updateSkills(newSkills) { // DON'T CHANGE THIS SKILLS
+    updateSkills(newSkills) {
       this.projectData.skills = newSkills;
     }
   }
