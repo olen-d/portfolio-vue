@@ -31,13 +31,13 @@
           &nbsp;
         </div>
         <div class="ten columns">
-          <div v-for="{ _id, deployedLink, description, title, repoLink, screenshot, priority, show } in projects" :key="_id" :id="_id" class="card-container">
+          <div v-for="{ _id, deployedLink, description, title, repoLink, screenshot, skills, priority, show } in projects" :key="_id" :id="_id" class="card-container">
             <div class="card-actions">
               <i @click="updateProject" class="fas fa-edit edit" :data-id="_id"></i>
               <i @click="confirmDeleteProject" class="fas fa-times delete" :data-id="_id" :data-title="title"></i>
             </div>
             <AdminProjectsCard
-              v-bind="{ _id, deployedLink, description, title, repoLink, screenshot, priority, show }"
+              v-bind="{ _id, deployedLink, description, title, repoLink, screenshot, skills, priority, show }"
             >
             </AdminProjectsCard>
           </div>
