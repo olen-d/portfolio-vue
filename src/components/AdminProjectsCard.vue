@@ -19,6 +19,12 @@
         {{ repoLink }}
       </p>
     </div>
+    <div class="skills">
+      <p>
+        Skills: <br />
+        {{ skillNames }}
+      </p>
+    </div>
     <div class="meta">
       <p>
         Sort Priority: {{ priority }}
@@ -39,6 +45,7 @@ export default {
     title: String, 
     repoLink: String, 
     screenshot: String,
+    skills: Array,
     priority: Number, 
     show: Number
   },
@@ -46,6 +53,26 @@ export default {
   data: () => {
     return {
       publicPath: process.env.BASE_URL,
+      skillsData: [],
+      skillNamesById: []
+    }
+  },
+
+  computed: {
+    skillNames() {
+      let skillNamesOutput = "";
+      if(this.skills) {
+        this.skills.forEach(skill => {
+          let index = this.skillNamesById.map(item => item._id).indexOf(skill);
+          if(index > -1) {
+            skillNamesOutput += this.skillNamesById[index].name + ", ";
+          }
+        });
+      } else {
+        skillNamesOutput = "No skills were found for this project."
+      }
+      skillNamesOutput = skillNamesOutput.replace(/,\s*$/, "")
+      return skillNamesOutput;
     }
   },
 
@@ -56,7 +83,32 @@ export default {
       } else {
         return "No";
       }
+    },
+
+    readSkills() {
+      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        this.skillsData = json.skills;
+      })
+      .then(() => {
+        this.mapSkillNames();
+      });
+    },
+
+    mapSkillNames() {
+      this.skillsData.forEach(skill => {
+        let _id = skill._id;
+        let name = skill.name;
+        this.skillNamesById.push({_id, name});
+      });
     }
+  },
+
+  created() {
+    this.readSkills();
   }
 }
 </script>
