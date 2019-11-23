@@ -30,12 +30,12 @@ exports.create_skill = (req, res) => {
         } = req.body;
 
         const skillInfo = {
-          userId: userId,
-          type: type,
-          name: name,
-          description: description,
+          userId,
+          type,
+          name,
+          description,
           show: parseInt(show),
-          icon: icon,
+          icon,
           priority: parseInt(priority)
         };
 
@@ -165,13 +165,13 @@ exports.update_skill = (req, res) => {
         } = req.body;
 
         const skillInfo = {
-          skill_id: skill_id,
-          userId: userId,
-          type: type,
-          name: name,
-          description: description,
-          show: show,
-          icon: icon,
+          skill_id,
+          userId,
+          type,
+          name,
+          description,
+          show: parseInt(show),
+          icon,
           priority: parseInt(priority)
         };
 
