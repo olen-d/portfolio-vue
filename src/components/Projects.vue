@@ -18,7 +18,7 @@
             &nbsp;
         </div>
         <div class="ten columns projects">
-          <div v-for="{ _id, deployedLink, description, title, repoLink, screenshot } in displayProjects" :key="_id" class="card u-pull-left">
+          <div v-for="{ _id, deployedLink, description, title, repoLink, screenshot } in sortedProjects" :key="_id" class="card u-pull-left">
             <div class="card-title">
               <img :src="`${publicPath}assets/images/${screenshot}`" width="350" height="auto" :alt="`Screenshot of ${title}`">
               <h2>
@@ -63,6 +63,12 @@ export default {
     displayProjects() {
       const displayProjects = this.projects.filter(project => project.show === 1 );
       return displayProjects;
+    },
+    sortedProjects() {
+      const sortedProjects = [...this.displayProjects].sort((a, b) => {
+        return a.priority - b.priority;
+      });
+      return sortedProjects;
     }
   },
 
