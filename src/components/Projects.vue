@@ -20,9 +20,9 @@
         <div class="ten columns projects">
           <div v-for="{ _id, deployedLink, description, projectTitle, repoLink, screenshot } in displayProjects" :key="_id" class="card u-pull-left">
             <div class="card-title">
-              <img :src="`${publicPath}${screenshot}`" width="350" height="auto" :alt="`Screenshot of ${projectTitle}`">
+              <img :src="`${publicPath}assets/images/${screenshot}`" width="350" height="auto" :alt="`Screenshot of ${projectTitle}`">
               <h2>
-                {{projectTitle}}
+                {{title}}
               </h2>
               <p>
                 {{description}}

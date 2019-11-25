@@ -27,7 +27,7 @@ export default {
 
   watch: {
     initialCheckedSkills(newValue) {
-      this.checkedSkills = this.initialCheckedSkills;
+      (Array.isArray(this.initialCheckedSkills)) ? this.checkedSkills = this.initialCheckedSkills : this.checkedSkills = []; // Handle no skills returned from the API call
     }
   },
 
