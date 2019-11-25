@@ -18,9 +18,9 @@
             &nbsp;
         </div>
         <div class="ten columns projects">
-          <div v-for="{ _id, deployedLink, description, projectTitle, repoLink, screenshot } in displayProjects" :key="_id" class="card u-pull-left">
+          <div v-for="{ _id, deployedLink, description, title, repoLink, screenshot } in displayProjects" :key="_id" class="card u-pull-left">
             <div class="card-title">
-              <img :src="`${publicPath}assets/images/${screenshot}`" width="350" height="auto" :alt="`Screenshot of ${projectTitle}`">
+              <img :src="`${publicPath}assets/images/${screenshot}`" width="350" height="auto" :alt="`Screenshot of ${title}`">
               <h2>
                 {{title}}
               </h2>
