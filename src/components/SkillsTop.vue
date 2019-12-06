@@ -1,13 +1,13 @@
 <template>
   <div class="skills">
-    <div v-for="skill in results.skills" :key="skill._id" class="card-skinny u-pull-left">
+    <div v-for="{ _id, name, description, icon } in results.skills" :key="_id" class="card-skinny">
       <div class="card-title">
-        <i :class="skill.icon" class="card-icon"></i>
+        <i :class="icon" class="card-icon"></i>
         <h2>
-          {{skill.name}}
+          {{name}}
         </h2>
         <p>
-          {{skill.description}}
+          {{description}}
         </p>
       </div>
     </div>
@@ -36,3 +36,21 @@
   }
 
 </script>
+
+<style scoped>
+
+.skills {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  justify-items: center;
+  column-gap: 1rem;
+  row-gap: 1rem;
+}
+
+@media (min-width: 780px) {
+  .skills {
+    justify-items: start;      
+  }
+}
+
+</style>
