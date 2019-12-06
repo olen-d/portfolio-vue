@@ -44,7 +44,6 @@
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   justify-items: center;
   column-gap: 1rem;
-  row-gap: 1rem;
 }
 
 @media (min-width: 780px) {
