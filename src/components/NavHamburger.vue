@@ -19,6 +19,12 @@ export default {
     }
   },
 
+  watch: {
+    $route (to, from) {
+      this.visible = false;
+    }
+  },
+
   methods: {
     toggleDropdownMenu() {
       this.visible = !this.visible;
