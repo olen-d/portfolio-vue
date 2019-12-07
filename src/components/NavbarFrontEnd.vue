@@ -18,7 +18,10 @@
 import NavHamburger from "./NavHamburger";
 
 export default {
-  props: ["showStandard", "showHamburger"],
+  props: {
+    showStandard: Boolean, 
+    showHamburger: Boolean
+  },
 
   components: {
     NavHamburger

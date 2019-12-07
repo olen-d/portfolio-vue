@@ -11,7 +11,10 @@
 
 <script>
 export default {
-  props: ["links", "showHamburger"],
+  props: {
+    links: Array,
+    showHamburger: Boolean
+  },
 
   data: () => {
     return {
