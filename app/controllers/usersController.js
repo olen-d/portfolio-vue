@@ -15,10 +15,10 @@ exports.create_user = (req, res) => {
   bcrypt.newPass(password).then(pwdRes => {
     if (pwdRes.status === 200) {
       const userInfo = {
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        userName: userName,
+        firstName,
+        lastName,
+        email,
+        userName,
         password: pwdRes.passwordHash
       };
 
@@ -29,7 +29,7 @@ exports.create_user = (req, res) => {
           jwt.sign(
             resolve,
             process.env.secret,
-            { expiresIn: "24h" },
+            { expiresIn: "1h" },
             (err, token) => {
               return res.send({
                 isLoggedIn: true,
