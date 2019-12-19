@@ -1,7 +1,12 @@
 <template>
   <div class="admin-projects-card">
     <div class="screenshot">
-      <img :src="`${publicPath}assets/images/${screenshot}`" width="200" height="auto" :alt="`Screenshot of ${title}`">
+      <img
+        :src="`${publicPath}assets/images/${screenshot}`"
+        width="200"
+        height="auto"
+        :alt="`Screenshot of ${title}`"
+      />
     </div>
     <div class="title">
       {{ title }}
@@ -26,12 +31,8 @@
       </p>
     </div>
     <div class="meta">
-      <p>
-        Sort Priority: {{ priority }}
-      </p>
-      <p>
-        Display: {{ formatShow(show) }}
-      </p>
+      <p>Sort Priority: {{ priority }}</p>
+      <p>Display: {{ formatShow(show) }}</p>
     </div>
   </div>
 </template>
@@ -39,14 +40,14 @@
 <script>
 export default {
   props: {
-    _id: String, 
-    deployedLink: String, 
-    description: String, 
-    title: String, 
-    repoLink: String, 
+    _id: String,
+    deployedLink: String,
+    description: String,
+    title: String,
+    repoLink: String,
     screenshot: String,
     skills: Array,
-    priority: Number, 
+    priority: Number,
     show: Number
   },
 
@@ -55,23 +56,23 @@ export default {
       publicPath: process.env.BASE_URL,
       skillsData: [],
       skillNamesById: []
-    }
+    };
   },
 
   computed: {
     skillNames() {
       let skillNamesOutput = "";
-      if(this.skills) {
+      if (this.skills) {
         this.skills.forEach(skill => {
           let index = this.skillNamesById.map(item => item._id).indexOf(skill);
-          if(index > -1) {
+          if (index > -1) {
             skillNamesOutput += this.skillNamesById[index].name + ", ";
           }
         });
       } else {
-        skillNamesOutput = "No skills were found for this project."
+        skillNamesOutput = "No skills were found for this project.";
       }
-      skillNamesOutput = skillNamesOutput.replace(/,\s*$/, "")
+      skillNamesOutput = skillNamesOutput.replace(/,\s*$/, "");
       return skillNamesOutput;
     }
   },
@@ -87,22 +88,22 @@ export default {
 
     readSkills() {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.skillsData = json.skills;
-      })
-      .then(() => {
-        this.mapSkillNames();
-      });
+        .then(response => {
+          return response.json();
+        })
+        .then(json => {
+          this.skillsData = json.skills;
+        })
+        .then(() => {
+          this.mapSkillNames();
+        });
     },
 
     mapSkillNames() {
       this.skillsData.forEach(skill => {
         let _id = skill._id;
         let name = skill.name;
-        this.skillNamesById.push({_id, name});
+        this.skillNamesById.push({ _id, name });
       });
     }
   },
@@ -110,9 +111,7 @@ export default {
   created() {
     this.readSkills();
   }
-}
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
