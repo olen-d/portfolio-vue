@@ -15,21 +15,35 @@
       </div>
       <div class="row">
         <div class="one column">
-            &nbsp;
+          &nbsp;
         </div>
         <div class="ten columns projects">
-          <div v-for="{ _id, deployedLink, description, title, repoLink, screenshot } in sortedProjects" :key="_id" class="card u-pull-left">
+          <div
+            v-for="{
+              _id,
+              deployedLink,
+              description,
+              title,
+              repoLink,
+              screenshot
+            } in sortedProjects"
+            :key="_id"
+            class="card u-pull-left"
+          >
             <div class="card-title">
-              <img :src="`${publicPath}assets/images/${screenshot}`" width="350" height="auto" :alt="`Screenshot of ${title}`">
+              <img
+                :src="`${publicPath}assets/images/${screenshot}`"
+                width="350"
+                height="auto"
+                :alt="`Screenshot of ${title}`"
+              />
               <h2>
-                {{title}}
+                {{ title }}
               </h2>
               <p>
-                {{description}}
+                {{ description }}
               </p>
-              <p>
-                <a :href="deployedLink">Visit the project</a>.
-              </p>
+              <p><a :href="deployedLink">Visit the project</a>.</p>
               <p>
                 <a :href="repoLink">See the code on Github</a>
               </p>
@@ -56,12 +70,14 @@ export default {
     return {
       projects: [],
       publicPath: process.env.BASE_URL
-    }
+    };
   },
 
   computed: {
     displayProjects() {
-      const displayProjects = this.projects.filter(project => project.show === 1 );
+      const displayProjects = this.projects.filter(
+        project => project.show === 1
+      );
       return displayProjects;
     },
     sortedProjects() {
@@ -74,13 +90,12 @@ export default {
 
   created() {
     fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects`)
-      .then((response) => {
+      .then(response => {
         return response.json();
       })
-      .then((json) => {
+      .then(json => {
         this.projects = json.projects;
       });
   }
-}
-
+};
 </script>
