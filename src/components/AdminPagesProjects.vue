@@ -56,7 +56,7 @@
               skills,
               priority,
               show
-            } in projects"
+            } in sortedProjects"
             :key="_id"
             :id="_id"
             class="card-container"
@@ -159,7 +159,34 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["jwt"])
+    ...mapGetters(["jwt"]),
+    displayProjects() {
+      const displayProjects = this.projects.filter(
+        project => project.show >= 0
+      );
+      return displayProjects;
+    },
+
+    filteredBySkillProjects() {
+      let filteredBySkillProjects;
+      const filterSkill = this.filterSkill;
+
+      if (this.filterSkill != "") {
+        filteredBySkillProjects = this.displayProjects.filter(project => {
+          return project.skills.indexOf(filterSkill) !== -1;
+        });
+      } else {
+        filteredBySkillProjects = [...this.displayProjects];
+      }
+      return filteredBySkillProjects;
+    },
+
+    sortedProjects() {
+      const sortedProjects = [...this.filteredBySkillProjects].sort((a, b) => {
+        return a.priority - b.priority;
+      });
+      return sortedProjects;
+    }
   },
 
   methods: {

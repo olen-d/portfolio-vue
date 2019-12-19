@@ -1,7 +1,7 @@
 <template>
   <select name="filter-skills" v-model="filterSkill" @change="onChange">
     <option disabled value="">Select one...</option>
-    <option v-for="{ _id, name } in skills" :key="_id">
+    <option v-for="{ _id, name } in skills" :key="_id" :value="_id">
       {{ name }}
     </option>
   </select>
