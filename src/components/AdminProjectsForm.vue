@@ -1,35 +1,84 @@
 <template>
   <div id="admin-projects-form">
     <h3>{{ formAction }} a Project</h3>
-      <form id="projects-form" enctype="multipart/form-data">
-        <label for="name">Title</label>
-        <input v-model="projectData.title" type="text" class="u-full-width" id="title" placeholder="The project title" required />
-        <label for="description">Description</label>
-        <textarea class="u-full-width" id="description" v-model="projectData.description" placeholder="Briefly explain the project and what problems it solves..."></textarea>
-        <label for="screenshot">Screenshot</label>
-        <input type="file" @change="onFileChange" id="screenshot" ref="screenshotFileInput">
-        <label for="deployedLink">Deployed Link</label>
-        <input v-model="projectData.deployedLink" type="text" class="u-full-width" id="deployedLink" placeholder="Enter a link to the deployed project" required />
-        <label for="repoLink">Repository Link</label>
-        <input v-model="projectData.repoLink" type="text" class="u-full-width" id="repoLink" placeholder="Enter a link to the repository where the project source code is hosted" required />
-        <SkillsCheckboxes
-          v-bind:initialCheckedSkills="updateProjectData.skills"
-          @update-skills="updateSkills"
+    <form id="projects-form" enctype="multipart/form-data">
+      <label for="name">Title</label>
+      <input
+        v-model="projectData.title"
+        type="text"
+        class="u-full-width"
+        id="title"
+        placeholder="The project title"
+        required
+      />
+      <label for="description">Description</label>
+      <textarea
+        class="u-full-width"
+        id="description"
+        v-model="projectData.description"
+        placeholder="Briefly explain the project and what problems it solves..."
+      ></textarea>
+      <label for="screenshot">Screenshot</label>
+      <input
+        type="file"
+        @change="onFileChange"
+        id="screenshot"
+        ref="screenshotFileInput"
+      />
+      <label for="deployedLink">Deployed Link</label>
+      <input
+        v-model="projectData.deployedLink"
+        type="text"
+        class="u-full-width"
+        id="deployedLink"
+        placeholder="Enter a link to the deployed project"
+        required
+      />
+      <label for="repoLink">Repository Link</label>
+      <input
+        v-model="projectData.repoLink"
+        type="text"
+        class="u-full-width"
+        id="repoLink"
+        placeholder="Enter a link to the repository where the project source code is hosted"
+        required
+      />
+      <SkillsCheckboxes
+        v-bind:initialCheckedSkills="updateProjectData.skills"
+        @update-skills="updateSkills"
+      >
+      </SkillsCheckboxes>
+      <label for="priority">Sort Priority</label>
+      <input
+        v-model="projectData.priority"
+        type="number"
+        class="u-quarter-width"
+        id="priority"
+        placeholder="Number"
+      />
+      <label for="show">Display Project?</label>
+      <select v-model="projectData.show" class="u-quarter-width" id="show">
+        <option disabled value="">Select one...</option>
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select>
+      <div class="right">
+        <button
+          v-on:click.prevent="submitProjectForm"
+          class="button-primary"
+          id="project-submit"
         >
-        </SkillsCheckboxes>
-        <label for="priority">Sort Priority</label>
-        <input v-model="projectData.priority" type="number" class="u-quarter-width" id="priority" placeholder="Number" />
-        <label for="show">Display Project?</label>
-        <select v-model="projectData.show" class="u-quarter-width" id="show">
-          <option disabled value="">Select one...</option>
-          <option value="1">Yes</option>
-          <option value="0">No</option>
-        </select>
-        <div class="right">
-          <button v-on:click.prevent="submitProjectForm" class="button-primary" id="project-submit">{{ formAction }} Project</button>
-          <button v-if="formAction === 'Edit'" v-on:click.prevent="cancelEditProject" class="edit-button-cancel">cancel</button>
+          {{ formAction }} Project
+        </button>
+        <button
+          v-if="formAction === 'Edit'"
+          v-on:click.prevent="cancelEditProject"
+          class="edit-button-cancel"
+        >
+          cancel
+        </button>
       </div>
-      </form>
+    </form>
   </div>
 </template>
 
@@ -42,11 +91,11 @@ export default {
   components: {
     SkillsCheckboxes
   },
-  
+
   props: {
     formAction: String,
     editProjectId: String,
-    updateProjectData: Object,
+    updateProjectData: Object
   },
 
   data: () => {
@@ -61,21 +110,16 @@ export default {
         skills: [],
         show: ""
       }
-    }
+    };
   },
 
   computed: {
-    ...mapGetters([
-      "jwt"
-    ]),
+    ...mapGetters(["jwt"]),
 
-    ...mapState([
-      "statusCategory",
-      "statusMessage"
-    ]),
+    ...mapState(["statusCategory", "statusMessage"]),
 
     fl() {
-      return typeof(this.projectData.file);
+      return typeof this.projectData.file;
     }
   },
 
@@ -90,7 +134,16 @@ export default {
   methods: {
     submitProjectForm() {
       const userId = this.$store.getters.userId;
-      const { title, description, deployedLink, repoLink, priority, screenshot, skills, show } = this.projectData;
+      const {
+        title,
+        description,
+        deployedLink,
+        repoLink,
+        priority,
+        screenshot,
+        skills,
+        show
+      } = this.projectData;
       const priorityInt = parseInt(priority);
       const showInt = parseInt(show);
 
@@ -104,7 +157,7 @@ export default {
         screenshot,
         skills: JSON.stringify(skills),
         show: showInt
-      }
+      };
       if (this.formAction === "Add") {
         this.createProject(formInputs);
       } else if (this.formAction === "Edit") {
@@ -128,8 +181,8 @@ export default {
         this.projectData[e] = "";
       });
 
-      this.$refs.screenshotFileInput.type = 'text'
-      this.$refs.screenshotFileInput.type = 'file'
+      this.$refs.screenshotFileInput.type = "text";
+      this.$refs.screenshotFileInput.type = "file";
 
       this.$emit("clear-selected-skills");
     },
@@ -147,32 +200,44 @@ export default {
       formData.append("file", file);
 
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects/create`, {
-      method: "post",
-      headers: {
-        "Authorization": `Bearer ${this.jwt}`
-      },
+        method: "post",
+        headers: {
+          Authorization: `Bearer ${this.jwt}`
+        },
         body: formData
-      }).then(response => {
-        return response.json();
-      }).then(dataObj => {
-        if (dataObj._id) {
-          this.$store.commit("setStatusCategory", "success");
-          this.$store.commit("setStatusMessage", "Project created successfully.");
-          this.$emit("project-created", dataObj);
-          this.clearProjectForm();
-        } else {
-          this.$store.commit("setStatusCategory", "error");
-          this.$store.commit("setStatusMessage", "Project was not created. Database error. ");          
-        }
-      }).catch(error => {
-        this.$store.commit("setStatusCategory", "error");
-        this.$store.commit("setStatusMessage", "Project was not created. " + error);
-        return ({
-          type: "error",
-          message: "Internal server error.",
-          error: error
+      })
+        .then(response => {
+          return response.json();
         })
-      });
+        .then(dataObj => {
+          if (dataObj._id) {
+            this.$store.commit("setStatusCategory", "success");
+            this.$store.commit(
+              "setStatusMessage",
+              "Project created successfully."
+            );
+            this.$emit("project-created", dataObj);
+            this.clearProjectForm();
+          } else {
+            this.$store.commit("setStatusCategory", "error");
+            this.$store.commit(
+              "setStatusMessage",
+              "Project was not created. Database error. "
+            );
+          }
+        })
+        .catch(error => {
+          this.$store.commit("setStatusCategory", "error");
+          this.$store.commit(
+            "setStatusMessage",
+            "Project was not created. " + error
+          );
+          return {
+            type: "error",
+            message: "Internal server error.",
+            error: error
+          };
+        });
     },
 
     updateProject(formInputs) {
@@ -184,52 +249,67 @@ export default {
         formData.append(key, value);
       }
 
-      if (typeof(file) === "object") {
+      if (typeof file === "object") {
         formData.append("file", file);
       } else {
         // Multer None...
       }
-      
+
       const projectId = this.editProjectId;
 
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects/update/${projectId}`, {
-      method: "put",
-      headers: {
-        "Authorization": `Bearer ${this.jwt}`
-      },
-        body: formData
-      }).then(response => {
-        return response.json();
-      }).then(dataObj => {
-        if(dataObj.n === 1 && dataObj.ok === 1) {
-          this.$store.commit("setStatusCategory", "success");
-          this.$store.commit("setStatusMessage", "Project updated successfully.");
-          this.$emit("project-updated", projectId);
-          this.clearProjectForm();
-        } else {
-          this.$store.commit("setStatusCategory", "error");
-          this.$store.commit("setStatusMessage", "Project was not updated. Database error. ");
+      fetch(
+        `${process.env.VUE_APP_API_BASE_URL}/api/projects/update/${projectId}`,
+        {
+          method: "put",
+          headers: {
+            Authorization: `Bearer ${this.jwt}`
+          },
+          body: formData
         }
-      }).catch(error => {
-        this.$store.commit("setStatusCategory", "error");
-        this.$store.commit("setStatusMessage", "Project was not updated. " + error);
-        return ({
-          errorCode: 500,
-          errorMsg: "Internal Server Error",
-          errorDetail: error
+      )
+        .then(response => {
+          return response.json();
         })
-      });
+        .then(dataObj => {
+          if (dataObj.n === 1 && dataObj.ok === 1) {
+            this.$store.commit("setStatusCategory", "success");
+            this.$store.commit(
+              "setStatusMessage",
+              "Project updated successfully."
+            );
+            this.$emit("project-updated", projectId);
+            this.clearProjectForm();
+          } else {
+            this.$store.commit("setStatusCategory", "error");
+            this.$store.commit(
+              "setStatusMessage",
+              "Project was not updated. Database error. "
+            );
+          }
+        })
+        .catch(error => {
+          this.$store.commit("setStatusCategory", "error");
+          this.$store.commit(
+            "setStatusMessage",
+            "Project was not updated. " + error
+          );
+          return {
+            errorCode: 500,
+            errorMsg: "Internal Server Error",
+            errorDetail: error
+          };
+        });
     },
 
     updateSkills(newSkills) {
       this.projectData.skills = newSkills;
     }
   }
-}
+};
 </script>
 
 <style scoped>
 .edit-button-cancel {
-  margin-left:1rem;
+  margin-left: 1rem;
 }
 </style>

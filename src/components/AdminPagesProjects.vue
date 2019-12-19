@@ -2,12 +2,12 @@
   <div id="admin-pages-projects">
     <ModalConfirmCancel
       v-if="showModalConfirmCancel"
-      v-bind:payload = modalConfirmCancelProps.payload
-      v-bind:action = modalConfirmCancelProps.action
-      v-bind:title = modalConfirmCancelProps.title
-      v-bind:message = modalConfirmCancelProps.message 
-      v-bind:confirm = modalConfirmCancelProps.confirm
-      v-bind:cancel = modalConfirmCancelProps.cancel
+      v-bind:payload="modalConfirmCancelProps.payload"
+      v-bind:action="modalConfirmCancelProps.action"
+      v-bind:title="modalConfirmCancelProps.title"
+      v-bind:message="modalConfirmCancelProps.message"
+      v-bind:confirm="modalConfirmCancelProps.confirm"
+      v-bind:cancel="modalConfirmCancelProps.cancel"
       @confirm-action="confirmAction"
       @cancel-action="cancelAction"
     >
@@ -31,13 +31,61 @@
           &nbsp;
         </div>
         <div class="ten columns">
-          <div v-for="{ _id, deployedLink, description, title, repoLink, screenshot, skills, priority, show } in projects" :key="_id" :id="_id" class="card-container">
+          <h4>
+            Filter
+          </h4>
+          <SkillsDropdown @filter-projects-by-skill="filterProjectsBySkill" />
+        </div>
+        <div class="one columns">
+          &nbsp;
+        </div>
+      </div>
+      <div class="row">
+        <div class="one columns">
+          &nbsp;
+        </div>
+        <div class="ten columns">
+          <div
+            v-for="{
+              _id,
+              deployedLink,
+              description,
+              title,
+              repoLink,
+              screenshot,
+              skills,
+              priority,
+              show
+            } in projects"
+            :key="_id"
+            :id="_id"
+            class="card-container"
+          >
             <div class="card-actions">
-              <i @click="updateProject" class="fas fa-edit edit" :data-id="_id"></i>
-              <i @click="confirmDeleteProject" class="fas fa-times delete" :data-id="_id" :data-title="title"></i>
+              <i
+                @click="updateProject"
+                class="fas fa-edit edit"
+                :data-id="_id"
+              ></i>
+              <i
+                @click="confirmDeleteProject"
+                class="fas fa-times delete"
+                :data-id="_id"
+                :data-title="title"
+              ></i>
             </div>
             <AdminProjectsCard
-              v-bind="{ _id, deployedLink, description, title, repoLink, screenshot, skills, priority, show }"
+              v-bind="{
+                _id,
+                deployedLink,
+                description,
+                title,
+                repoLink,
+                screenshot,
+                skills,
+                priority,
+                show
+              }"
             >
             </AdminProjectsCard>
           </div>
@@ -64,7 +112,7 @@
         </div>
         <div class="one columns">
           &nbsp;
-        </div>  
+        </div>
       </div>
     </div>
   </div>
@@ -76,7 +124,7 @@ import { mapGetters } from "vuex";
 import AdminProjectsCard from "./AdminProjectsCard";
 import AdminProjectsForm from "./AdminProjectsForm";
 import ModalConfirmCancel from "./ModalConfirmCancel";
-
+import SkillsDropdown from "./SkillsDropdown";
 
 export default {
   name: "AdminPagesProjects",
@@ -84,7 +132,8 @@ export default {
   components: {
     AdminProjectsCard,
     AdminProjectsForm,
-    ModalConfirmCancel
+    ModalConfirmCancel,
+    SkillsDropdown
   },
 
   data: () => {
@@ -104,12 +153,13 @@ export default {
         message: "",
         confirm: "ok",
         cancel: "cancel"
-      }
-    }
+      },
+      filterSkill: ""
+    };
   },
 
   computed: {
-    ...mapGetters([ "jwt" ])
+    ...mapGetters(["jwt"])
   },
 
   methods: {
@@ -128,12 +178,12 @@ export default {
 
     readProjects() {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.projects = json.projects;
-      });
+        .then(response => {
+          return response.json();
+        })
+        .then(json => {
+          this.projects = json.projects;
+        });
     },
 
     findProjectIndexById(projectId) {
@@ -147,9 +197,9 @@ export default {
 
     deleteProjectsRemoveCard(projectId) {
       const index = this.findProjectIndexById(projectId);
-        if (index > -1) {
-          this.projects.splice(index, 1);
-        }
+      if (index > -1) {
+        this.projects.splice(index, 1);
+      }
     },
 
     projectCreated(e) {
@@ -163,34 +213,46 @@ export default {
 
     updateProjectCard(projectId) {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects/id/${projectId}`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        const updatedProjectData = json.project;
-        const index = this.findProjectIndexById(projectId);
+        .then(response => {
+          return response.json();
+        })
+        .then(json => {
+          const updatedProjectData = json.project;
+          const index = this.findProjectIndexById(projectId);
 
-        const { _id, userId, title, description, deployedLink, repoLink, screenshot, skills, priority, show, updatedAt } = updatedProjectData;
+          const {
+            _id,
+            userId,
+            title,
+            description,
+            deployedLink,
+            repoLink,
+            screenshot,
+            skills,
+            priority,
+            show,
+            updatedAt
+          } = updatedProjectData;
 
-        const updatedProjectObj = {
-          _id,
-          userId,
-          title,
-          description,
-          deployedLink,
-          repoLink,
-          screenshot,
-          skills,
-          priority,
-          show,
-          updatedAt
-        };
+          const updatedProjectObj = {
+            _id,
+            userId,
+            title,
+            description,
+            deployedLink,
+            repoLink,
+            screenshot,
+            skills,
+            priority,
+            show,
+            updatedAt
+          };
 
-        this.projects.splice(index, 1, updatedProjectObj);
+          this.projects.splice(index, 1, updatedProjectObj);
 
-        this.formAction = "Add";
-        this.projectSkillId = "";
-      });
+          this.formAction = "Add";
+          this.projectSkillId = "";
+        });
     },
 
     projectUpdated(projectId) {
@@ -201,7 +263,7 @@ export default {
     updateProject(e) {
       const projectId = e.currentTarget.getAttribute("data-id");
       const projectIndex = this.findProjectIndexById(projectId);
-      const project = {...this.projects[projectIndex]}; // Clone the current project object
+      const project = { ...this.projects[projectIndex] }; // Clone the current project object
       project.file = "";
 
       delete project._id;
@@ -218,33 +280,45 @@ export default {
 
     deleteProject(projectId) {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects/delete`, {
-      method: "delete",
-      headers: {
-        "Authorization": `Bearer ${this.jwt}`,
-        "Content-Type": "application/json"
-      },
+        method: "delete",
+        headers: {
+          Authorization: `Bearer ${this.jwt}`,
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({ projectId: projectId })
-      }).then(response => {
-        return response.json();
-      }).then(dataObj => {
-        const { ok, deletedCount } = dataObj;
-        if (ok === 1 && deletedCount === 1) {
-          this.$store.commit("setStatusCategory", "success");
-          this.$store.commit("setStatusMessage", "Project deleted successfully.");
-          this.deleteProjectsRemoveCard(projectId);
-        } else {
-          this.$store.commit("setStatusCategory", "error");
-          this.$store.commit("setStatusMessage", "Project was not deleted. Database error. ");
-        }
-      }).catch(error => {
-        this.$store.commit("setStatusCategory", "error");
-        this.$store.commit("setStatusMessage", "Project was not deleted. " + error);
-        return ({
-          errorCode: 500,
-          errorMsg: "Internal Server Error",
-          errorDetail: error
+      })
+        .then(response => {
+          return response.json();
         })
-      });
+        .then(dataObj => {
+          const { ok, deletedCount } = dataObj;
+          if (ok === 1 && deletedCount === 1) {
+            this.$store.commit("setStatusCategory", "success");
+            this.$store.commit(
+              "setStatusMessage",
+              "Project deleted successfully."
+            );
+            this.deleteProjectsRemoveCard(projectId);
+          } else {
+            this.$store.commit("setStatusCategory", "error");
+            this.$store.commit(
+              "setStatusMessage",
+              "Project was not deleted. Database error. "
+            );
+          }
+        })
+        .catch(error => {
+          this.$store.commit("setStatusCategory", "error");
+          this.$store.commit(
+            "setStatusMessage",
+            "Project was not deleted. " + error
+          );
+          return {
+            errorCode: 500,
+            errorMsg: "Internal Server Error",
+            errorDetail: error
+          };
+        });
     },
 
     confirmDeleteProject(e) {
@@ -254,7 +328,7 @@ export default {
       this.modalConfirmCancelProps.payload.action = "delete";
       this.modalConfirmCancelProps.payload.data = projectId;
       this.modalConfirmCancelProps.title = "Delete Project";
-      this.modalConfirmCancelProps.message =  `Do you really want to delete the project: ${projectName}?`;
+      this.modalConfirmCancelProps.message = `Do you really want to delete the project: ${projectName}?`;
       this.modalConfirmCancelProps.confirm = "delete";
 
       this.setShowModalConfirmCancel(true);
@@ -265,7 +339,7 @@ export default {
     },
 
     cancelAction() {
-       this.setShowModalConfirmCancel(false);
+      this.setShowModalConfirmCancel(false);
     },
 
     confirmAction(v) {
@@ -279,14 +353,17 @@ export default {
 
     clearSelectedSkills() {
       this.updateProjectData.skills = [0];
+    },
+
+    filterProjectsBySkill(filterSkill) {
+      this.filterSkill = filterSkill;
     }
   },
 
   created() {
     this.readProjects();
   }
-}
-
+};
 </script>
 
 <style scoped>
@@ -305,5 +382,4 @@ export default {
   word-break: break-word;
   /* overflow: hidden; */
 }
-
 </style>

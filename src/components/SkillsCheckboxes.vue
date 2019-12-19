@@ -4,8 +4,18 @@
       Skills
     </div>
     <div class="skills">
-      <div class="skill u-third-width" v-for="{ _id, type, name } in skills" :key="_id">
-        <input type="checkbox" :id="name" :value ="_id" v-model="checkedSkills" @change="onChange">
+      <div
+        class="skill u-third-width"
+        v-for="{ _id, type, name } in skills"
+        :key="_id"
+      >
+        <input
+          type="checkbox"
+          :id="name"
+          :value="_id"
+          v-model="checkedSkills"
+          @change="onChange"
+        />
         <label class="skill-label" :for="name">{{ name }}</label>
       </div>
     </div>
@@ -22,24 +32,26 @@ export default {
     return {
       skills: [],
       checkedSkills: this.initialCheckedSkills
-    }
+    };
   },
 
   watch: {
     initialCheckedSkills(newValue) {
-      (Array.isArray(this.initialCheckedSkills)) ? this.checkedSkills = this.initialCheckedSkills : this.checkedSkills = []; // Handle no skills returned from the API call
+      Array.isArray(this.initialCheckedSkills)
+        ? (this.checkedSkills = this.initialCheckedSkills)
+        : (this.checkedSkills = []); // Handle no skills returned from the API call
     }
   },
 
   methods: {
     readSkills() {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/sort/type+name`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.skills = json.skills;
-      });
+        .then(response => {
+          return response.json();
+        })
+        .then(json => {
+          this.skills = json.skills;
+        });
     },
 
     onChange(event) {
@@ -50,7 +62,7 @@ export default {
   created() {
     this.readSkills();
   }
-}
+};
 </script>
 
 <style scoped>
@@ -80,7 +92,6 @@ export default {
 }
 
 .skill label {
-  margin-left: 1.0rem;
+  margin-left: 1rem;
 }
-
 </style>
