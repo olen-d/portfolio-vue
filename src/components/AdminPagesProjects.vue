@@ -167,6 +167,7 @@ export default {
       return displayProjects;
     },
 
+    // TODO: Add ability to choose multiple skills
     filteredBySkillProjects() {
       let filteredBySkillProjects;
       const filterSkill = this.filterSkill;
