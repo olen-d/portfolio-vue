@@ -171,9 +171,12 @@ export default {
     filteredBySkillProjects() {
       let filteredBySkillProjects;
       const filterSkill = this.filterSkill;
+      console.log("FILTER SKILL 1:\n", filterSkill);
 
       if (this.filterSkill != "") {
+        console.log("FILTER SKILL 2:\n", filterSkill);
         filteredBySkillProjects = this.displayProjects.filter(project => {
+          console.log("FILTER SKILL 3\n", filterSkill, "FILTER SKILL 4\n", this.filterSkill);
           return project.skills.indexOf(filterSkill) !== -1;
         });
       } else {
