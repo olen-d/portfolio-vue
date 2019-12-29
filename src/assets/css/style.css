@@ -133,27 +133,6 @@ a:hover {
     margin-bottom: 10rem;
 }
 
-#social {
-    padding-top:1rem;
-    padding-bottom:1rem;
-    font-size:4rem;
-    background-color:#136a9b;
-    color:#fcc914;
-    text-align:center;
-}
-
-#social a:link {
-    color:#ffffff;
-}
-
-#social a:visited {
-    color:#ffffff;
-}
-
-#social a:hover {
-    color:#fcc914;
-}
-
 .footer {
     position:absolute;
     bottom:0px;
