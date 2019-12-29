@@ -73,7 +73,11 @@ export default {
     this.loading = true;
     fetch(`${process.env.VUE_APP_API_BASE_URL}/api/welcome`)
       .then(response => {
-        return response.json();
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Network response was not ok. Unable to fetch. ");
+        }
       })
       .then(json => {
         this.loading = false;
