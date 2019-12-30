@@ -7,18 +7,13 @@
           <div class="hexa">
             <div class="hex1">
               <div class="hex2">
-                <img src="./../assets/images/headshot_01.jpg" alt="Olen Daelhousen's Headshot" width="100%" height="auto">
+                <img
+                  src="./../assets/images/headshot_01.jpg"
+                  alt="Olen Daelhousen's Headshot"
+                  width="100%"
+                  height="auto"
+                />
               </div>
-            </div>
-          </div>
-          <div class="main-header-wrapper">
-            <div class="main-header">
-              <h1>
-                {{user.firstName}}&nbsp;{{user.lastName}}
-              </h1>
-              <h4 class="title">
-                {{profile.title}}
-              </h4>
             </div>
           </div>
         </div>
@@ -28,7 +23,15 @@
           &nbsp;
         </div>
         <div class="ten columns">
-          <span v-html="profile.bio"></span>
+          <div class="user-wrapper">
+            <div v-if="loading || error" class="loading-indicator-wrapper">
+              <LoadingIndicator v-bind:loading="loading" v-bind:error="error" />
+            </div>
+            <div v-if="user" class="user">
+              <h1>{{ user.firstName }}&nbsp;{{ user.lastName }}</h1>
+            </div>
+          </div>
+          <Profile />
         </div>
         <div class="one column">
           &nbsp;
@@ -39,36 +42,75 @@
 </template>
 
 <script>
-import Header from "./Header.vue"
+import Header from "./Header.vue";
+import LoadingIndicator from "./LoadingIndicator.vue";
+import Profile from "./Profile.vue";
 
 export default {
   components: {
-    Header
+    Header,
+    LoadingIndicator,
+    Profile
   },
 
   data: () => {
     return {
-      user: [],
-      profile: []
-    }
+      loading: false,
+      user: null,
+      error: null
+    };
   },
 
-created() {
-  fetch(`${process.env.VUE_APP_API_BASE_URL}/api/users/olen.d`)
-    .then((response) => {
-      return response.json();
-    })
-    .then((json) => {
-      this.user = json.user;
-    });
-  
-  fetch(`${process.env.VUE_APP_API_BASE_URL}/api/profiles/olen.d`)
-    .then((response) => {
-      return response.json();
-    })
-    .then((json) => {
-      this.profile = json.profile;
-    });
+  created() {
+    this.loading = true;
+    fetch(`${process.env.VUE_APP_API_BASE_URL}/api/users/olen.d`)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Network response was not ok. Unable to fetch. ");
+        }
+      })
+      .then(json => {
+        this.loading = false;
+        this.user = json.user;
+      })
+      .catch(err => {
+        this.loading = false;
+        this.error = err.toString();
+      });
+  }
+};
+</script>
+
+<style scoped>
+.user-wrapper {
+  margin: 0rem;
+  padding: 0rem;
+}
+
+.loading-indicator-wrapper {
+  margin-top: 6rem;
+  margin-bottom: 2rem;
+}
+
+.user {
+  margin: 0rem;
+  padding: 0rem;
+}
+
+@media (min-width: 880px) {
+  .user-wrapper {
+    /* display: inline-block;
+    position: relative;
+    top: 0rem;
+    left: 24rem; */
+  }
+
+  .user {
+    /* display: inline-block;
+    position: absolute;
+    bottom: 0px; */
   }
 }
-</script>
+</style>
