@@ -106,29 +106,6 @@ a:hover {
     transform: rotate(-60deg);
   }
 
-.main-header-wrapper {
-    display:block;
-
-    clear:both;
-}
-
-.main-header {
-    display:block;
-
-}
-
-@media (min-width: 880px) {
-    .main-header-wrapper {
-        display:inline-block;
-        position:relative;
-    }
-    .main-header {
-        display:inline-block;
-        position:absolute;
-        bottom:0px;
-  }
-}
-
 #about, #contact {
     margin-bottom: 10rem;
 }
