@@ -7,9 +7,7 @@
           &nbsp;
         </div>
         <div class="ten columns">
-          <h1>
-            Olen Daelhousen
-          </h1>
+          <UserFullName />
           <LoadingIndicator v-bind:loading="loading" v-bind:error="error" />
           <div v-if="welcome">
             <h5>
@@ -53,12 +51,14 @@
 import Header from "./Header.vue";
 import LoadingIndicator from "./LoadingIndicator.vue";
 import SkillsTop from "./SkillsTop.vue";
+import UserFullName from "./UserFullName.vue";
 
 export default {
   components: {
     Header,
     LoadingIndicator,
-    SkillsTop
+    SkillsTop,
+    UserFullName
   },
 
   data: () => {
