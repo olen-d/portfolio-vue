@@ -17,36 +17,41 @@
         <div class="one column">
           &nbsp;
         </div>
-        <div class="ten columns projects">
-          <div
-            v-for="{
-              _id,
-              deployedLink,
-              description,
-              title,
-              repoLink,
-              screenshot
-            } in sortedProjects"
-            :key="_id"
-            class="card u-pull-left"
-          >
-            <div class="card-title">
-              <img
-                :src="`${publicPath}assets/images/${screenshot}`"
-                width="350"
-                height="auto"
-                :alt="`Screenshot of ${title}`"
-              />
-              <h2>
-                {{ title }}
-              </h2>
-              <p>
-                {{ description }}
-              </p>
-              <p><a :href="deployedLink">Visit the project</a>.</p>
-              <p>
-                <a :href="repoLink">See the code on Github</a>
-              </p>
+        <div class="ten columns">
+          <div class="loading-indicator-wrapper">
+            <LoadingIndicator v-bind:loading="loading" v-bind:error="error" />
+          </div>
+          <div v-if="projects" class="projects">
+            <div
+              v-for="{
+                _id,
+                deployedLink,
+                description,
+                title,
+                repoLink,
+                screenshot
+              } in sortedProjects"
+              :key="_id"
+              class="card u-pull-left"
+            >
+              <div class="card-title">
+                <img
+                  :src="`${publicPath}assets/images/${screenshot}`"
+                  width="350"
+                  height="auto"
+                  :alt="`Screenshot of ${title}`"
+                />
+                <h2>
+                  {{ title }}
+                </h2>
+                <p>
+                  {{ description }}
+                </p>
+                <p><a :href="deployedLink">Visit the project</a>.</p>
+                <p>
+                  <a :href="repoLink">See the code on Github</a>
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -60,15 +65,19 @@
 
 <script>
 import Header from "./Header.vue";
+import LoadingIndicator from "./LoadingIndicator.vue";
 
 export default {
   components: {
-    Header
+    Header,
+    LoadingIndicator
   },
 
   data: () => {
     return {
-      projects: [],
+      loading: false,
+      projects: null,
+      error: null,
       publicPath: process.env.BASE_URL
     };
   },
@@ -89,13 +98,29 @@ export default {
   },
 
   created() {
+    this.loading = true;
     fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects`)
       .then(response => {
-        return response.json();
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Network response was not ok. Unable to fetch. ");
+        }
       })
       .then(json => {
+        this.loading = false;
         this.projects = json.projects;
+      })
+      .catch(err => {
+        this.loading = false;
+        this.error = err.toString();
       });
   }
 };
 </script>
+
+<style scoped>
+.loading-indicator-wrapper {
+  margin-bottom: 10rem;
+}
+</style>
