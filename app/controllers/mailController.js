@@ -5,12 +5,12 @@ exports.send_mail = (req, res) => {
   const { name, email, message } = req.body;
 
   const transporter = nodemailer.createTransport({
-    host: "mail.gandi.net",
-    port: 465,
-    secure: true,
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: process.env.SMTP_SECURE,
     auth: {
-      user: process.env.MAILUSER,
-      pass: process.env.MAILPASS
+      user: process.env.SMTP_USER,
+      pass: process.env.SMPT_PASS
     },
     tls: {
       rejectUnauthorized: false
