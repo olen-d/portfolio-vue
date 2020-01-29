@@ -2,14 +2,15 @@ const db = require("../config/connection");
 
 const data = userInfo => {
   return new Promise((resolve, reject) => {
+    const { firstName, lastName, email, userName, password } = userInfo;
     try {
       db.users.insert(
         {
-          firstName: userInfo.firstName,
-          lastName: userInfo.lastName,
-          email: userInfo.email,
-          userName: userInfo.userName,
-          password: userInfo.password,
+          firstName,
+          lastName,
+          email,
+          userName,
+          password,
           editor: false,
           administrator: false
         },
@@ -30,4 +31,4 @@ const data = userInfo => {
   });
 };
 
-module.exports = { data: data };
+module.exports = { data };
