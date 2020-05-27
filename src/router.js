@@ -10,6 +10,7 @@ const AdminPagesProjects = () => import("./views/AdminPagesProjects.vue");
 const AdminPagesSkills = () => import("./views/AdminPagesSkills.vue");
 const AdminPagesWelcome = () => import("./views/AdminPagesWelcome.vue");
 
+const AuthorizeStrava = () => import("./views/AuthorizeStrava.vue");
 Vue.use(Router);
 
 export default new Router({
@@ -70,6 +71,11 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       component: () =>
         import(/* webpackChunkName: "about" */ "./views/About.vue")
+    },
+    {
+      path: "/authorize",
+      name: "authorize",
+      component: AuthorizeStrava
     },
     {
       path: "/login",
