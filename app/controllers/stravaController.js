@@ -2,6 +2,7 @@ const fetch = require("node-fetch");
 
 // Models
 const createStravaAccessToken = require("../models/createStravaAccessToken");
+const createStravaRefreshToken = require("../models/createStravaRefreshToken");
 
 exports.read_auth_code = (req, res) => {
   if (req.query) {
@@ -37,16 +38,25 @@ exports.read_auth_code = (req, res) => {
           const {
             access_token: accessToken,
             expires_at: expiresAt,
-            refresh_token: refeshToken,
+            refresh_token: refreshToken,
             athlete: { id: athleteId }
           } = data;
-          const createTokenResult = await createStravaAccessToken.data(
+
+          const createAccessTokenResult = await createStravaAccessToken.data(
             athleteId,
             scope,
             accessToken,
             expiresAt
           );
-          res.write(`<p>CREATE TOKEN RESULT: </p><p>${JSON.stringify(createTokenResult)}</p>`)
+
+          const createRefreshTokenResult = await createStravaRefreshToken.data(
+            athleteId,
+            scope,
+            refreshToken
+          );
+
+          res.write(`<p>CREATE TOKEN RESULT: </p><p>${JSON.stringify(createAccessTokenResult)}</p>`);
+          res.write(`<p>REFRESH TOKEN RESULT:<p>${JSON.stringify(createRefreshTokenResult)}</p>`);
           const cheese = JSON.stringify(data);
           res.write(`<p>DATA:</p><p>${cheese}</p>`);
         })();
