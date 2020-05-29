@@ -83,3 +83,12 @@ exports.read_access_token = (req, res) => {
     res.json({ data });
   })();
 };
+
+exports.read_refresh_token = (req, res) => {
+  const athleteId = parseInt(process.env.STRAVA_ATHLETE_ID);
+  (async () => {
+    const data = await readStravaRefreshToken.data(athleteId);
+
+    res.json({ data });
+  })();
+}
