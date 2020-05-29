@@ -6,6 +6,7 @@ const data = athleteId => {
       const currentTimestamp = Math.floor(Date.now() / 1000);
       db.stravaAccessTokens.find(
         { athleteId, expiresAt: { $gt: currentTimestamp } },
+        { accessToken: 1 },
         (err, data) => {
           if (err) {
             resolve({
