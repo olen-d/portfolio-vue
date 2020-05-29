@@ -3,6 +3,8 @@ const fetch = require("node-fetch");
 // Models
 const createStravaAccessToken = require("../models/createStravaAccessToken");
 const createStravaRefreshToken = require("../models/createStravaRefreshToken");
+const readStravaAccessToken = require("../models/readStravaAccessToken");
+const readStravaRefreshToken = require("../models/readStravaRefreshToken");
 
 exports.read_auth_code = (req, res) => {
   if (req.query) {
@@ -71,4 +73,13 @@ exports.read_auth_code = (req, res) => {
     // TODO: Failed, deal with error.
     res.write("FAIL");
   }
+};
+
+exports.read_access_token = (req, res) => {
+  const athleteId = parseInt(process.env.STRAVA_ATHLETE_ID);
+  (async () => {
+    const data = await readStravaAccessToken.data(athleteId);
+
+    res.json({ data });
+  })();
 };
