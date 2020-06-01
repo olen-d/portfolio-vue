@@ -94,7 +94,6 @@ exports.read_refresh_token = (req, res) => {
 };
 
 exports.read_refresh_access_token = (req, res) => {
-  console.log("PARAMS", req.params);
   const { refreshtoken } = req.params;
   (async () => {
     try {
