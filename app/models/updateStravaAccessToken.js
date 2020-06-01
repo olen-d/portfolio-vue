@@ -1,7 +1,6 @@
 const db = require("../config/connection");
 
 const data = (athleteId, accessToken, expiresAt) => {
-  console.log("MODEL AT:", athleteId, accessToken, expiresAt);
   return new Promise((resolve, reject) => {
     try {
       db.stravaAccessTokens.update(
@@ -9,9 +8,9 @@ const data = (athleteId, accessToken, expiresAt) => {
         { $set: { accessToken, expiresAt } },
         (error, response) => {
           if (error) {
-            resolve(error);
+            resolve({ error });
           } else {
-            resolve(response);
+            resolve({ response });
           }
         }
       );

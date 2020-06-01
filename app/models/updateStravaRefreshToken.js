@@ -8,9 +8,9 @@ const data = (athleteId, refreshToken) => {
         { $set: { refreshToken } },
         (error, response) => {
           if (error) {
-            resolve(error);
+            resolve({ error });
           } else {
-            resolve(response);
+            resolve({ response });
           }
         }
       );

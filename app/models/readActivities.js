@@ -65,9 +65,11 @@ const data = () => {
     (async () => {
       try {
         const accessTokenResult = await getAccessToken();
-        if (accessTokenResult.length > 0) {
+        if (accessTokenResult.data && accessTokenResult.data.length > 0) {
           // Destructure the access token...
-          const { access_token: at } = accessTokenResult;
+          const {
+            data: [{ accessToken: at }]
+          } = accessTokenResult;
           gblAccessToken = at;
         } else {
           // Check for a refresh token
@@ -77,7 +79,6 @@ const data = () => {
               data: [{ refreshToken }]
             } = refreshTokenResult;
             // Request an authorization token from Strava and put it in the database
-            console.log("BASE", process.env.API_BASE_URL);
             const result = await fetch(
               `${
                 process.env.API_BASE_URL
@@ -86,7 +87,6 @@ const data = () => {
             // console.log("REFRESH TOKEN RESULT", result);
 
             const data = await result.json();
-            console.log("STRAVA REFRESH:", data);
             const {
               data: {
                 access_token: accessToken,
@@ -95,7 +95,6 @@ const data = () => {
               }
             } = data;
             // TODO: Consider abstracting this into an API route
-            console.log("Access TOKEN:", accessToken);
             gblAccessToken = accessToken;
             const athleteId = parseInt(process.env.STRAVA_ATHLETE_ID);
             const updateAccessTokenResult = await updateStravaAccessToken.data(
@@ -103,18 +102,15 @@ const data = () => {
               accessToken,
               expiresAt
             );
-            console.log(updateAccessTokenResult);
             // TODO: Consider abstracting this into an API route
             const updateRefreshTokenResult = await updateStravaRefreshToken.data(
               athleteId,
               newRefreshToken
             );
-            console.log(updateRefreshTokenResult);
           } else {
             // No refresh token; redirect to authorization
           }
         }
-console.log("FINAL_AT", gblAccessToken);
         const result = await fetch(`${apiUrl}/${apiVersion}/activities`, {
           headers: {
             Authorization: `Bearer ${gblAccessToken}`
