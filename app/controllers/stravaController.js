@@ -3,8 +3,11 @@ const fetch = require("node-fetch");
 // Models
 const createStravaAccessToken = require("../models/createStravaAccessToken");
 const createStravaRefreshToken = require("../models/createStravaRefreshToken");
+const readActivities = require("../models/readActivities");
 const readStravaAccessToken = require("../models/readStravaAccessToken");
 const readStravaRefreshToken = require("../models/readStravaRefreshToken");
+const updateStravaAccessToken = require("../models/updateStravaAccessToken");
+const updateStravaRefreshToken = require("../models/updateStravaRefreshToken");
 
 exports.read_auth_code = (req, res) => {
   if (req.query) {
@@ -84,6 +87,59 @@ exports.read_access_token = (req, res) => {
   })();
 };
 
+exports.read_activities = (req, res) => {
+  (async () => {
+    let accessToken = "";
+
+    const accessTokenResult = await getAccessToken();
+    if (accessTokenResult.data && accessTokenResult.data.length > 0) {
+      const {
+        data: [{ accessToken: at }]
+      } = accessTokenResult;
+      accessToken = at;
+    } else {
+      // Check for a refresh token
+      const refreshTokenResult = await getRefreshToken();
+      if (refreshTokenResult.data && refreshTokenResult.data.length > 0) {
+        const {
+          data: [{ refreshToken }]
+        } = refreshTokenResult;
+        // Request an authorization token from Strava and put it in the database
+        const result = await fetch(
+          `${
+            process.env.API_BASE_URL
+          }/api/strava/read/refresh/accesstoken/${refreshToken}`
+        );
+        const data = await result.json();
+        const {
+          data: {
+            access_token: at,
+            expires_at: expiresAt,
+            refresh_token: newRefreshToken
+          }
+        } = data;
+        // TODO: Consider abstracting this into an API route
+        accessToken = at;
+        const athleteId = parseInt(process.env.STRAVA_ATHLETE_ID);
+        const updateAccessTokenResult = await updateStravaAccessToken.data(
+          athleteId,
+          accessToken,
+          expiresAt
+        );
+        // TODO: Consider abstracting this into an API route
+        const updateRefreshTokenResult = await updateStravaRefreshToken.data(
+          athleteId,
+          newRefreshToken
+        );
+      } else {
+        // No refresh token; redirect to authorization
+      }
+    }
+    const data = await readActivities.data(accessToken);
+    res.json(data);
+  })();
+};
+
 exports.read_refresh_token = (req, res) => {
   const athleteId = parseInt(process.env.STRAVA_ATHLETE_ID);
   (async () => {
@@ -93,6 +149,7 @@ exports.read_refresh_token = (req, res) => {
   })();
 };
 
+// Get a new access token from strava using the refresh token
 exports.read_refresh_access_token = (req, res) => {
   const { refreshtoken } = req.params;
   (async () => {
@@ -107,6 +164,38 @@ exports.read_refresh_access_token = (req, res) => {
 };
 
 // Helpers
+const getAccessToken = () => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const result = await fetch(
+          `${process.env.API_BASE_URL}/api/strava/read/accesstoken`
+        );
+        const data = await result.json();
+        resolve(data);
+      } catch (error) {
+        reject(error);
+      }
+    })();
+  });
+};
+
+const getRefreshToken = () => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const result = await fetch(
+          `${process.env.API_BASE_URL}/api/strava/read/refreshtoken`
+        );
+        const data = await result.json();
+        resolve(data);
+      } catch (error) {
+        reject(error);
+      }
+    })();
+  });
+};
+
 const getStravaAccessToken = (code, grantType) => {
   return new Promise((resolve, reject) => {
     (async () => {

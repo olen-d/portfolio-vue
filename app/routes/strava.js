@@ -5,6 +5,7 @@ const strava_controller = require("../controllers/stravaController");
 
 router.get("/strava", strava_controller.read_auth_code);
 router.get("/strava/read/accesstoken", strava_controller.read_access_token);
+router.get("/strava/read/activities", strava_controller.read_activities);
 router.get(
   "/strava/read/refresh/accesstoken/:refreshtoken",
   strava_controller.read_refresh_access_token
