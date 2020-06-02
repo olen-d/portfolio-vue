@@ -6,6 +6,7 @@ const data = (athleteId, refreshToken) => {
       db.stravaRefreshTokens.update(
         { athleteId },
         { $set: { refreshToken } },
+        { upsert: true },
         (error, response) => {
           if (error) {
             resolve({ error });
