@@ -1,5 +1,5 @@
 const fetch = require("node-fetch");
-
+// TODO: Refactor self executing async functions up to exports.. (req, res) => wherever it makes sense
 // Models
 const createStravaAccessToken = require("../models/createStravaAccessToken");
 const createStravaRefreshToken = require("../models/createStravaRefreshToken");
@@ -126,6 +126,8 @@ exports.read_activities = (req, res) => {
           accessToken,
           expiresAt
         };
+
+        // Update the access token in the database
         const updateAccessTokenResult = await fetch(
           `${process.env.API_BASE_URL}/api/strava/update/accesstoken`,
           {
@@ -139,15 +141,32 @@ exports.read_activities = (req, res) => {
         const updateAccessTokenData = await updateAccessTokenResult.json();
 
         if (updateAccessTokenData.response.ok !== 1) {
-          //Throw error.
+          // TODO: Deal with the error. Probably just log it, Strava will return the token with a refresh request anyway
         }
-        // TODO: Consider abstracting this into an API route
-        const updateRefreshTokenResult = await updateStravaRefreshToken.data(
+
+        // The access token response came with a refresh token, so update that too
+        const formDataRefresh = {
           athleteId,
           newRefreshToken
+        };
+
+        const updateRefreshTokenResult = await fetch(
+          `${process.env.API_BASE_URL}/api/strava/update/refreshtoken`,
+          {
+            method: "put",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formDataRefresh)
+          }
         );
+        const updateRefreshTokenData = await updateRefreshTokenResult.json();
+
+        if (updateRefreshTokenData.response.ok !== 1) {
+          // TODO: Deal with the error
+        }
       } else {
-        // No refresh token; redirect to authorization
+        // No refresh token; TODO: redirect to authorization
       }
     }
     const data = await readActivities.data(accessToken);
@@ -193,7 +212,17 @@ exports.update_access_token = async (req, res) => {
   }
 };
 
-exports.update_refresh_token = (req, res) => {
+exports.update_refresh_token = async (req, res) => {
+  const { athleteId, newRefreshToken } = req.body;
+  try {
+    const result = await updateStravaRefreshToken.data(
+      athleteId,
+      newRefreshToken
+    );
+    res.json({ ...result });
+  } catch (error) {
+    res.json({ error });
+  }
 };
 
 // Helpers
