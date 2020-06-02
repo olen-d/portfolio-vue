@@ -121,11 +121,26 @@ exports.read_activities = (req, res) => {
         // TODO: Consider abstracting this into an API route
         accessToken = at;
         const athleteId = parseInt(process.env.STRAVA_ATHLETE_ID);
-        const updateAccessTokenResult = await updateStravaAccessToken.data(
+        const formData = {
           athleteId,
           accessToken,
           expiresAt
+        };
+        const updateAccessTokenResult = await fetch(
+          `${process.env.API_BASE_URL}/api/strava/update/accesstoken`,
+          {
+            method: "put",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+          }
         );
+        const updateAccessTokenData = await updateAccessTokenResult.json();
+
+        if (updateAccessTokenData.response.ok !== 1) {
+          //Throw error.
+        }
         // TODO: Consider abstracting this into an API route
         const updateRefreshTokenResult = await updateStravaRefreshToken.data(
           athleteId,
@@ -161,6 +176,24 @@ exports.read_refresh_access_token = (req, res) => {
       res.json({ error });
     }
   })();
+};
+
+// Update Modules
+exports.update_access_token = async (req, res) => {
+  const { athleteId, accessToken, expiresAt } = req.body;
+  try {
+    const result = await updateStravaAccessToken.data(
+      athleteId,
+      accessToken,
+      expiresAt
+    );
+    res.json({ ...result });
+  } catch (error) {
+    res.json({ error });
+  }
+};
+
+exports.update_refresh_token = (req, res) => {
 };
 
 // Helpers

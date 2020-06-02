@@ -6,6 +6,7 @@ const data = (athleteId, accessToken, expiresAt) => {
       db.stravaAccessTokens.update(
         { athleteId },
         { $set: { accessToken, expiresAt } },
+        { upsert: true },
         (error, response) => {
           if (error) {
             resolve({ error });

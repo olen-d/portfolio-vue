@@ -12,5 +12,7 @@ router.get(
 );
 router.get("/strava/read/refreshtoken", strava_controller.read_refresh_token);
 
+router.put("/strava/update/accesstoken", strava_controller.update_access_token);
+
 // TODO: UPDATE THIS ROUTE TO BE /STRAVA/RESPONSE/AUTHCODE
 module.exports = router;
