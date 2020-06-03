@@ -4,6 +4,10 @@ const router = express.Router();
 const strava_controller = require("../controllers/stravaController");
 
 router.get("/strava", strava_controller.read_auth_code);
+router.get(
+  "/strava/process/activities/rides",
+  strava_controller.process_athlete_activities_rides
+);
 router.get("/strava/read/accesstoken", strava_controller.read_access_token);
 router.get("/strava/read/activities", strava_controller.read_activities);
 router.get(
