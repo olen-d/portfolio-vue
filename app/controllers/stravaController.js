@@ -225,6 +225,29 @@ exports.update_refresh_token = async (req, res) => {
   }
 };
 
+// Non-CRUD Modules
+exports.process_athlete_activities_rides = async (req, res) => {
+  const response = await fetch(
+    `${process.env.API_BASE_URL}/api/strava/read/activities`
+  );
+  const activities = await response.json();
+
+  // const gearId = "b4574947"; // TODO: This will be a variable later to filter by gear.
+  // // const gearId = "b4868209";
+  // const activitiesGear = activities.filter(activity => {
+  //   return activity.gear_id === gearId;
+  // });
+  const rides = activities.filter(activity => {
+    return activity.type === "Ride";
+  });
+
+  const data = rides.map(activity => {
+    return activity.name;
+  });
+
+  res.json({ data });
+};
+
 // Helpers
 const getAccessToken = () => {
   return new Promise((resolve, reject) => {
