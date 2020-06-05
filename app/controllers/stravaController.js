@@ -241,7 +241,7 @@ exports.process_athlete_activities_rides = async (req, res) => {
     return activity.type === "Ride";
   });
 
-  const data = rides.map(activity => {
+  const processed = rides.map(activity => {
     const {
       name,
       distance,
@@ -252,18 +252,39 @@ exports.process_athlete_activities_rides = async (req, res) => {
       average_speed: averageSpeed,
       max_speed: maxSpeed
     } = activity;
+
+    let startDateOnly = startDate.split("T")[0];
+
     const activityObj = {
       name,
       distance,
       totalElevationGain,
       type,
       startDate,
+      startDateOnly,
       gearId,
       averageSpeed,
       maxSpeed
     };
     return activityObj;
   });
+
+  // Group the activities by date
+  const data = processed.reduce((obj, activity) => {
+    let key = activity.startDateOnly;
+
+    if (!obj.hasOwnProperty([key])) {
+      obj[key] = { distance: 0, elevationGain: 0, activities: 0 };
+    }
+
+    const { distance, totalElevationGain: elevationGain } = activity;
+
+    obj[key]["distance"] += distance;
+    obj[key]["elevationGain"] += elevationGain;
+    obj[key]["activities"] += 1;
+
+    return obj;
+  }, {});
 
   res.json({ data });
 };
