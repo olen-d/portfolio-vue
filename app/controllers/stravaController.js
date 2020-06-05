@@ -242,7 +242,27 @@ exports.process_athlete_activities_rides = async (req, res) => {
   });
 
   const data = rides.map(activity => {
-    return activity.name;
+    const {
+      name,
+      distance,
+      total_elevation_gain: totalElevationGain,
+      type,
+      start_date: startDate,
+      gear_id: gearId,
+      average_speed: averageSpeed,
+      max_speed: maxSpeed
+    } = activity;
+    const activityObj = {
+      name,
+      distance,
+      totalElevationGain,
+      type,
+      startDate,
+      gearId,
+      averageSpeed,
+      maxSpeed
+    };
+    return activityObj;
   });
 
   res.json({ data });
