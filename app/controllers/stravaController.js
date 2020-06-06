@@ -270,23 +270,38 @@ exports.process_athlete_activities_rides = async (req, res) => {
   });
 
   // Group the activities by date
-  const data = processed.reduce((obj, activity) => {
-    let key = activity.startDateOnly;
+  const groupedByDate = processed.reduce((activitiesByDate, activity) => {
+    const {
+      startDateOnly,
+      distance,
+      totalElevationGain: elevationGain
+    } = activity;
 
-    if (!obj.hasOwnProperty([key])) {
-      obj[key] = { distance: 0, elevationGain: 0, activities: 0 };
+    let index = activitiesByDate.length - 1;
+    if (
+      index > 0 &&
+      activitiesByDate[index]["startDateOnly"] === startDateOnly
+    ) {
+      activitiesByDate[index]["distance"] += distance;
+      activitiesByDate[index]["elevationGain"] += elevationGain;
+      activitiesByDate[index]["activities"] += 1;
+    } else {
+      activitiesByDate.push({
+        startDateOnly,
+        distance,
+        elevationGain,
+        activities: 1
+      });
     }
+    return activitiesByDate;
+  }, []);
 
-    const { distance, totalElevationGain: elevationGain } = activity;
+  const distances = groupedByDate.map(activity => {
+    return activity.distance;
+  });
 
-    obj[key]["distance"] += distance;
-    obj[key]["elevationGain"] += elevationGain;
-    obj[key]["activities"] += 1;
-
-    return obj;
-  }, {});
-
-  res.json({ data });
+  res.json(distances);
+  // res.json({ data });
 };
 
 // Helpers
