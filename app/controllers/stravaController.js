@@ -227,6 +227,12 @@ exports.update_refresh_token = async (req, res) => {
 
 // Non-CRUD Modules
 exports.process_athlete_activities_rides = async (req, res) => {
+  // Divide an array into quantiles and return the cut points
+  const quantiles = (values) => {
+    const sorted = values.sort((a, b) => a - b);
+    return sorted;
+  };
+
   const response = await fetch(
     `${process.env.API_BASE_URL}/api/strava/read/activities`
   );
@@ -300,7 +306,8 @@ exports.process_athlete_activities_rides = async (req, res) => {
     return activity.distance;
   });
 
-  res.json(distances);
+  const sorted = quantiles(distances);
+  res.json(sorted);
   // res.json({ data });
 };
 
