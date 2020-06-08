@@ -227,10 +227,18 @@ exports.update_refresh_token = async (req, res) => {
 
 // Non-CRUD Modules
 exports.process_athlete_activities_rides = async (req, res) => {
-  // Divide an array into quantiles and return the cut points
-  const quantiles = (values) => {
+  // Divide an array into quantiles and return the cut points TODO: Move this to the View
+  const quantiles = (values, groups) => {
+    const cutPoints = [];
+    const percentage = 100 / groups / 100;
     const sorted = values.sort((a, b) => a - b);
-    return sorted;
+    const totalValues = values.length;
+
+    for (let i = 1; i < groups; i++) {
+      let quantile = Math.floor(i * percentage * (totalValues + 1));
+      cutPoints.push(sorted[quantile]);
+    }
+    return cutPoints;
   };
 
   const response = await fetch(
@@ -301,14 +309,21 @@ exports.process_athlete_activities_rides = async (req, res) => {
     }
     return activitiesByDate;
   }, []);
-
+  // TODO: Move to View Layer
   const distances = groupedByDate.map(activity => {
     return activity.distance;
   });
 
-  const sorted = quantiles(distances);
-  res.json(sorted);
-  // res.json({ data });
+  const elevationGains = groupedByDate.map(activity => {
+    return activity.elevationGain;
+  });
+
+  const activitiesDaily = groupedByDate.map(activity => {
+    return activity.activities;
+  })
+  // TODO: End Move to View Layer
+
+  res.json({ data: groupedByDate });
 };
 
 // Helpers
