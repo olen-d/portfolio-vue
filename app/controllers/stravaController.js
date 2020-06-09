@@ -227,7 +227,7 @@ exports.update_refresh_token = async (req, res) => {
 
 // Non-CRUD Modules
 exports.process_athlete_activities_rides = async (req, res) => {
-  // Divide an array into quantiles and return the cut points TODO: Move this to the View
+  // Divide an array into quantiles and return the cut points
   const quantiles = (values, groups) => {
     const cutPoints = [];
     const percentage = 100 / groups / 100;
@@ -309,7 +309,7 @@ exports.process_athlete_activities_rides = async (req, res) => {
     }
     return activitiesByDate;
   }, []);
-  // TODO: Move to View Layer
+
   const distances = groupedByDate.map(activity => {
     return activity.distance;
   });
@@ -320,10 +320,50 @@ exports.process_athlete_activities_rides = async (req, res) => {
 
   const activitiesDaily = groupedByDate.map(activity => {
     return activity.activities;
-  })
-  // TODO: End Move to View Layer
+  });
 
-  res.json({ data: groupedByDate });
+  const distanceQuantiles = quantiles(distances, 5);
+  const elevationGainQuantiles = quantiles(elevationGains, 5);
+
+  const groupedWithQuantiles = groupedByDate.map(activity => {
+    const { distance, elevationGain } = activity;
+
+    let distanceQuantile = null;
+    let elevationGainQuantile = null;
+
+    if (distance < distanceQuantiles[0]) {
+      distanceQuantile = "distanceQuantile1";
+    } else if (distance < distanceQuantiles[1]) {
+      distanceQuantile = "distanceQuantile2";
+    } else if (distance < distanceQuantiles[2]) {
+      distanceQuantile = "distanceQuantile3";
+    } else if (distance < distanceQuantiles[3]) {
+      distanceQuantile = "distanceQuantile4";
+    } else {
+      distanceQuantile = "distanceQuantile5";
+    }
+
+    if (elevationGain < elevationGainQuantiles[0]) {
+      elevationGainQuantile = "elevationGainQuantile1";
+    } else if (distance < distanceQuantiles[1]) {
+      elevationGainQuantile = "elevationGainQuantile2";
+    } else if (distance < distanceQuantiles[2]) {
+      elevationGainQuantile = "elevationGainQuantile3";
+    } else if (distance < distanceQuantiles[3]) {
+      elevationGainQuantile = "elevationGainQuantile4";
+    } else {
+      elevationGainQuantile = "elevationGainQuantile5";
+    }
+
+    const activityObj = {
+      ...activity,
+      distanceQuantile,
+      elevationGainQuantile
+    };
+    return activityObj;
+  });
+
+  res.json({ data: groupedWithQuantiles });
 };
 
 // Helpers

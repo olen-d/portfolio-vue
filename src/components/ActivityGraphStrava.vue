@@ -33,7 +33,6 @@ export default {
           }/api/strava/process/activities/rides`
         );
         const data = await response.json();
-
         this.loading = false;
         this.responseData = { ...data };
       } catch (err) {
