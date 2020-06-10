@@ -1,17 +1,15 @@
 <template>
-  <div class="activity-graph=wrapper">
+  <div class="activity-graph-wrapper">
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
     <div v-if="responseData" class="response-data">
       <div
         v-for="{ startDateOnly, distanceQuantile } in responseData.data"
         :key="startDateOnly"
       >
-        <div :class="distanceQuantile">
-          &nbsp;
-        </div>
+        <div :class="distanceQuantile"></div>
       </div>
-      <pre>{{ responseData }}</pre>
     </div>
+          <pre>{{ responseData }}</pre>
   </div>
 </template>
 
@@ -41,8 +39,11 @@ export default {
           }/api/strava/process/activities/rides`
         );
         const data = await response.json();
+        const sortedAscending = data.data.sort((a, b) =>
+          a.startDateOnly > b.startDateOnly ? 1 : -1
+        );
         this.loading = false;
-        this.responseData = { ...data };
+        this.responseData = { data: [...sortedAscending] };
       } catch (err) {
         this.error = err.toString();
         // TODO: Deal with the error
@@ -53,15 +54,22 @@ export default {
 </script>
 
 <style scoped>
+.response-data {
+  display: grid;
+  grid-template-columns: repeat(53, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  gap: 1px;
+}
+
 .distance-quantile-1,
 .distance-quantile-2,
 .distance-quantile-3,
 .distance-quantile-4,
 .distance-quantile-5 {
-  height: 1em;
-  width: 1em;
-  margin-right: 0.2em;
-  margin-bottom: 0.2em;
+  height: 0.7em;
+  width: 0.7em;
+  /* margin-right: 0.2em;
+  margin-bottom: 0.2em; */
 }
 
 .distance-quantile-1 {
@@ -83,4 +91,5 @@ export default {
 .distance-quantile-5 {
   background-color: #4288af;
 }
+
 </style>
