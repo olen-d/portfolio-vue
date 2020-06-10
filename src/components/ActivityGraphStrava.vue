@@ -2,6 +2,14 @@
   <div class="activity-graph=wrapper">
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
     <div v-if="responseData" class="response-data">
+      <div
+        v-for="{ startDateOnly, distanceQuantile } in responseData.data"
+        :key="startDateOnly"
+      >
+        <div :class="distanceQuantile">
+          &nbsp;
+        </div>
+      </div>
       <pre>{{ responseData }}</pre>
     </div>
   </div>
@@ -43,3 +51,36 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.distance-quantile-1,
+.distance-quantile-2,
+.distance-quantile-3,
+.distance-quantile-4,
+.distance-quantile-5 {
+  height: 1em;
+  width: 1em;
+  margin-right: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.distance-quantile-1 {
+  background-color: #d0e1eb;
+}
+
+.distance-quantile-2 {
+  background-color: #b8d2e1;
+}
+
+.distance-quantile-3 {
+  background-color: #a1c3d7;
+}
+
+.distance-quantile-4 {
+  background-color: #71a6c3;
+}
+
+.distance-quantile-5 {
+  background-color: #4288af;
+}
+</style>

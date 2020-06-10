@@ -332,27 +332,27 @@ exports.process_athlete_activities_rides = async (req, res) => {
     let elevationGainQuantile = null;
 
     if (distance < distanceQuantiles[0]) {
-      distanceQuantile = "distanceQuantile1";
+      distanceQuantile = "distance-quantile-1";
     } else if (distance < distanceQuantiles[1]) {
-      distanceQuantile = "distanceQuantile2";
+      distanceQuantile = "distance-quantile-2";
     } else if (distance < distanceQuantiles[2]) {
-      distanceQuantile = "distanceQuantile3";
+      distanceQuantile = "distance-quantile-3";
     } else if (distance < distanceQuantiles[3]) {
-      distanceQuantile = "distanceQuantile4";
+      distanceQuantile = "distance-quantile-4";
     } else {
-      distanceQuantile = "distanceQuantile5";
+      distanceQuantile = "distance-quantile-5";
     }
 
     if (elevationGain < elevationGainQuantiles[0]) {
-      elevationGainQuantile = "elevationGainQuantile1";
+      elevationGainQuantile = "elevation-gain-quantile-1";
     } else if (distance < distanceQuantiles[1]) {
-      elevationGainQuantile = "elevationGainQuantile2";
+      elevationGainQuantile = "elevation-gain-quantile-2";
     } else if (distance < distanceQuantiles[2]) {
-      elevationGainQuantile = "elevationGainQuantile3";
+      elevationGainQuantile = "elevation-gain-quantile-3";
     } else if (distance < distanceQuantiles[3]) {
-      elevationGainQuantile = "elevationGainQuantile4";
+      elevationGainQuantile = "elevation-gain-quantile-4";
     } else {
-      elevationGainQuantile = "elevationGainQuantile5";
+      elevationGainQuantile = "elevation-gain-quantile-5";
     }
 
     const activityObj = {
