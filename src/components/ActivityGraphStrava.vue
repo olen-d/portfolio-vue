@@ -3,13 +3,17 @@
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
     <div v-if="responseData" class="response-data">
       <div
-        v-for="{ startDateOnly, distanceQuantile } in responseData.data"
+        v-for="{
+          startDateOnly,
+          distanceQuantile,
+          gridPosition
+        } in responseData.data"
         :key="startDateOnly"
-      >
-        <div :class="distanceQuantile"></div>
-      </div>
+        :class="distanceQuantile"
+        :style="gridPosition"
+      ></div>
     </div>
-          <pre>{{ responseData }}</pre>
+    <pre>{{ responseData }}</pre>
   </div>
 </template>
 
@@ -43,7 +47,7 @@ export default {
           a.startDateOnly > b.startDateOnly ? 1 : -1
         );
         const dts = new Date();
-        dts.setDate(dts.getDate() - 365);
+        dts.setDate(dts.getDate() - 368);
 
         const dte = new Date();
 
@@ -61,12 +65,30 @@ export default {
 
         const prevYearDates = allDates(dts, dte);
 
-        const noDataActivityObj = { distance: 0, elevationGain: 0, activites: 0, distanceQuantile: "distance-quantile-0", elevationGainQuantile: "elevation-gain-quantile-0"};
+        const noDataActivityObj = {
+          distance: 0,
+          elevationGain: 0,
+          activites: 0,
+          distanceQuantile: "distance-quantile-0",
+          elevationGainQuantile: "elevation-gain-quantile-0"
+        };
+
+        let col = 1;
+        let row = 1;
         const allData = prevYearDates.map(date => {
-          // const doritos = Array.isArray(data.data);
-          const doritos = data.data.indexOf(element => { element === date });
-          console.log("Cheese:", typeof date );
-          return data.data.indexOf(date) == -1 ? { startDateOnly: date, ...noDataActivityObj } : data[date];
+          // const gridPosition = `{ 'grid-column': '${col}', 'grid-row': '${row}' }`;
+          const gridPosition = `gridColumn: ${col}; gridRow: ${row}`;
+          if (row % 7 === 0) {
+            row = 1;
+            col++;
+          } else {
+            row++;
+          }
+
+          const idx = data.data.findIndex(obj => obj.startDateOnly === date);
+          return idx === -1
+            ? { startDateOnly: date, ...noDataActivityObj, gridPosition }
+            : { ...data.data[idx], gridPosition };
         });
 
         this.loading = false;
@@ -86,7 +108,7 @@ export default {
 <style scoped>
 .response-data {
   display: grid;
-  grid-template-columns: repeat(53, 1fr);
+  grid-template-columns: repeat(auto-fill, 53, 1fr);
   grid-template-rows: repeat(7, 1fr);
   gap: 1px;
 }
@@ -97,14 +119,14 @@ export default {
 .distance-quantile-3,
 .distance-quantile-4,
 .distance-quantile-5 {
-  height: 0.7em;
-  width: 0.7em;
+  height: 0.8em;
+  width: 0.8em;
   /* margin-right: 0.2em;
   margin-bottom: 0.2em; */
 }
 
 .distance-quantile-0 {
-  background-color: #efefef;
+  background-color: #f2f2f2;
 }
 
 .distance-quantile-1 {
@@ -126,5 +148,4 @@ export default {
 .distance-quantile-5 {
   background-color: #4288af;
 }
-
 </style>
