@@ -42,8 +42,38 @@ export default {
         const sortedAscending = data.data.sort((a, b) =>
           a.startDateOnly > b.startDateOnly ? 1 : -1
         );
+        const dts = new Date();
+        dts.setDate(dts.getDate() - 365);
+
+        const dte = new Date();
+
+        const allDates = (startDate, endDate) => {
+          const dates = [];
+          for (
+            dates, startDate;
+            startDate <= endDate;
+            startDate.setDate(startDate.getDate() + 1)
+          ) {
+            dates.push(new Date(startDate).toISOString().split("T")[0]);
+          }
+          return dates;
+        };
+
+        const prevYearDates = allDates(dts, dte);
+
+        const noDataActivityObj = { distance: 0, elevationGain: 0, activites: 0, distanceQuantile: "distance-quantile-0", elevationGainQuantile: "elevation-gain-quantile-0"};
+        const allData = prevYearDates.map(date => {
+          // const doritos = Array.isArray(data.data);
+          const doritos = data.data.indexOf(element => { element === date });
+          console.log("Cheese:", typeof date );
+          return data.data.indexOf(date) == -1 ? { startDateOnly: date, ...noDataActivityObj } : data[date];
+        });
+
         this.loading = false;
-        this.responseData = { data: [...sortedAscending] };
+
+        this.responseData = { data: allData };
+        // this.responseData = { data: [...sortedAscending] };
+        // this.responseData = { data };
       } catch (err) {
         this.error = err.toString();
         // TODO: Deal with the error
@@ -61,6 +91,7 @@ export default {
   gap: 1px;
 }
 
+.distance-quantile-0,
 .distance-quantile-1,
 .distance-quantile-2,
 .distance-quantile-3,
@@ -70,6 +101,10 @@ export default {
   width: 0.7em;
   /* margin-right: 0.2em;
   margin-bottom: 0.2em; */
+}
+
+.distance-quantile-0 {
+  background-color: #efefef;
 }
 
 .distance-quantile-1 {
