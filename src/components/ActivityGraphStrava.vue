@@ -107,10 +107,16 @@ export default {
 
 <style scoped>
 .response-data {
+  --activity-graph-square-width: 10px;
+  --activity-graph-square-height: 10px;
+  --activity-graph-gap: 1px;
+  --activity-graph-squares-width: calc(var(--activity-graph-square-width) * 53);
+  --activity-graph-gaps: calc(var(--activity-graph-gap) * 52);
+  width: calc(var(--activity-graph-squares-width) + var(--activity-graph-gaps));
   display: grid;
   grid-template-columns: repeat(auto-fill, 53, 1fr);
   grid-template-rows: repeat(7, 1fr);
-  gap: 1px;
+  gap: var(--activity-graph-gap);
 }
 
 .distance-quantile-0,
@@ -119,8 +125,8 @@ export default {
 .distance-quantile-3,
 .distance-quantile-4,
 .distance-quantile-5 {
-  height: 0.8em;
-  width: 0.8em;
+  width: var(--activity-graph-square-width);
+  height: var(--activity-graph-square-height);
   /* margin-right: 0.2em;
   margin-bottom: 0.2em; */
 }
