@@ -47,7 +47,11 @@ export default {
           a.startDateOnly > b.startDateOnly ? 1 : -1
         );
         const dts = new Date();
-        dts.setDate(dts.getDate() - 368);
+        const dow = dts.getDay();
+        const futureDays = 7 - dow;
+        const totalDays = 370 - futureDays;
+
+        dts.setDate(dts.getDate() - totalDays);
 
         const dte = new Date();
 
@@ -76,7 +80,6 @@ export default {
         let col = 1;
         let row = 1;
         const allData = prevYearDates.map(date => {
-          // const gridPosition = `{ 'grid-column': '${col}', 'grid-row': '${row}' }`;
           const gridPosition = `gridColumn: ${col}; gridRow: ${row}`;
           if (row % 7 === 0) {
             row = 1;
@@ -107,8 +110,8 @@ export default {
 
 <style scoped>
 .response-data {
-  --activity-graph-square-width: 10px;
-  --activity-graph-square-height: 10px;
+  --activity-graph-square-width: 11px;
+  --activity-graph-square-height: 11px;
   --activity-graph-gap: 1px;
   --activity-graph-squares-width: calc(var(--activity-graph-square-width) * 53);
   --activity-graph-gaps: calc(var(--activity-graph-gap) * 52);
