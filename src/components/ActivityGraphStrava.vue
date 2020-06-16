@@ -3,6 +3,16 @@
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
     <div v-if="responseData" class="response-data">
       <div
+        v-for="(day, index) in dayNames"
+        :key="day"
+        class="day-name-text"
+        :style="`grid-column: 1; grid-row: ${index + 1}`"
+      >
+        <p>
+          {{ day }}
+        </p>
+      </div>
+      <div
         v-for="{
           startDateOnly,
           distanceQuantile,
@@ -28,6 +38,7 @@ export default {
   data: () => {
     return {
       loading: false,
+      dayNames: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       responseData: null,
       error: null
     };
@@ -49,7 +60,7 @@ export default {
         const dts = new Date();
         const dow = dts.getDay();
         const futureDays = 7 - dow;
-        const totalDays = 370 - futureDays;
+        const totalDays = 371 - futureDays;
 
         dts.setDate(dts.getDate() - totalDays);
 
@@ -77,7 +88,7 @@ export default {
           elevationGainQuantile: "elevation-gain-quantile-0"
         };
 
-        let col = 1;
+        let col = 2;
         let row = 1;
         const allData = prevYearDates.map(date => {
           const gridPosition = `gridColumn: ${col}; gridRow: ${row}`;
@@ -110,16 +121,21 @@ export default {
 
 <style scoped>
 .response-data {
+  --activity-graph-day-of-week-width: 22px;
   --activity-graph-square-width: 11px;
   --activity-graph-square-height: 11px;
   --activity-graph-gap: 1px;
   --activity-graph-squares-width: calc(var(--activity-graph-square-width) * 53);
   --activity-graph-gaps: calc(var(--activity-graph-gap) * 52);
-  width: calc(var(--activity-graph-squares-width) + var(--activity-graph-gaps));
+  width: calc(
+    var(--activity-graph-day-of-week-width) +
+      var(--activity-graph-squares-width) + var(--activity-graph-gaps)
+  );
   display: grid;
-  grid-template-columns: repeat(auto-fill, 53, 1fr);
+  grid-template-columns: var(--activity-graph-day-of-week-width) repeat(auto-fill, 53, 1fr);
   grid-template-rows: repeat(7, 1fr);
   gap: var(--activity-graph-gap);
+  /* align-items: center; */
 }
 
 .distance-quantile-0,
@@ -134,7 +150,22 @@ export default {
   margin-bottom: 0.2em; */
 }
 
+.day-name-text {
+  width: var(--activity-graph-day-of-week-width);
+  margin: 0px;
+  padding: 0px;
+  /* background-color: #f00; */
+}
+
+.day-name-text p {
+  margin: 0px;
+  padding: 0px;
+  font-size: 8px;
+  text-transform: uppercase;
+}
+
 .distance-quantile-0 {
+  /* background-color: #ffcc88; */
   background-color: #f2f2f2;
 }
 
