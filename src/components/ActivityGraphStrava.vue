@@ -2,11 +2,14 @@
   <div class="activity-graph-wrapper">
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
     <div v-if="responseData" class="response-data">
+      <div v-for="{ monthShortName, gridPosition} in monthNames" :key="" class="month-name-text" :style="gridPosition">
+        {{ monthShortName }}
+      </div>
       <div
         v-for="(day, index) in dayNames"
         :key="day"
         class="day-name-text"
-        :style="`grid-column: 1; grid-row: ${index + 1}`"
+        :style="`grid-column: 1; grid-row: ${index + 2}`"
       >
         <p>
           {{ day }}
@@ -23,6 +26,7 @@
         :style="gridPosition"
       ></div>
     </div>
+    <pre>{{ monthNames }}</pre>
     <pre>{{ responseData }}</pre>
   </div>
 </template>
@@ -39,6 +43,7 @@ export default {
     return {
       loading: false,
       dayNames: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      monthNames: [],
       responseData: null,
       error: null
     };
@@ -60,7 +65,7 @@ export default {
         const dts = new Date();
         const dow = dts.getDay();
         const futureDays = 7 - dow;
-        const totalDays = 371 - futureDays;
+        const totalDays = 370 - futureDays;
 
         dts.setDate(dts.getDate() - totalDays);
 
@@ -89,11 +94,18 @@ export default {
         };
 
         let col = 2;
-        let row = 1;
+        let row = 2;
+        let lastMonthShort = dts.toLocaleString("en-us", { month: "short" });
+        this.monthNames.push({ monthShortName: lastMonthShort, gridPosition: "gridColumn: 2 / 4; gridRow: 1"});
         const allData = prevYearDates.map(date => {
           const gridPosition = `gridColumn: ${col}; gridRow: ${row}`;
-          if (row % 7 === 0) {
-            row = 1;
+          const currentMonthShort = new Date(date).toLocaleString("en-us", { month: "short"});
+          if (lastMonthShort !== currentMonthShort) {
+            this.monthNames.push({ monthShortName: currentMonthShort, gridPosition: `gridColumn: ${col} / ${col + 2}; gridRow: 1`});
+            lastMonthShort = currentMonthShort;
+          }
+          if (row % 8 === 0) {
+            row = 2;
             col++;
           } else {
             row++;
@@ -133,7 +145,7 @@ export default {
   );
   display: grid;
   grid-template-columns: var(--activity-graph-day-of-week-width) repeat(auto-fill, 53, 1fr);
-  grid-template-rows: repeat(7, 1fr);
+  grid-template-rows: repeat(8, 1fr);
   gap: var(--activity-graph-gap);
   /* align-items: center; */
 }
@@ -157,7 +169,13 @@ export default {
   /* background-color: #f00; */
 }
 
-.day-name-text p {
+.month-name-text {
+  margin: 0px;
+  padding: 0px;
+}
+
+.day-name-text p,
+.month-name-text {
   margin: 0px;
   padding: 0px;
   font-size: 8px;
