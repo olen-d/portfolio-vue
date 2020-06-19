@@ -293,7 +293,7 @@ exports.process_athlete_activities_rides = async (req, res) => {
 
     let index = activitiesByDate.length - 1;
     if (
-      index > 0 &&
+      index > -1 &&
       activitiesByDate[index]["startDateOnly"] === startDateOnly
     ) {
       activitiesByDate[index]["distance"] += distance;
