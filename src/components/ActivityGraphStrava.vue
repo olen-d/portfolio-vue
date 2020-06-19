@@ -3,8 +3,8 @@
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
     <div v-if="responseData" class="response-data">
       <div
-        v-for="{ monthShortName, gridPosition } in monthNames"
-        :key=""
+        v-for="{ id, monthShortName, gridPosition } in monthNames"
+        :key="id"
         class="month-name-text"
         :style="gridPosition"
       >
@@ -36,7 +36,6 @@
         :data-distance="distance"
       ></div>
     </div>
-    <pre>{{ monthNames }}</pre>
     <pre>{{ responseData }}</pre>
   </div>
 </template>
@@ -63,7 +62,7 @@ export default {
     popupDateFormat: originalDate => {
       const dtf = new Date(originalDate);
       const shortMonth = dtf.toLocaleString("en-us", { month: "short" });
-      const day = dtf.getDate();
+      const day = dtf.getUTCDate();
       const fullYear = dtf.getFullYear();
       return `${shortMonth} ${day}, ${fullYear}`;
     }
@@ -117,6 +116,7 @@ export default {
         let row = 2;
         let lastMonthShort = dts.toLocaleString("en-us", { month: "short" });
         this.monthNames.push({
+          id: 0,
           monthShortName: lastMonthShort,
           gridPosition: "gridColumn: 2 / 4; gridRow: 1"
         });
@@ -126,7 +126,9 @@ export default {
             month: "short"
           });
           if (lastMonthShort !== currentMonthShort) {
+            const nextMonthId = this.monthNames.length;
             this.monthNames.push({
+              id: nextMonthId,
               monthShortName: currentMonthShort,
               gridPosition: `gridColumn: ${col} / ${col + 2}; gridRow: 1`
             });
@@ -211,8 +213,8 @@ export default {
 }
 
 .distance-quantile-0 {
-  /* background-color: #ffcc88; */
-  background-color: #f2f2f2;
+  background-color: #ffcc88;
+  /* background-color: #f2f2f2; */
 }
 
 .distance-quantile-1 {
