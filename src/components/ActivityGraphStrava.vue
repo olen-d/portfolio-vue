@@ -2,7 +2,12 @@
   <div class="activity-graph-wrapper">
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
     <div v-if="responseData" class="response-data">
-      <div v-for="{ monthShortName, gridPosition} in monthNames" :key="" class="month-name-text" :style="gridPosition">
+      <div
+        v-for="{ monthShortName, gridPosition } in monthNames"
+        :key=""
+        class="month-name-text"
+        :style="gridPosition"
+      >
         {{ monthShortName }}
       </div>
       <div
@@ -17,6 +22,8 @@
       </div>
       <div
         v-for="{
+          activities,
+          distance,
           startDateOnly,
           distanceQuantile,
           gridPosition
@@ -24,6 +31,9 @@
         :key="startDateOnly"
         :class="distanceQuantile"
         :style="gridPosition"
+        :data-activities="activities"
+        :data-date="popupDateFormat(startDateOnly)"
+        :data-distance="distance"
       ></div>
     </div>
     <pre>{{ monthNames }}</pre>
@@ -47,6 +57,16 @@ export default {
       responseData: null,
       error: null
     };
+  },
+
+  methods: {
+    popupDateFormat: originalDate => {
+      const dtf = new Date(originalDate);
+      const shortMonth = dtf.toLocaleString("en-us", { month: "short" });
+      const day = dtf.getDate();
+      const fullYear = dtf.getFullYear();
+      return `${shortMonth} ${day}, ${fullYear}`;
+    }
   },
 
   created() {
@@ -88,7 +108,7 @@ export default {
         const noDataActivityObj = {
           distance: 0,
           elevationGain: 0,
-          activites: 0,
+          activities: 0,
           distanceQuantile: "distance-quantile-0",
           elevationGainQuantile: "elevation-gain-quantile-0"
         };
@@ -96,12 +116,20 @@ export default {
         let col = 2;
         let row = 2;
         let lastMonthShort = dts.toLocaleString("en-us", { month: "short" });
-        this.monthNames.push({ monthShortName: lastMonthShort, gridPosition: "gridColumn: 2 / 4; gridRow: 1"});
+        this.monthNames.push({
+          monthShortName: lastMonthShort,
+          gridPosition: "gridColumn: 2 / 4; gridRow: 1"
+        });
         const allData = prevYearDates.map(date => {
           const gridPosition = `gridColumn: ${col}; gridRow: ${row}`;
-          const currentMonthShort = new Date(date).toLocaleString("en-us", { month: "short"});
+          const currentMonthShort = new Date(date).toLocaleString("en-us", {
+            month: "short"
+          });
           if (lastMonthShort !== currentMonthShort) {
-            this.monthNames.push({ monthShortName: currentMonthShort, gridPosition: `gridColumn: ${col} / ${col + 2}; gridRow: 1`});
+            this.monthNames.push({
+              monthShortName: currentMonthShort,
+              gridPosition: `gridColumn: ${col} / ${col + 2}; gridRow: 1`
+            });
             lastMonthShort = currentMonthShort;
           }
           if (row % 8 === 0) {
