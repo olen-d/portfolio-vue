@@ -31,11 +31,11 @@
         :key="startDateOnly"
         :class="[distanceQuantile, 'tooltip']"
         :style="gridPosition"
-        :data-activities="activities"
-        :data-date="popupDateFormat(startDateOnly)"
-        :data-distance="distance"
       >
-        <span class="tooltip-text">{{ distance }} on {{ popupDateFormat(startDateOnly) }}</span>
+        <span class="tooltip-text">
+          {{ popupDistanceFormat(distance) }} on
+          {{ popupDateFormat(startDateOnly) }}
+        </span>
       </div>
     </div>
     <pre>{{ responseData }}</pre>
@@ -67,6 +67,13 @@ export default {
       const day = dtf.getUTCDate();
       const fullYear = dtf.getFullYear();
       return `${shortMonth} ${day}, ${fullYear}`;
+    },
+
+    popupDistanceFormat: originalDistance => {
+      const units = "miles";
+      const convertedDistance = Math.round(originalDistance * 0.000621371);
+      // eslint-disable-next-line prettier/prettier
+      return originalDistance > 0 ? `${convertedDistance} ${units}` : "No rides ";
     }
   },
 
