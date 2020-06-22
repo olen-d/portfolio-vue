@@ -29,12 +29,14 @@
           gridPosition
         } in responseData.data"
         :key="startDateOnly"
-        :class="distanceQuantile"
+        :class="[distanceQuantile, 'tooltip']"
         :style="gridPosition"
         :data-activities="activities"
         :data-date="popupDateFormat(startDateOnly)"
         :data-distance="distance"
-      ></div>
+      >
+        <span class="tooltip-text">{{ distance }} on {{ popupDateFormat(startDateOnly) }}</span>
+      </div>
     </div>
     <pre>{{ responseData }}</pre>
   </div>

@@ -244,3 +244,41 @@ p:first-child {
     margin:0rem;
     padding:0rem;
 }
+
+/* Tooltip */
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 100px;
+  left: 50%;
+  bottom: 100%;
+  margin-bottom: 15px;
+  margin-left: -60px;
+  background-color: #3d3d3d;
+  color: #ffffff;
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+}
+
+.tooltip .tooltip-text::after {
+  content: " ";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -10px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: #3d3d3d transparent transparent transparent;
+}
