@@ -82,7 +82,7 @@ export default {
           a.startDateOnly > b.startDateOnly ? 1 : -1
         );
         const dts = new Date();
-        const dow = dts.getDay();
+        const dow = dts.getUTCDay();
         const futureDays = 7 - dow;
         const totalDays = 370 - futureDays;
 
