@@ -82,7 +82,9 @@ export default {
 
   methods: {
     popupDateFormat: originalDate => {
-      const dtf = new Date(originalDate);
+      const dateComponents = originalDate.split("-");
+      const [y, m, d] = dateComponents;
+      const dtf = new Date(Date.UTC(y, m - 1, d, 12)); // TODO - 12 is a hack to fix an edge case on the first day of the month. Refactor to address timezones in the future.
       const shortMonth = dtf.toLocaleString("en-us", { month: "short" });
       const day = dtf.getUTCDate();
       const fullYear = dtf.getUTCFullYear();
@@ -113,20 +115,19 @@ export default {
         const dts = new Date();
         const dow = dts.getUTCDay();
         const futureDays = 7 - dow;
-        const totalDays = 371 - futureDays;
+        const totalDays = 370 - futureDays;
 
         dts.setDate(dts.getUTCDate() - totalDays);
 
         const dte = new Date();
-        // console.log(dte.getUTCDate());
         dte.setDate(dte.getUTCDate());
-// console.log(dte.getDate());
+
         const allDates = (startDate, endDate) => {
           const dates = [];
           for (
             dates, startDate;
-            startDate < endDate;
-            startDate.setDate(startDate.getDate() + 1)
+            startDate <= endDate;
+            startDate.setDate(startDate.getUTCDate() + 1)
           ) {
             dates.push(new Date(startDate).toISOString().split("T")[0]);
           }
