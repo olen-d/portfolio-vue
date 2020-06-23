@@ -1,7 +1,9 @@
 <template>
   <div class="activity-graph-wrapper">
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
-    <div v-if="responseData">Total distance: {{ totalDistance }}</div>
+    <div v-if="responseData" class="annual-total">
+      <p>{{ totalDistanceMiles }} miles ridden in the past year</p>
+    </div>
     <div v-if="responseData" class="response-data">
       <div
         v-for="{ id, monthShortName, gridPosition } in monthNames"
@@ -74,6 +76,14 @@ export default {
           [0]
         );
         return totalDistance;
+      } else {
+        return 0;
+      }
+    },
+
+    totalDistanceMiles: function() {
+      if (this.totalDistance > 0) {
+        return Math.round(this.totalDistance * 0.000621371);
       } else {
         return 0;
       }
@@ -194,6 +204,14 @@ export default {
 </script>
 
 <style scoped>
+.annual-total {
+  padding-bottom: 1rem;
+}
+
+.annual-total p {
+  margin: 0px;
+}
+
 .response-data {
   --activity-graph-day-of-week-width: 22px;
   --activity-graph-square-width: 11px;
