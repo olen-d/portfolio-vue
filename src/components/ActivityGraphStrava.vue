@@ -1,6 +1,7 @@
 <template>
   <div class="activity-graph-wrapper">
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
+    <div v-if="responseData">Total distance: {{ totalDistance }}</div>
     <div v-if="responseData" class="response-data">
       <div
         v-for="{ id, monthShortName, gridPosition } in monthNames"
@@ -60,12 +61,31 @@ export default {
     };
   },
 
+  computed: {
+    totalDistance: function() {
+      if (this.responseData) {
+        const {
+          responseData: { data }
+        } = this;
+        const totalDistance = data.reduce(
+          (accumulator, activity) => {
+            return parseFloat(accumulator) + parseFloat(activity.distance);
+          },
+          [0]
+        );
+        return totalDistance;
+      } else {
+        return 0;
+      }
+    }
+  },
+
   methods: {
     popupDateFormat: originalDate => {
       const dtf = new Date(originalDate);
       const shortMonth = dtf.toLocaleString("en-us", { month: "short" });
       const day = dtf.getUTCDate();
-      const fullYear = dtf.getFullYear();
+      const fullYear = dtf.getUTCFullYear();
       return `${shortMonth} ${day}, ${fullYear}`;
     },
 
@@ -93,17 +113,19 @@ export default {
         const dts = new Date();
         const dow = dts.getUTCDay();
         const futureDays = 7 - dow;
-        const totalDays = 370 - futureDays;
+        const totalDays = 371 - futureDays;
 
-        dts.setDate(dts.getDate() - totalDays);
+        dts.setDate(dts.getUTCDate() - totalDays);
 
         const dte = new Date();
-
+        // console.log(dte.getUTCDate());
+        dte.setDate(dte.getUTCDate());
+// console.log(dte.getDate());
         const allDates = (startDate, endDate) => {
           const dates = [];
           for (
             dates, startDate;
-            startDate <= endDate;
+            startDate < endDate;
             startDate.setDate(startDate.getDate() + 1)
           ) {
             dates.push(new Date(startDate).toISOString().split("T")[0]);
