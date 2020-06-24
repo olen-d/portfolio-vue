@@ -123,14 +123,13 @@ export default {
         //   a.startDateOnly > b.startDateOnly ? 1 : -1
         // );
         const dts = new Date();
-        const dow = dts.getUTCDay();
+        const dow = dts.getDay();
         const futureDays = 7 - dow;
         const totalDays = 370 - futureDays;
 
-        dts.setDate(dts.getUTCDate() - totalDays);
+        dts.setDate(dts.getDate() - totalDays);
 
         const dte = new Date();
-        dte.setDate(dte.getUTCDate());
 
         const allDates = (startDate, endDate) => {
           const dates = [];
