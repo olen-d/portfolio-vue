@@ -119,9 +119,9 @@ export default {
           }/api/strava/process/activities/rides`
         );
         const data = await response.json();
-        const sortedAscending = data.data.sort((a, b) =>
-          a.startDateOnly > b.startDateOnly ? 1 : -1
-        );
+        // const sortedAscending = data.data.sort((a, b) =>
+        //   a.startDateOnly > b.startDateOnly ? 1 : -1
+        // );
         const dts = new Date();
         const dow = dts.getUTCDay();
         const futureDays = 7 - dow;
@@ -137,7 +137,7 @@ export default {
           for (
             dates, startDate;
             startDate <= endDate;
-            startDate.setDate(startDate.getUTCDate() + 1)
+            startDate.setDate(startDate.getDate() + 1)
           ) {
             dates.push(new Date(startDate).toISOString().split("T")[0]);
           }
