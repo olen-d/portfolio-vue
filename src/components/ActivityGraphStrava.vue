@@ -2,7 +2,9 @@
   <div class="activity-graph-wrapper">
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
     <div v-if="responseData" class="annual-total">
-      <p>{{ totalDistanceMiles }} miles ridden in the past year</p>
+      <p>
+        {{ totalDistanceMiles }} <DistanceUnitsDropdown v-bind:defaultUnits="0" /> ridden in the past year
+      </p>
     </div>
     <div v-if="responseData" class="response-data">
       <div
@@ -46,10 +48,12 @@
 </template>
 
 <script>
+import DistanceUnitsDropdown from "./DistanceUnitsDropdown.vue";
 import LoadingIndicator from "./LoadingIndicator.vue";
 
 export default {
   components: {
+    DistanceUnitsDropdown,
     LoadingIndicator
   },
 
