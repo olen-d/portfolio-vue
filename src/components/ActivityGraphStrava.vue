@@ -95,17 +95,19 @@ export default {
       if (this.totalDistance > 0) {
         const { distanceUnits, totalDistance } = this;
 
+        let distanceConverted = "";
+
         switch (distanceUnits) {
           case 0:
-            return Math.round(totalDistance * 0.000621371);
+            distanceConverted = Math.round(totalDistance * 0.000621371);
             break;
           case 1:
-            return Math.round(totalDistance / 1000);
+            distanceConverted = Math.round(totalDistance / 1000);
             break;
           default:
             return 0;
         }
-        
+        return distanceConverted.toLocaleString();
       } else {
         return 0;
       }
@@ -123,11 +125,25 @@ export default {
       return `${shortMonth} ${day}, ${fullYear}`;
     },
 
-    popupDistanceFormat: originalDistance => {
-      const units = "miles";
-      const convertedDistance = Math.round(originalDistance * 0.000621371);
+    popupDistanceFormat(originalDistance) {
+      let units = "";
+      let convertedDistance = 0;
+
+      switch (this.distanceUnits) {
+        case 0:
+          units = "miles";
+          convertedDistance = Math.round(originalDistance * 0.000621371);
+          break;
+        case 1:
+          units = "kilometers";
+          convertedDistance = Math.round(originalDistance / 1000);
+          break;
+        default:
+          units = "meters";
+          convertedDistance = Math.round(originalDistance);
+      }
       // eslint-disable-next-line prettier/prettier
-      return originalDistance > 0 ? `${convertedDistance} ${units}` : "No rides ";
+      return originalDistance > 0 ? `${convertedDistance.toLocaleString()} ${units}` : "No rides ";
     },
 
     useDistanceUnits(distanceUnit) {
