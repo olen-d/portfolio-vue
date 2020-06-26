@@ -3,7 +3,12 @@
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
     <div v-if="responseData" class="annual-total">
       <p>
-        {{ totalDistanceMiles }} <DistanceUnitsDropdown v-bind:defaultUnits="0" /> ridden in the past year
+        {{ totalDistanceFormatted }}
+        <DistanceUnitsDropdown
+          v-bind:defaultUnits="distanceUnits"
+          @use-distance-units="useDistanceUnits"
+        />
+        ridden in the past year
       </p>
     </div>
     <div v-if="responseData" class="response-data">
@@ -59,6 +64,7 @@ export default {
 
   data: () => {
     return {
+      distanceUnits: 0, // TODO: Set this up as some sort of user preference. Maybe a cookie.
       loading: false,
       dayNames: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       monthNames: [],
@@ -85,9 +91,21 @@ export default {
       }
     },
 
-    totalDistanceMiles: function() {
+    totalDistanceFormatted: function() {
       if (this.totalDistance > 0) {
-        return Math.round(this.totalDistance * 0.000621371);
+        const { distanceUnits, totalDistance } = this;
+
+        switch (distanceUnits) {
+          case 0:
+            return Math.round(totalDistance * 0.000621371);
+            break;
+          case 1:
+            return Math.round(totalDistance / 1000);
+            break;
+          default:
+            return 0;
+        }
+        
       } else {
         return 0;
       }
@@ -110,6 +128,10 @@ export default {
       const convertedDistance = Math.round(originalDistance * 0.000621371);
       // eslint-disable-next-line prettier/prettier
       return originalDistance > 0 ? `${convertedDistance} ${units}` : "No rides ";
+    },
+
+    useDistanceUnits(distanceUnit) {
+      this.distanceUnits = distanceUnit;
     }
   },
 
