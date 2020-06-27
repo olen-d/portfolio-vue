@@ -5,6 +5,10 @@
       <p>
         {{ totalDistanceFormatted }}
         <DistanceUnitsDropdown
+          v-bind:defaultOptions="[
+            { _id: 'mi', name: 'miles' },
+            { _id: 'km', name: 'kilometers' }
+          ]"
           v-bind:defaultUnits="distanceUnits"
           @use-distance-units="useDistanceUnits"
         />
@@ -73,7 +77,7 @@ export default {
 
   data: () => {
     return {
-      distanceUnits: 0, // TODO: Set this up as some sort of user preference. Maybe a cookie.
+      distanceUnits: "mi", // TODO: Set this up as some sort of user preference. Maybe a cookie.
       loading: false,
       dayNames: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       monthNames: [],
@@ -107,10 +111,10 @@ export default {
         let distanceConverted = "";
 
         switch (distanceUnits) {
-          case 0:
+          case "mi":
             distanceConverted = Math.round(totalDistance * 0.000621371);
             break;
-          case 1:
+          case "km":
             distanceConverted = Math.round(totalDistance / 1000);
             break;
           default:
@@ -139,11 +143,11 @@ export default {
       let convertedDistance = 0;
 
       switch (this.distanceUnits) {
-        case 0:
+        case "mi":
           units = "miles";
           convertedDistance = Math.round(originalDistance * 0.000621371);
           break;
-        case 1:
+        case "km":
           units = "kilometers";
           convertedDistance = Math.round(originalDistance / 1000);
           break;
