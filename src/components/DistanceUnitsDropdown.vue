@@ -9,12 +9,13 @@
 <script>
 export default {
   props: {
-    defaultUnits: Number
+    defaultUnits: String,
+    defaultOptions: Array
   },
 
   data: function() {
     return {
-      units: [{ _id: 0, name: "miles" }, { _id: 1, name: "kilometers" }],
+      units: this.defaultOptions,
       distanceUnit: this.defaultUnits
     };
   },
