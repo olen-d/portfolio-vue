@@ -48,7 +48,16 @@
         </span>
       </div>
     </div>
-    <pre>{{ responseData }}</pre>
+    <div v-if="responseData" class="activity-graph-legend">
+      <p class="legend-text">Less</p>
+      <div class="distance-quantile-legend-1"></div>
+      <div class="distance-quantile-legend-2"></div>
+      <div class="distance-quantile-legend-3"></div>
+      <div class="distance-quantile-legend-4"></div>
+      <div class="distance-quantile-legend-5"></div>
+      <p class="legend-text">More</p>
+    </div>
+    <!-- <pre>{{ responseData }}</pre> -->
   </div>
 </template>
 
@@ -271,6 +280,19 @@ export default {
   /* align-items: center; */
 }
 
+.activity-graph-legend {
+  --activity-graph-legend-square-width: 11px;
+  --activity-graph-legend-square-height: 11px;
+}
+
+.activity-graph-legend p {
+  display: inline-block;
+  margin: 0px 5px 0px 5px;
+  padding: 0px;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
 .distance-quantile-0,
 .distance-quantile-1,
 .distance-quantile-2,
@@ -281,6 +303,18 @@ export default {
   height: var(--activity-graph-square-height);
   /* margin-right: 0.2em;
   margin-bottom: 0.2em; */
+}
+
+.distance-quantile-legend-0,
+.distance-quantile-legend-1,
+.distance-quantile-legend-2,
+.distance-quantile-legend-3,
+.distance-quantile-legend-4,
+.distance-quantile-legend-5 {
+  display: inline-block;
+  width: var(--activity-graph-legend-square-width);
+  height: var(--activity-graph-legend-square-height);
+  margin-left: 3px;
 }
 
 .day-name-text {
@@ -303,28 +337,34 @@ export default {
   text-transform: uppercase;
 }
 
-.distance-quantile-0 {
+.distance-quantile-0,
+.distance-quantile-legend-0 {
   background-color: #ffcc88;
   /* background-color: #f2f2f2; */
 }
 
-.distance-quantile-1 {
+.distance-quantile-1,
+.distance-quantile-legend-1 {
   background-color: #d0e1eb;
 }
 
-.distance-quantile-2 {
+.distance-quantile-2,
+.distance-quantile-legend-2 {
   background-color: #b8d2e1;
 }
 
-.distance-quantile-3 {
+.distance-quantile-3,
+.distance-quantile-legend-3 {
   background-color: #a1c3d7;
 }
 
-.distance-quantile-4 {
+.distance-quantile-4,
+.distance-quantile-legend-4 {
   background-color: #71a6c3;
 }
 
-.distance-quantile-5 {
+.distance-quantile-5,
+.distance-quantile-legend-5 {
   background-color: #4288af;
 }
 </style>
