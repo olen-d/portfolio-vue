@@ -5,11 +5,7 @@
       <p>
         {{ totalDistanceFormatted }}
         <DistanceUnitsDropdown
-          v-bind:defaultOptions="[
-            { _id: 'mi', name: 'miles' },
-            { _id: 'km', name: 'kilometers' }
-          ]"
-          v-bind:defaultUnits="distanceUnits"
+          v-bind:activityStatistic="activityStatistic"
           @use-distance-units="useDistanceUnits"
         />
         ridden in the past year
@@ -52,6 +48,16 @@
         </span>
       </div>
     </div>
+    <div v-if="responseData">
+      <ActivityStatisticsDropdown
+        v-bind:defaultOptions="[
+          { _id: 'distance', name: 'distance' },
+          { _id: 'elevation', name: 'elevation' }
+        ]"
+        v-bind:defaultActivityStatistic="activityStatistic"
+        @use-activity-statistics="useActivityStatistics"
+      />
+    </div>
     <div v-if="responseData" class="activity-graph-legend">
       <p class="legend-text">Less</p>
       <div class="distance-quantile-legend-1"></div>
@@ -66,17 +72,20 @@
 </template>
 
 <script>
+import ActivityStatisticsDropdown from "./ActivityStatisticsDropdown.vue"
 import DistanceUnitsDropdown from "./DistanceUnitsDropdown.vue";
 import LoadingIndicator from "./LoadingIndicator.vue";
 
 export default {
   components: {
+    ActivityStatisticsDropdown,
     DistanceUnitsDropdown,
     LoadingIndicator
   },
 
   data: () => {
     return {
+      activityStatistic: "distance", // TODO: Set this up as a user preference. Maybe a cookie.
       distanceUnits: "mi", // TODO: Set this up as some sort of user preference. Maybe a cookie.
       loading: false,
       dayNames: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -157,6 +166,10 @@ export default {
       }
       // eslint-disable-next-line prettier/prettier
       return originalDistance > 0 ? `${convertedDistance.toLocaleString()} ${units}` : "No rides ";
+    },
+
+    useActivityStatistics(activityStatistic) {
+      this.activityStatistic = activityStatistic;
     },
 
     useDistanceUnits(distanceUnit) {
