@@ -3,10 +3,10 @@
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
     <div v-if="responseData" class="annual-total">
       <p>
-        {{ totalDistanceFormatted }}
-        <DistanceUnitsDropdown
+        {{ totalStatisticsFormatted }}
+        <StatisticsUnitsDropdown
           v-bind:activityStatistic="activityStatistic"
-          @use-distance-units="useDistanceUnits"
+          @use-statistics-units="useStatisticsUnits"
         />
         ridden in the past year
       </p>
@@ -52,7 +52,7 @@
       <ActivityStatisticsDropdown
         v-bind:defaultOptions="[
           { _id: 'distance', name: 'distance' },
-          { _id: 'elevation', name: 'elevation' }
+          { _id: 'elevationGain', name: 'elevation' }
         ]"
         v-bind:defaultActivityStatistic="activityStatistic"
         @use-activity-statistics="useActivityStatistics"
@@ -73,20 +73,20 @@
 
 <script>
 import ActivityStatisticsDropdown from "./ActivityStatisticsDropdown.vue"
-import DistanceUnitsDropdown from "./DistanceUnitsDropdown.vue";
+import StatisticsUnitsDropdown from "./StatisticsUnitsDropdown.vue";
 import LoadingIndicator from "./LoadingIndicator.vue";
 
 export default {
   components: {
     ActivityStatisticsDropdown,
-    DistanceUnitsDropdown,
-    LoadingIndicator
+    LoadingIndicator,
+    StatisticsUnitsDropdown
   },
 
   data: () => {
     return {
       activityStatistic: "distance", // TODO: Set this up as a user preference. Maybe a cookie.
-      distanceUnits: "mi", // TODO: Set this up as some sort of user preference. Maybe a cookie.
+      statisticsUnits: "mi", // TODO: Set this up as some sort of user preference. Maybe a cookie.
       loading: false,
       dayNames: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       monthNames: [],
@@ -96,14 +96,16 @@ export default {
   },
 
   computed: {
-    totalDistance: function() {
+    totalStatistics: function() {
       if (this.responseData) {
         const {
+          activityStatistic,
           responseData: { data }
         } = this;
+
         const totalDistance = data.reduce(
           (accumulator, activity) => {
-            return parseFloat(accumulator) + parseFloat(activity.distance);
+            return parseFloat(accumulator) + parseFloat(activity[activityStatistic]);
           },
           [0]
         );
@@ -113,23 +115,29 @@ export default {
       }
     },
 
-    totalDistanceFormatted: function() {
-      if (this.totalDistance > 0) {
-        const { distanceUnits, totalDistance } = this;
+    totalStatisticsFormatted: function() {
+      if (this.totalStatistics > 0) {
+        const { statisticsUnits, totalStatistics } = this;
 
-        let distanceConverted = "";
+        let statisticsConverted = "";
 
-        switch (distanceUnits) {
+        switch (statisticsUnits) {
+          case "ft":
+            statisticsConverted = Math.round(totalStatistics * 3.28084);
+            break;
+          case "m":
+            statisticsConverted = Math.round(totalStatistics);
+            break;
           case "mi":
-            distanceConverted = Math.round(totalDistance * 0.000621371);
+            statisticsConverted = Math.round(totalStatistics * 0.000621371);
             break;
           case "km":
-            distanceConverted = Math.round(totalDistance / 1000);
+            statisticsConverted = Math.round(totalStatistics / 1000);
             break;
           default:
             return 0;
         }
-        return distanceConverted.toLocaleString();
+        return statisticsConverted.toLocaleString();
       } else {
         return 0;
       }
@@ -151,7 +159,7 @@ export default {
       let units = "";
       let convertedDistance = 0;
 
-      switch (this.distanceUnits) {
+      switch (this.statisticsUnits) {
         case "mi":
           units = "miles";
           convertedDistance = Math.round(originalDistance * 0.000621371);
@@ -172,8 +180,8 @@ export default {
       this.activityStatistic = activityStatistic;
     },
 
-    useDistanceUnits(distanceUnit) {
-      this.distanceUnits = distanceUnit;
+    useStatisticsUnits(statisticsUnit) {
+      this.statisticsUnits = statisticsUnit;
     }
   },
 
