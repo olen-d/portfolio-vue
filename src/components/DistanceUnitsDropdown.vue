@@ -1,6 +1,6 @@
 <template>
-  <select name="distance-units" v-model="distanceUnit" @change="onChange">
-    <option v-for="{ _id, name } in units" :key="_id" :value="_id">
+  <select name="statistics-units" v-model="statisticsUnit" @change="onChange">
+    <option v-for="{ _id, name } in statisticsUnitsOptions" :key="_id" :value="_id">
       {{ name }}
     </option>
   </select>
@@ -9,20 +9,41 @@
 <script>
 export default {
   props: {
-    defaultUnits: String,
-    defaultOptions: Array
+    activityStatistic: String
   },
 
   data: function() {
     return {
-      units: this.defaultOptions,
-      distanceUnit: this.defaultUnits
+      statisticsUnit: this.defaultUnits
     };
   },
 
+  computed: {
+    statisticsUnitsOptions: function() {
+      const { activityStatistic } = this;
+      if (activityStatistic === "distance") {
+        this.setDefaultStatisticsUnits("mi");
+        return [
+          { _id: "mi", name: "miles" },
+          { _id: "km", name: "kilometers" }
+        ];
+      } else if (activityStatistic === "elevation") {
+        this.setDefaultStatisticsUnits("ft");
+        return [{ _id: "ft", name: "feet" }, { _id: "m", name: "meters" }];
+      } else {
+        return "error";
+      }
+    }
+  },
+
   methods: {
-    onChange(event) {
-      this.$emit("use-distance-units", this.distanceUnit);
+    onChange() {
+      this.$emit("use-distance-units", this.statisticsUnit);
+    },
+
+    setDefaultStatisticsUnits(units) {
+      this.statisticsUnit = units;
+      this.$emit("use-distance-units", units);
     }
   }
 };
