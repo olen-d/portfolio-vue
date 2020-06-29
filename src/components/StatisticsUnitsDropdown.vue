@@ -27,7 +27,7 @@ export default {
           { _id: "mi", name: "miles" },
           { _id: "km", name: "kilometers" }
         ];
-      } else if (activityStatistic === "elevation") {
+      } else if (activityStatistic === "elevationGain") {
         this.setDefaultStatisticsUnits("ft");
         return [{ _id: "ft", name: "feet" }, { _id: "m", name: "meters" }];
       } else {
@@ -38,12 +38,12 @@ export default {
 
   methods: {
     onChange() {
-      this.$emit("use-distance-units", this.statisticsUnit);
+      this.$emit("use-statistics-units", this.statisticsUnit);
     },
 
     setDefaultStatisticsUnits(units) {
       this.statisticsUnit = units;
-      this.$emit("use-distance-units", units);
+      this.$emit("use-statistics-units", units);
     }
   }
 };
