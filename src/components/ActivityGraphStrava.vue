@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import ActivityStatisticsDropdown from "./ActivityStatisticsDropdown.vue"
+import ActivityStatisticsDropdown from "./ActivityStatisticsDropdown.vue";
 import StatisticsUnitsDropdown from "./StatisticsUnitsDropdown.vue";
 import LoadingIndicator from "./LoadingIndicator.vue";
 
@@ -105,7 +105,9 @@ export default {
 
         const totalDistance = data.reduce(
           (accumulator, activity) => {
-            return parseFloat(accumulator) + parseFloat(activity[activityStatistic]);
+            return (
+              parseFloat(accumulator) + parseFloat(activity[activityStatistic])
+            );
           },
           [0]
         );
@@ -299,7 +301,11 @@ export default {
       var(--activity-graph-squares-width) + var(--activity-graph-gaps)
   );
   display: grid;
-  grid-template-columns: var(--activity-graph-day-of-week-width) repeat(auto-fill, 53, 1fr);
+  grid-template-columns: var(--activity-graph-day-of-week-width) repeat(
+      auto-fill,
+      53,
+      1fr
+    );
   grid-template-rows: repeat(8, 1fr);
   gap: var(--activity-graph-gap);
   /* align-items: center; */

@@ -1,6 +1,10 @@
 <template>
   <select name="statistics-units" v-model="statisticsUnit" @change="onChange">
-    <option v-for="{ _id, name } in statisticsUnitsOptions" :key="_id" :value="_id">
+    <option
+      v-for="{ _id, name } in statisticsUnitsOptions"
+      :key="_id"
+      :value="_id"
+    >
       {{ name }}
     </option>
   </select>
