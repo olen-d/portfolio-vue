@@ -1,5 +1,9 @@
 <template>
-  <select name="activity-statistics" v-model="activityStatistic" @change="onChange">
+  <select
+    name="activity-statistics"
+    v-model="activityStatistic"
+    @change="onChange"
+  >
     <option v-for="{ _id, name } in activityStatistics" :key="_id" :value="_id">
       {{ name }}
     </option>
