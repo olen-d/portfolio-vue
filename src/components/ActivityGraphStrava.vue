@@ -33,17 +33,17 @@
       <div
         v-for="{
           activities,
-          distance,
+          gridPosition,
+          quantile,
           startDateOnly,
-          distanceQuantile,
-          gridPosition
-        } in responseData.data"
+          statisticValue
+        } in statistics"
         :key="startDateOnly"
-        :class="[distanceQuantile, 'tooltip']"
+        :class="[`quantile-${quantile}`, 'tooltip']"
         :style="gridPosition"
       >
         <span class="tooltip-text">
-          {{ popupDistanceFormat(distance) }} on
+          {{ popupStatisticValueFormat(statisticValue) }} on
           {{ popupDateFormat(startDateOnly) }}
         </span>
       </div>
@@ -96,6 +96,57 @@ export default {
   },
 
   computed: {
+    statistics: function() {
+      if (this.responseData) {
+        const {
+          activityStatistic,
+          responseData: { data }
+        } = this;
+        if (activityStatistic === "distance") {
+          const statistics = data.map(item => {
+            const {
+              startDateOnly,
+              distance,
+              activities,
+              distanceQuantile,
+              gridPosition
+            } = item;
+            const quantile = distanceQuantile.split("-")[2];
+            return {
+              startDateOnly,
+              statisticValue: distance,
+              activities,
+              quantile,
+              gridPosition
+            };
+          });
+          return statistics;
+        } else if (activityStatistic === "elevationGain") {
+          const statistics = data.map(item => {
+            const {
+              startDateOnly,
+              elevationGain,
+              activities,
+              elevationGainQuantile,
+              gridPosition
+            } = item;
+            const quantile = elevationGainQuantile.split("-")[3];
+            return {
+              startDateOnly,
+              statisticValue: elevationGain,
+              activities,
+              quantile,
+              gridPosition
+            };
+          });
+          return statistics;
+        }
+        return 0;
+      } else {
+        return 0;
+      }
+    },
+
     totalStatistics: function() {
       if (this.responseData) {
         const {
@@ -103,7 +154,7 @@ export default {
           responseData: { data }
         } = this;
 
-        const totalDistance = data.reduce(
+        const totalStatistic = data.reduce(
           (accumulator, activity) => {
             return (
               parseFloat(accumulator) + parseFloat(activity[activityStatistic])
@@ -111,7 +162,7 @@ export default {
           },
           [0]
         );
-        return totalDistance;
+        return totalStatistic;
       } else {
         return 0;
       }
@@ -157,25 +208,29 @@ export default {
       return `${shortMonth} ${day}, ${fullYear}`;
     },
 
-    popupDistanceFormat(originalDistance) {
+    popupStatisticValueFormat(originalStatisticValue) {
       let units = "";
-      let convertedDistance = 0;
+      let statisticsConverted = 0;
 
       switch (this.statisticsUnits) {
+        case "ft":
+          units = "feet";
+          statisticsConverted = Math.round(originalStatisticValue * 3.28084);
+          break;
         case "mi":
           units = "miles";
-          convertedDistance = Math.round(originalDistance * 0.000621371);
+          statisticsConverted = Math.round(originalStatisticValue * 0.000621371);
           break;
         case "km":
           units = "kilometers";
-          convertedDistance = Math.round(originalDistance / 1000);
+          statisticsConverted = Math.round(originalStatisticValue / 1000);
           break;
         default:
           units = "meters";
-          convertedDistance = Math.round(originalDistance);
+          statisticsConverted = Math.round(originalStatisticValue);
       }
       // eslint-disable-next-line prettier/prettier
-      return originalDistance > 0 ? `${convertedDistance.toLocaleString()} ${units}` : "No rides ";
+      return originalStatisticValue > 0 ? `${statisticsConverted.toLocaleString()} ${units}` : "No rides ";
     },
 
     useActivityStatistics(activityStatistic) {
@@ -324,12 +379,12 @@ export default {
   text-transform: uppercase;
 }
 
-.distance-quantile-0,
-.distance-quantile-1,
-.distance-quantile-2,
-.distance-quantile-3,
-.distance-quantile-4,
-.distance-quantile-5 {
+.quantile-0,
+.quantile-1,
+.quantile-2,
+.quantile-3,
+.quantile-4,
+.quantile-5 {
   width: var(--activity-graph-square-width);
   height: var(--activity-graph-square-height);
   /* margin-right: 0.2em;
@@ -368,33 +423,33 @@ export default {
   text-transform: uppercase;
 }
 
-.distance-quantile-0,
+.quantile-0,
 .distance-quantile-legend-0 {
   background-color: #ffcc88;
   /* background-color: #f2f2f2; */
 }
 
-.distance-quantile-1,
+.quantile-1,
 .distance-quantile-legend-1 {
   background-color: #d0e1eb;
 }
 
-.distance-quantile-2,
+.quantile-2,
 .distance-quantile-legend-2 {
   background-color: #b8d2e1;
 }
 
-.distance-quantile-3,
+.quantile-3,
 .distance-quantile-legend-3 {
   background-color: #a1c3d7;
 }
 
-.distance-quantile-4,
+.quantile-4,
 .distance-quantile-legend-4 {
   background-color: #71a6c3;
 }
 
-.distance-quantile-5,
+.quantile-5,
 .distance-quantile-legend-5 {
   background-color: #4288af;
 }
