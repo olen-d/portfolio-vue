@@ -8,7 +8,7 @@
           v-bind:activityStatistic="activityStatistic"
           @use-statistics-units="useStatisticsUnits"
         />
-        ridden in the past year
+        {{ activityStatisticPastTense }} in the past year
       </p>
     </div>
     <div v-if="responseData" class="response-data">
@@ -54,6 +54,10 @@
           { _id: 'distance', name: 'distance' },
           { _id: 'elevationGain', name: 'elevation' }
         ]"
+        v-bind:defaultActivityStatisticPastTenses="{
+          distance: 'ridden',
+          elevationGain: 'climbed'
+        }"
         v-bind:defaultActivityStatistic="activityStatistic"
         @use-activity-statistics="useActivityStatistics"
       />
@@ -86,6 +90,7 @@ export default {
   data: () => {
     return {
       activityStatistic: "distance", // TODO: Set this up as a user preference. Maybe a cookie.
+      activityStatisticPastTense: "ridden",
       statisticsUnits: "mi", // TODO: Set this up as some sort of user preference. Maybe a cookie.
       loading: false,
       dayNames: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -233,8 +238,11 @@ export default {
       return originalStatisticValue > 0 ? `${statisticsConverted.toLocaleString()} ${units}` : "No rides ";
     },
 
-    useActivityStatistics(activityStatistic) {
-      this.activityStatistic = activityStatistic;
+    useActivityStatistics(eventValues) {
+      // console.log(eventValues);
+      [this.activityStatistic, this.activityStatisticPastTense] = eventValues;
+      // this.activityStatistic = activityStatistic;
+      // this.activityStatisticPastTense = activityStatisticPastTense;
     },
 
     useStatisticsUnits(statisticsUnit) {

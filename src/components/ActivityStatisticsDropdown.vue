@@ -14,19 +14,27 @@
 export default {
   props: {
     defaultActivityStatistic: String,
+    defaultActivityStatisticPastTenses: Object,
     defaultOptions: Array
   },
 
   data: function() {
     return {
       activityStatistics: this.defaultOptions,
+      activityStatisticPastTenses: this.defaultActivityStatisticPastTenses,
       activityStatistic: this.defaultActivityStatistic
     };
   },
 
   methods: {
     onChange() {
-      this.$emit("use-activity-statistics", this.activityStatistic);
+      const { activityStatistic, activityStatisticPastTenses } = this;
+
+      const eventValues = [
+        activityStatistic,
+        activityStatisticPastTenses[activityStatistic]
+      ];
+      this.$emit("use-activity-statistics", eventValues);
     }
   }
 };
