@@ -3,11 +3,15 @@
     <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
     <div v-if="responseData" class="annual-total">
       <p>
-        {{ totalStatisticsFormatted }}
+        <span class="emphasis">
+          {{ totalStatisticsFormatted }}
+        </span>
+        &nbsp;
         <StatisticsUnitsDropdown
           v-bind:activityStatistic="activityStatistic"
           @use-statistics-units="useStatisticsUnits"
         />
+        &nbsp;
         {{ activityStatisticPastTense }} in the past year
       </p>
     </div>
@@ -48,7 +52,17 @@
         </span>
       </div>
     </div>
-    <div v-if="responseData">
+    <div v-if="responseData" class="activity-graph-legend">
+      <p class="legend-text">Less</p>
+      <div class="distance-quantile-legend-1"></div>
+      <div class="distance-quantile-legend-2"></div>
+      <div class="distance-quantile-legend-3"></div>
+      <div class="distance-quantile-legend-4"></div>
+      <div class="distance-quantile-legend-5"></div>
+      <p class="legend-text">More</p>
+    </div>
+    <div v-if="responseData" class="activity-statistics-dropdown">
+      Show:&nbsp;
       <ActivityStatisticsDropdown
         v-bind:defaultOptions="[
           { _id: 'distance', name: 'distance' },
@@ -61,15 +75,6 @@
         v-bind:defaultActivityStatistic="activityStatistic"
         @use-activity-statistics="useActivityStatistics"
       />
-    </div>
-    <div v-if="responseData" class="activity-graph-legend">
-      <p class="legend-text">Less</p>
-      <div class="distance-quantile-legend-1"></div>
-      <div class="distance-quantile-legend-2"></div>
-      <div class="distance-quantile-legend-3"></div>
-      <div class="distance-quantile-legend-4"></div>
-      <div class="distance-quantile-legend-5"></div>
-      <p class="legend-text">More</p>
     </div>
     <!-- <pre>{{ responseData }}</pre> -->
   </div>
@@ -377,6 +382,8 @@ export default {
 .activity-graph-legend {
   --activity-graph-legend-square-width: 11px;
   --activity-graph-legend-square-height: 11px;
+  padding-top: 1rem;
+  float: right;
 }
 
 .activity-graph-legend p {
@@ -385,6 +392,16 @@ export default {
   padding: 0px;
   font-size: 11px;
   text-transform: uppercase;
+}
+
+.activity-statistics-dropdown {
+  padding-top: 2rem;
+}
+
+.emphasis {
+  font-size: 120%;
+  /* font-weight: 600; */
+  /* letter-spacing: 0.1rem; */
 }
 
 .quantile-0,
