@@ -9,6 +9,7 @@
         &nbsp;
         <StatisticsUnitsDropdown
           v-bind:activityStatistic="activityStatistic"
+          v-bind:defaultStatisticUnit="statisticsUnits[activityStatistic]"
           @use-statistics-units="useStatisticsUnits"
         />
         &nbsp;
@@ -96,7 +97,7 @@ export default {
     return {
       activityStatistic: "distance", // TODO: Set this up as a user preference. Maybe a cookie.
       activityStatisticPastTense: "ridden",
-      statisticsUnits: "mi", // TODO: Set this up as some sort of user preference. Maybe a cookie.
+      statisticsUnits: { distance: "mi", elevationGain: "ft" }, // TODO: Set this up as some sort of user preference. Maybe a cookie.
       loading: false,
       dayNames: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       monthNames: [],
@@ -180,11 +181,13 @@ export default {
 
     totalStatisticsFormatted: function() {
       if (this.totalStatistics > 0) {
-        const { statisticsUnits, totalStatistics } = this;
+        const { activityStatistic, statisticsUnits, totalStatistics } = this;
+
+        const statisticsUnitsToConvert = statisticsUnits[activityStatistic];
 
         let statisticsConverted = "";
 
-        switch (statisticsUnits) {
+        switch (statisticsUnitsToConvert) {
           case "ft":
             statisticsConverted = Math.round(totalStatistics * 3.28084);
             break;
@@ -251,7 +254,10 @@ export default {
     },
 
     useStatisticsUnits(statisticsUnit) {
-      this.statisticsUnits = statisticsUnit;
+      const { activityStatistic } = this;
+console.log("SU:", statisticsUnit, "AS", activityStatistic);
+      this.statisticsUnits[activityStatistic] = statisticsUnit;
+      console.log("CHEESE:", this.statisticsUnits[activityStatistic]);
     }
   },
 
