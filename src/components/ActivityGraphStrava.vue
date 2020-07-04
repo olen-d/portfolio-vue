@@ -4,7 +4,7 @@
     <div v-if="responseData" class="annual-total">
       <p>
         <span class="emphasis">
-          {{ totalStatisticsFormatted }}
+          {{ statisticValueFormat(totalStatistics) }}
         </span>
         &nbsp;
         <StatisticsUnitsDropdown
@@ -48,7 +48,7 @@
         :style="gridPosition"
       >
         <span class="tooltip-text">
-          {{ popupStatisticValueFormat(statisticValue) }} on
+          {{ statisticValueFormat(statisticValue) }} on
           {{ popupDateFormat(startDateOnly) }}
         </span>
       </div>
@@ -177,37 +177,38 @@ export default {
       } else {
         return 0;
       }
-    },
-
-    totalStatisticsFormatted: function() {
-      if (this.totalStatistics > 0) {
-        const { activityStatistic, statisticsUnits, totalStatistics } = this;
-
-        const statisticsUnitsToConvert = statisticsUnits[activityStatistic];
-
-        let statisticsConverted = "";
-
-        switch (statisticsUnitsToConvert) {
-          case "ft":
-            statisticsConverted = Math.round(totalStatistics * 3.28084);
-            break;
-          case "m":
-            statisticsConverted = Math.round(totalStatistics);
-            break;
-          case "mi":
-            statisticsConverted = Math.round(totalStatistics * 0.000621371);
-            break;
-          case "km":
-            statisticsConverted = Math.round(totalStatistics / 1000);
-            break;
-          default:
-            return 0;
-        }
-        return statisticsConverted.toLocaleString();
-      } else {
-        return 0;
-      }
     }
+
+//     totalStatisticsFormatted: function() {
+//       if (this.totalStatistics > 0) {
+//         const { activityStatistic, statisticsUnits, totalStatistics } = this;
+
+//         const statisticsUnitsToConvert = statisticsUnits[activityStatistic];
+// console.log("convert:", statisticsUnitsToConvert);
+//         let statisticsConverted = "";
+
+//         switch (statisticsUnitsToConvert) {
+//           case "ft":
+//             statisticsConverted = Math.round(totalStatistics * 3.28084);
+//             break;
+//           case "m":
+//             statisticsConverted = Math.round(totalStatistics);
+//             break;
+//           case "mi":
+//             console.log("DORITOS DORITOS DORITOS");
+//             statisticsConverted = Math.round(totalStatistics * 0.000621371);
+//             break;
+//           case "km":
+//             statisticsConverted = Math.round(totalStatistics / 1000);
+//             break;
+//           default:
+//             return 0;
+//         }
+//         return statisticsConverted.toLocaleString();
+//       } else {
+//         return 0;
+//       }
+//     }
   },
 
   methods: {
@@ -221,11 +222,14 @@ export default {
       return `${shortMonth} ${day}, ${fullYear}`;
     },
 
-    popupStatisticValueFormat(originalStatisticValue) {
+    statisticValueFormat(originalStatisticValue) {
       let units = "";
       let statisticsConverted = 0;
 
-      switch (this.statisticsUnits) {
+      const { activityStatistic, statisticsUnits } = this;
+      const statisticsUnitsToConvert = statisticsUnits[activityStatistic];
+
+      switch (statisticsUnitsToConvert) {
         case "ft":
           units = "feet";
           statisticsConverted = Math.round(originalStatisticValue * 3.28084);
@@ -247,17 +251,12 @@ export default {
     },
 
     useActivityStatistics(eventValues) {
-      // console.log(eventValues);
       [this.activityStatistic, this.activityStatisticPastTense] = eventValues;
-      // this.activityStatistic = activityStatistic;
-      // this.activityStatisticPastTense = activityStatisticPastTense;
     },
 
     useStatisticsUnits(statisticsUnit) {
       const { activityStatistic } = this;
-console.log("SU:", statisticsUnit, "AS", activityStatistic);
       this.statisticsUnits[activityStatistic] = statisticsUnit;
-      console.log("CHEESE:", this.statisticsUnits[activityStatistic]);
     }
   },
 

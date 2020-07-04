@@ -1,6 +1,4 @@
 <template>
-<div>
-  <p>D: {{ defaultStatisticUnit }}</p>
   <select name="statistics-units" v-model="statisticsUnit" @change="onChange">
     <option
       v-for="{ _id, name } in statisticsUnitsOptions"
@@ -10,7 +8,6 @@
       {{ name }}
     </option>
   </select>
-  </div>
 </template>
 
 <script>
@@ -45,6 +42,13 @@ export default {
   methods: {
     onChange() {
       this.$emit("use-statistics-units", this.statisticsUnit);
+    }
+  },
+
+  // Force the units to change when the prop is changed in the parent.
+  watch: {
+    defaultStatisticUnit: function() {
+      this.statisticsUnit = this.defaultStatisticUnit;
     }
   }
 };
