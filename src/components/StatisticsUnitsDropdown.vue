@@ -1,4 +1,6 @@
 <template>
+<div>
+  <p>D: {{ defaultStatisticUnit }}</p>
   <select name="statistics-units" v-model="statisticsUnit" @change="onChange">
     <option
       v-for="{ _id, name } in statisticsUnitsOptions"
@@ -8,17 +10,19 @@
       {{ name }}
     </option>
   </select>
+  </div>
 </template>
 
 <script>
 export default {
   props: {
-    activityStatistic: String
+    activityStatistic: String,
+    defaultStatisticUnit: String
   },
 
   data: function() {
     return {
-      statisticsUnit: this.defaultUnits
+      statisticsUnit: this.defaultStatisticUnit
     };
   },
 
@@ -26,13 +30,11 @@ export default {
     statisticsUnitsOptions: function() {
       const { activityStatistic } = this;
       if (activityStatistic === "distance") {
-        this.setDefaultStatisticsUnits("mi");
         return [
           { _id: "mi", name: "miles" },
           { _id: "km", name: "kilometers" }
         ];
       } else if (activityStatistic === "elevationGain") {
-        this.setDefaultStatisticsUnits("ft");
         return [{ _id: "ft", name: "feet" }, { _id: "m", name: "meters" }];
       } else {
         return "error";
@@ -43,11 +45,6 @@ export default {
   methods: {
     onChange() {
       this.$emit("use-statistics-units", this.statisticsUnit);
-    },
-
-    setDefaultStatisticsUnits(units) {
-      this.statisticsUnit = units;
-      this.$emit("use-statistics-units", units);
     }
   }
 };
