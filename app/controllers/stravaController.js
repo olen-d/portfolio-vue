@@ -345,11 +345,11 @@ exports.process_athlete_activities_rides = async (req, res) => {
 
     if (elevationGain < elevationGainQuantiles[0]) {
       elevationGainQuantile = "elevation-gain-quantile-1";
-    } else if (distance < distanceQuantiles[1]) {
+    } else if (elevationGain < elevationGainQuantiles[1]) {
       elevationGainQuantile = "elevation-gain-quantile-2";
-    } else if (distance < distanceQuantiles[2]) {
+    } else if (elevationGain < elevationGainQuantiles[2]) {
       elevationGainQuantile = "elevation-gain-quantile-3";
-    } else if (distance < distanceQuantiles[3]) {
+    } else if (elevationGain < elevationGainQuantiles[3]) {
       elevationGainQuantile = "elevation-gain-quantile-4";
     } else {
       elevationGainQuantile = "elevation-gain-quantile-5";
