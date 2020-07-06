@@ -169,12 +169,24 @@ exports.read_activities = (req, res) => {
         // No refresh token; TODO: redirect to authorization
       }
     }
+
+    // Prepare query parameters for the Strava API, which is paginated
     let page = 1;
+
+    // The Strava API can return only activities after a certain date, so set that here
     const dt = new Date();
     dt.setFullYear(dt.getFullYear() - 1);
-    const after = dt.getTime() / 1000;
-    const data = await readActivities.data(accessToken, after, page);
-    // if ()
+    dt.setDate(dt.getDate() - 7); // Since the graph can contain up to 371 days
+    const after = dt.getTime() / 1000; // The Strava API requires an epoch timestamp
+
+    // Setup for the API call
+    let isResponse = true;
+    const data = [];
+    do {
+      const response = await readActivities.data(accessToken, after, page);
+      response.length > 0 ? data.push(...response) : (isResponse = false);
+      page += 1;
+    } while (isResponse);
     res.json(data);
   })();
 };
