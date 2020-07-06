@@ -4,7 +4,7 @@
     <div v-if="responseData" class="annual-total">
       <p>
         <span class="emphasis">
-          {{ statisticValueFormat(totalStatistics) }}
+          {{ statisticValueFormat(totalStatistics, true) }}
         </span>
         &nbsp;
         <StatisticsUnitsDropdown
@@ -48,7 +48,7 @@
         :style="gridPosition"
       >
         <span class="tooltip-text">
-          {{ statisticValueFormat(statisticValue) }} on
+          {{ statisticValueFormat(statisticValue, false) }} on
           {{ popupDateFormat(startDateOnly) }}
         </span>
       </div>
@@ -222,7 +222,7 @@ export default {
       return `${shortMonth} ${day}, ${fullYear}`;
     },
 
-    statisticValueFormat(originalStatisticValue) {
+    statisticValueFormat(originalStatisticValue, valueOnly) {
       let units = "";
       let statisticsConverted = 0;
 
@@ -246,8 +246,12 @@ export default {
           units = "meters";
           statisticsConverted = Math.round(originalStatisticValue);
       }
-      // eslint-disable-next-line prettier/prettier
-      return originalStatisticValue > 0 ? `${statisticsConverted.toLocaleString()} ${units}` : "No rides ";
+      if (valueOnly) {
+        units = "";
+      }
+      return originalStatisticValue > 0
+        ? `${statisticsConverted.toLocaleString()} ${units}`
+        : "No rides ";
     },
 
     useActivityStatistics(eventValues) {
@@ -455,8 +459,9 @@ export default {
 
 .quantile-0,
 .distance-quantile-legend-0 {
-  background-color: #ffcc88;
+  /* background-color: #ffffff; */
   /* background-color: #f2f2f2; */
+  background-color: #fef4d0;
 }
 
 .quantile-1,
