@@ -169,7 +169,12 @@ exports.read_activities = (req, res) => {
         // No refresh token; TODO: redirect to authorization
       }
     }
-    const data = await readActivities.data(accessToken);
+    let page = 1;
+    const dt = new Date();
+    dt.setFullYear(dt.getFullYear() - 1);
+    const after = dt.getTime() / 1000;
+    const data = await readActivities.data(accessToken, after, page);
+    // if ()
     res.json(data);
   })();
 };
