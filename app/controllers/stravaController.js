@@ -276,6 +276,7 @@ exports.process_athlete_activities_rides = async (req, res) => {
     const {
       name,
       distance,
+      moving_time: movingTime,
       total_elevation_gain: totalElevationGain,
       type,
       start_date: startDate,
@@ -289,6 +290,7 @@ exports.process_athlete_activities_rides = async (req, res) => {
     const activityObj = {
       name,
       distance,
+      movingTime,
       totalElevationGain,
       type,
       startDate,
@@ -305,6 +307,7 @@ exports.process_athlete_activities_rides = async (req, res) => {
     const {
       startDateOnly,
       distance,
+      movingTime,
       totalElevationGain: elevationGain
     } = activity;
 
@@ -314,12 +317,14 @@ exports.process_athlete_activities_rides = async (req, res) => {
       activitiesByDate[index]["startDateOnly"] === startDateOnly
     ) {
       activitiesByDate[index]["distance"] += distance;
+      activitiesByDate[index]["movingTime"] += movingTime;
       activitiesByDate[index]["elevationGain"] += elevationGain;
       activitiesByDate[index]["activities"] += 1;
     } else {
       activitiesByDate.push({
         startDateOnly,
         distance,
+        movingTime,
         elevationGain,
         activities: 1
       });
@@ -331,6 +336,10 @@ exports.process_athlete_activities_rides = async (req, res) => {
     return activity.distance;
   });
 
+  const movingTimes = groupedByDate.map(activity => {
+    return activity.movingTime;
+  });
+
   const elevationGains = groupedByDate.map(activity => {
     return activity.elevationGain;
   });
@@ -340,12 +349,14 @@ exports.process_athlete_activities_rides = async (req, res) => {
   });
 
   const distanceQuantiles = quantiles(distances, 5);
+  const movingTimeQuantiles = quantiles(movingTimes, 5);
   const elevationGainQuantiles = quantiles(elevationGains, 5);
 
   const groupedWithQuantiles = groupedByDate.map(activity => {
-    const { distance, elevationGain } = activity;
+    const { distance, movingTime, elevationGain } = activity;
 
     let distanceQuantile = null;
+    let movingTimeQuantile = null;
     let elevationGainQuantile = null;
 
     if (distance < distanceQuantiles[0]) {
@@ -358,6 +369,18 @@ exports.process_athlete_activities_rides = async (req, res) => {
       distanceQuantile = "distance-quantile-4";
     } else {
       distanceQuantile = "distance-quantile-5";
+    }
+
+    if (movingTime < movingTimeQuantiles[0]) {
+      movingTimeQuantile = "moving-time-quantile-1";
+    } else if (movingTime < movingTimeQuantiles[1]) {
+      movingTimeQuantile = "moving-time-quantile-2";
+    } else if (movingTime < movingTimeQuantiles[2]) {
+      movingTimeQuantile = "moving-time-quantile-3";
+    } else if (movingTime < movingTimeQuantiles[3]) {
+      movingTimeQuantile = "moving-time-quantile-4";
+    } else {
+      movingTimeQuantile = "moving-time-quantile-5";
     }
 
     if (elevationGain < elevationGainQuantiles[0]) {
@@ -375,6 +398,7 @@ exports.process_athlete_activities_rides = async (req, res) => {
     const activityObj = {
       ...activity,
       distanceQuantile,
+      movingTimeQuantile,
       elevationGainQuantile
     };
     return activityObj;
