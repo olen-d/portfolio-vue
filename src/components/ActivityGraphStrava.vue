@@ -178,37 +178,6 @@ export default {
         return 0;
       }
     }
-
-//     totalStatisticsFormatted: function() {
-//       if (this.totalStatistics > 0) {
-//         const { activityStatistic, statisticsUnits, totalStatistics } = this;
-
-//         const statisticsUnitsToConvert = statisticsUnits[activityStatistic];
-// console.log("convert:", statisticsUnitsToConvert);
-//         let statisticsConverted = "";
-
-//         switch (statisticsUnitsToConvert) {
-//           case "ft":
-//             statisticsConverted = Math.round(totalStatistics * 3.28084);
-//             break;
-//           case "m":
-//             statisticsConverted = Math.round(totalStatistics);
-//             break;
-//           case "mi":
-//             console.log("DORITOS DORITOS DORITOS");
-//             statisticsConverted = Math.round(totalStatistics * 0.000621371);
-//             break;
-//           case "km":
-//             statisticsConverted = Math.round(totalStatistics / 1000);
-//             break;
-//           default:
-//             return 0;
-//         }
-//         return statisticsConverted.toLocaleString();
-//       } else {
-//         return 0;
-//       }
-//     }
   },
 
   methods: {
@@ -280,17 +249,18 @@ export default {
         const dts = new Date();
         const dow = dts.getDay();
         const futureDays = 7 - dow;
-        const totalDays = 370 - futureDays;
+        const totalDays = 371 - futureDays;
 
         dts.setDate(dts.getDate() - totalDays);
 
         const dte = new Date();
+        console.log(dte.getDate());
 
         const allDates = (startDate, endDate) => {
           const dates = [];
           for (
             dates, startDate;
-            startDate <= endDate;
+            startDate < endDate;
             startDate.setDate(startDate.getDate() + 1)
           ) {
             dates.push(new Date(startDate).toISOString().split("T")[0]);
