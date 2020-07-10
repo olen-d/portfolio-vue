@@ -6,13 +6,12 @@
         <span class="emphasis">
           {{ statisticValueFormat(totalStatistics, true) }}
         </span>
-        &nbsp;
         <StatisticsUnitsDropdown
+          v-if="activityStatistic !== 'movingTime'"
           v-bind:activityStatistic="activityStatistic"
           v-bind:defaultStatisticUnit="statisticsUnits[activityStatistic]"
           @use-statistics-units="useStatisticsUnits"
         />
-        &nbsp;
         {{ activityStatisticPastTense }} in the past year
       </p>
     </div>
@@ -67,10 +66,12 @@
       <ActivityStatisticsDropdown
         v-bind:defaultOptions="[
           { _id: 'distance', name: 'distance' },
+          { _id: 'movingTime', name: 'moving time' },
           { _id: 'elevationGain', name: 'elevation' }
         ]"
         v-bind:defaultActivityStatisticPastTenses="{
           distance: 'ridden',
+          movingTime: 'riding',
           elevationGain: 'climbed'
         }"
         v-bind:defaultActivityStatistic="activityStatistic"
@@ -97,7 +98,11 @@ export default {
     return {
       activityStatistic: "distance", // TODO: Set this up as a user preference. Maybe a cookie.
       activityStatisticPastTense: "ridden",
-      statisticsUnits: { distance: "mi", elevationGain: "ft" }, // TODO: Set this up as some sort of user preference. Maybe a cookie.
+      statisticsUnits: {
+        distance: "mi",
+        movingTime: "elapsedTime",
+        elevationGain: "ft"
+      }, // TODO: Set this up as some sort of user preference. Maybe a cookie.
       loading: false,
       dayNames: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       monthNames: [],
@@ -126,6 +131,25 @@ export default {
             return {
               startDateOnly,
               statisticValue: distance,
+              activities,
+              quantile,
+              gridPosition
+            };
+          });
+          return statistics;
+        } else if (activityStatistic === "movingTime") {
+          const statistics = data.map(item => {
+            const {
+              startDateOnly,
+              movingTime,
+              activities,
+              movingTimeQuantile,
+              gridPosition
+            } = item;
+            const quantile = movingTimeQuantile.split("-")[3];
+            return {
+              startDateOnly,
+              statisticValue: movingTime,
               activities,
               quantile,
               gridPosition
@@ -211,6 +235,19 @@ export default {
           units = "kilometers";
           statisticsConverted = Math.round(originalStatisticValue / 1000);
           break;
+        case "elapsedTime": {
+          const decimalHours = originalStatisticValue / 3600;
+          if (decimalHours >= 1) {
+            const hours = Math.floor(decimalHours);
+            const hoursText = hours !== 1 ? "hours" : "hour";
+            const minutes = Math.round((decimalHours - hours) * 60)
+            const minutesFormatted = minutes > 0 ? `and ${minutes} minutes` : null;
+            statisticsConverted = `${hours} ${hoursText} ${minutesFormatted}`;
+          } else {
+            statisticsConverted = Math.round(originalStatisticValue / 60) + " minutes";
+          }
+          break;
+        }
         default:
           units = "meters";
           statisticsConverted = Math.round(originalStatisticValue);
@@ -272,9 +309,11 @@ export default {
 
         const noDataActivityObj = {
           distance: 0,
+          movingTime: 0,
           elevationGain: 0,
           activities: 0,
           distanceQuantile: "distance-quantile-0",
+          movingTimeQuantile: "moving-time-quantile-0",
           elevationGainQuantile: "elevation-gain-quantile-0"
         };
 
