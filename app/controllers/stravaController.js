@@ -282,7 +282,8 @@ exports.process_athlete_activities_rides = async (req, res) => {
       start_date: startDate,
       gear_id: gearId,
       average_speed: averageSpeed,
-      max_speed: maxSpeed
+      max_speed: maxSpeed,
+      suffer_score: sufferScore
     } = activity;
 
     let startDateOnly = startDate.split("T")[0];
@@ -297,7 +298,8 @@ exports.process_athlete_activities_rides = async (req, res) => {
       startDateOnly,
       gearId,
       averageSpeed,
-      maxSpeed
+      maxSpeed,
+      sufferScore
     };
     return activityObj;
   });
@@ -308,7 +310,8 @@ exports.process_athlete_activities_rides = async (req, res) => {
       startDateOnly,
       distance,
       movingTime,
-      totalElevationGain: elevationGain
+      totalElevationGain: elevationGain,
+      sufferScore
     } = activity;
 
     let index = activitiesByDate.length - 1;
@@ -319,6 +322,7 @@ exports.process_athlete_activities_rides = async (req, res) => {
       activitiesByDate[index]["distance"] += distance;
       activitiesByDate[index]["movingTime"] += movingTime;
       activitiesByDate[index]["elevationGain"] += elevationGain;
+      activitiesByDate[index]["sufferScore"] += sufferScore;
       activitiesByDate[index]["activities"] += 1;
     } else {
       activitiesByDate.push({
@@ -326,6 +330,7 @@ exports.process_athlete_activities_rides = async (req, res) => {
         distance,
         movingTime,
         elevationGain,
+        sufferScore,
         activities: 1
       });
     }
@@ -344,6 +349,10 @@ exports.process_athlete_activities_rides = async (req, res) => {
     return activity.elevationGain;
   });
 
+  const sufferScores = groupedByDate.map(activity => {
+    return activity.sufferScore;
+  })
+
   const activitiesDaily = groupedByDate.map(activity => {
     return activity.activities;
   });
@@ -351,13 +360,15 @@ exports.process_athlete_activities_rides = async (req, res) => {
   const distanceQuantiles = quantiles(distances, 5);
   const movingTimeQuantiles = quantiles(movingTimes, 5);
   const elevationGainQuantiles = quantiles(elevationGains, 5);
+  const sufferScoreQuantiles = quantiles(sufferScores, 5);
 
   const groupedWithQuantiles = groupedByDate.map(activity => {
-    const { distance, movingTime, elevationGain } = activity;
+    const { distance, movingTime, elevationGain, sufferScore } = activity;
 
     let distanceQuantile = null;
     let movingTimeQuantile = null;
     let elevationGainQuantile = null;
+    let sufferScoreQuantile = null;
 
     if (distance < distanceQuantiles[0]) {
       distanceQuantile = "distance-quantile-1";
@@ -395,11 +406,24 @@ exports.process_athlete_activities_rides = async (req, res) => {
       elevationGainQuantile = "elevation-gain-quantile-5";
     }
 
+    if (sufferScore < sufferScoreQuantiles[0]) {
+      sufferScoreQuantile = "suffer-score-quantile-1";
+    } else if (sufferScore < sufferScoreQuantiles[1]) {
+      sufferScoreQuantile = "suffer-score-quantile-2";
+    } else if (sufferScore < sufferScoreQuantiles[2]) {
+      sufferScoreQuantile = "suffer-score-quantile-3";
+    } else if (sufferScore < sufferScoreQuantiles[3]) {
+      sufferScoreQuantile = "suffer-score-quantile-4";
+    } else {
+      sufferScoreQuantile = "suffer-score-quantile-5";
+    }
+
     const activityObj = {
       ...activity,
       distanceQuantile,
       movingTimeQuantile,
-      elevationGainQuantile
+      elevationGainQuantile,
+      sufferScoreQuantile
     };
     return activityObj;
   });
