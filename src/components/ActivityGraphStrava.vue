@@ -317,21 +317,27 @@ export default {
         const dts = new Date();
         const dow = dts.getDay();
         const futureDays = 7 - dow;
-        const totalDays = 371 - futureDays;
+        const totalDays = 370 - futureDays;
 
         dts.setDate(dts.getDate() - totalDays);
 
         const dte = new Date();
-        console.log(dte.getDate());
 
         const allDates = (startDate, endDate) => {
           const dates = [];
+
           for (
             dates, startDate;
-            startDate < endDate;
+            startDate <= endDate;
             startDate.setDate(startDate.getDate() + 1)
           ) {
-            dates.push(new Date(startDate).toISOString().split("T")[0]);
+            dates.push(
+              startDate.getFullYear() +
+                "-" +
+                ("0" + (startDate.getMonth() + 1)).slice(-2) +
+                "-" +
+                ("0" + startDate.getDate()).slice(-2)
+            );
           }
           return dates;
         };
