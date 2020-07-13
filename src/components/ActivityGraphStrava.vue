@@ -7,7 +7,7 @@
           {{ statisticValueFormat(totalStatistics, true) }}
         </span>
         <StatisticsUnitsDropdown
-          v-if="activityStatistic !== 'movingTime'"
+          v-if="showStatisticsDropdown"
           v-bind:activityStatistic="activityStatistic"
           v-bind:defaultStatisticUnit="statisticsUnits[activityStatistic]"
           @use-statistics-units="useStatisticsUnits"
@@ -67,12 +67,14 @@
         v-bind:defaultOptions="[
           { _id: 'distance', name: 'distance' },
           { _id: 'movingTime', name: 'moving time' },
-          { _id: 'elevationGain', name: 'elevation' }
+          { _id: 'elevationGain', name: 'elevation' },
+          { _id: 'sufferScore', name: 'suffer score'}
         ]"
         v-bind:defaultActivityStatisticPastTenses="{
           distance: 'ridden',
           movingTime: 'riding',
-          elevationGain: 'climbed'
+          elevationGain: 'climbed',
+          sufferScore: 'total suffering'
         }"
         v-bind:defaultActivityStatistic="activityStatistic"
         @use-activity-statistics="useActivityStatistics"
@@ -101,7 +103,8 @@ export default {
       statisticsUnits: {
         distance: "mi",
         movingTime: "elapsedTime",
-        elevationGain: "ft"
+        elevationGain: "ft",
+        sufferScore: "suffering"
       }, // TODO: Set this up as some sort of user preference. Maybe a cookie.
       loading: false,
       dayNames: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -112,6 +115,11 @@ export default {
   },
 
   computed: {
+    showStatisticsDropdown: function() {
+      const { activityStatistic } = this;
+      return activityStatistic !== "movingTime" && activityStatistic !== "sufferScore" ? true : false;
+    },
+
     statistics: function() {
       if (this.responseData) {
         const {
@@ -169,6 +177,25 @@ export default {
             return {
               startDateOnly,
               statisticValue: elevationGain,
+              activities,
+              quantile,
+              gridPosition
+            };
+          });
+          return statistics;
+        } else if (activityStatistic === "sufferScore") {
+          const statistics = data.map(item => {
+            const {
+              startDateOnly,
+              sufferScore,
+              activities,
+              sufferScoreQuantile,
+              gridPosition
+            } = item;
+            const quantile = sufferScoreQuantile.split("-")[3];
+            return {
+              startDateOnly,
+              statisticValue: sufferScore,
               activities,
               quantile,
               gridPosition
@@ -248,6 +275,10 @@ export default {
           }
           break;
         }
+        case "suffering":
+          units = "suffering units";
+          statisticsConverted = Math.round(originalStatisticValue);
+          break;
         default:
           units = "meters";
           statisticsConverted = Math.round(originalStatisticValue);
@@ -311,10 +342,12 @@ export default {
           distance: 0,
           movingTime: 0,
           elevationGain: 0,
+          sufferScore: 0,
           activities: 0,
           distanceQuantile: "distance-quantile-0",
           movingTimeQuantile: "moving-time-quantile-0",
-          elevationGainQuantile: "elevation-gain-quantile-0"
+          elevationGainQuantile: "elevation-gain-quantile-0",
+          sufferScoreQuantile: "suffer-score-quantile-0"
         };
 
         let col = 2;

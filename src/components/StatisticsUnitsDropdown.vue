@@ -39,6 +39,8 @@ export default {
         return [{ _id: "elapsedTime", name: "elapsed time " }];
       } else if (activityStatistic === "elevationGain") {
         return [{ _id: "ft", name: "feet" }, { _id: "m", name: "meters" }];
+      } else if (activityStatistic === "sufferScore") {
+        return [{ _id: "suffering", name: "suffering units"}];
       } else {
         return "error";
       }
