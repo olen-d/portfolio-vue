@@ -337,6 +337,13 @@ exports.process_athlete_activities_rides = async (req, res) => {
     return activitiesByDate;
   }, []);
 
+  // Calculate the average speed for each date
+  const groupedByDateAvgSpeed = groupedByDate.map(activity => {
+    const { distance, movingTime } = activity;
+    const averageSpeed = distance / movingTime;
+    return { ...activity, averageSpeed };
+  });
+
   const distances = groupedByDate.map(activity => {
     return activity.distance;
   });
@@ -351,7 +358,11 @@ exports.process_athlete_activities_rides = async (req, res) => {
 
   const sufferScores = groupedByDate.map(activity => {
     return activity.sufferScore;
-  })
+  });
+
+  const averageSpeeds = groupedByDateAvgSpeed.map(activity => {
+    return activity.averageSpeed;
+  });
 
   const activitiesDaily = groupedByDate.map(activity => {
     return activity.activities;
@@ -361,14 +372,22 @@ exports.process_athlete_activities_rides = async (req, res) => {
   const movingTimeQuantiles = quantiles(movingTimes, 5);
   const elevationGainQuantiles = quantiles(elevationGains, 5);
   const sufferScoreQuantiles = quantiles(sufferScores, 5);
+  const averageSpeedQuantiles = quantiles(averageSpeeds, 5);
 
-  const groupedWithQuantiles = groupedByDate.map(activity => {
-    const { distance, movingTime, elevationGain, sufferScore } = activity;
+  const groupedWithQuantiles = groupedByDateAvgSpeed.map(activity => {
+    const {
+      distance,
+      movingTime,
+      elevationGain,
+      sufferScore,
+      averageSpeed
+    } = activity;
 
     let distanceQuantile = null;
     let movingTimeQuantile = null;
     let elevationGainQuantile = null;
     let sufferScoreQuantile = null;
+    let averageSpeedQuantile = null;
 
     if (distance < distanceQuantiles[0]) {
       distanceQuantile = "distance-quantile-1";
@@ -418,12 +437,25 @@ exports.process_athlete_activities_rides = async (req, res) => {
       sufferScoreQuantile = "suffer-score-quantile-5";
     }
 
+    if (averageSpeed < averageSpeedQuantiles[0]) {
+      averageSpeedQuantile = "average-speed-quantile-1";
+    } else if (averageSpeed < averageSpeedQuantiles[1]) {
+      averageSpeedQuantile = "average-speed-quantile-2";
+    } else if (averageSpeed < averageSpeedQuantiles[2]) {
+      averageSpeedQuantile = "average-speed-quantile-3";
+    } else if (averageSpeed < averageSpeedQuantiles[3]) {
+      averageSpeedQuantile = "average-speed-quantile-4";
+    } else {
+      averageSpeedQuantile = "average-speed-quantile-5";
+    }
+
     const activityObj = {
       ...activity,
       distanceQuantile,
       movingTimeQuantile,
       elevationGainQuantile,
-      sufferScoreQuantile
+      sufferScoreQuantile,
+      averageSpeedQuantile
     };
     return activityObj;
   });
