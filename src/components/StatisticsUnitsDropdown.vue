@@ -40,7 +40,12 @@ export default {
       } else if (activityStatistic === "elevationGain") {
         return [{ _id: "ft", name: "feet" }, { _id: "m", name: "meters" }];
       } else if (activityStatistic === "sufferScore") {
-        return [{ _id: "suffering", name: "suffering units"}];
+        return [{ _id: "suffering", name: "suffering units" }];
+      } else if (activityStatistic === "averageSpeed") {
+        return [
+          { _id: "mph", name: "miles per hour" },
+          { _id: "kph", name: "kilometers per hour" }
+        ];
       } else {
         return "error";
       }
