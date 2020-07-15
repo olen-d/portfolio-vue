@@ -68,13 +68,15 @@
           { _id: 'distance', name: 'distance' },
           { _id: 'movingTime', name: 'moving time' },
           { _id: 'elevationGain', name: 'elevation' },
-          { _id: 'sufferScore', name: 'suffer score'}
+          { _id: 'sufferScore', name: 'suffer score' },
+          { _id: 'averageSpeed', name: 'average speed' }
         ]"
         v-bind:defaultActivityStatisticPastTenses="{
           distance: 'ridden',
           movingTime: 'riding',
           elevationGain: 'climbed',
-          sufferScore: 'total suffering'
+          sufferScore: 'total suffering',
+          averageSpeed: 'average speed'
         }"
         v-bind:defaultActivityStatistic="activityStatistic"
         @use-activity-statistics="useActivityStatistics"
@@ -104,7 +106,8 @@ export default {
         distance: "mi",
         movingTime: "elapsedTime",
         elevationGain: "ft",
-        sufferScore: "suffering"
+        sufferScore: "suffering",
+        averageSpeed: "mph"
       }, // TODO: Set this up as some sort of user preference. Maybe a cookie.
       loading: false,
       dayNames: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -202,6 +205,25 @@ export default {
             };
           });
           return statistics;
+        } else if (activityStatistic === "averageSpeed") {
+          const statistics = data.map(item => {
+            const {
+              startDateOnly,
+              averageSpeed,
+              activities,
+              averageSpeedQuantile,
+              gridPosition
+            } = item;
+            const quantile = averageSpeedQuantile.split("-")[3];
+            return {
+              startDateOnly,
+              statisticValue: averageSpeed,
+              activities,
+              quantile,
+              gridPosition
+            };
+          });
+          return statistics;
         }
         return 0;
       } else {
@@ -256,7 +278,9 @@ export default {
           break;
         case "mi":
           units = "miles";
-          statisticsConverted = Math.round(originalStatisticValue * 0.000621371);
+          statisticsConverted = Math.round(
+            originalStatisticValue * 0.000621371
+          );
           break;
         case "km":
           units = "kilometers";
@@ -278,6 +302,15 @@ export default {
         case "suffering":
           units = "suffering units";
           statisticsConverted = Math.round(originalStatisticValue);
+          break;
+        case "mph":
+          units = "miles per hour";
+          statisticsConverted = Math.round(originalStatisticValue * 2.23694 * 10) / 10;
+          break;
+        case "kph":
+          units = "kilometers per hour";
+          statisticsConverted =
+            Math.round(originalStatisticValue * 3.6 * 10) / 10;
           break;
         default:
           units = "meters";
@@ -349,11 +382,13 @@ export default {
           movingTime: 0,
           elevationGain: 0,
           sufferScore: 0,
+          averageSpeed: 0,
           activities: 0,
           distanceQuantile: "distance-quantile-0",
           movingTimeQuantile: "moving-time-quantile-0",
           elevationGainQuantile: "elevation-gain-quantile-0",
-          sufferScoreQuantile: "suffer-score-quantile-0"
+          sufferScoreQuantile: "suffer-score-quantile-0",
+          averageSpeedQuantile: "average-speed-quantile-0"
         };
 
         let col = 2;
