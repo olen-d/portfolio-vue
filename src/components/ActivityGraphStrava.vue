@@ -4,7 +4,7 @@
     <div v-if="responseData" class="annual-total">
       <p>
         <span class="emphasis">
-          {{ statisticValueFormat(totalStatistics, true) }}
+          {{ averageOrTotalStatistics }}
         </span>
         <StatisticsUnitsDropdown
           v-if="showStatisticsDropdown"
@@ -118,8 +118,16 @@ export default {
   },
 
   computed: {
+    averageOrTotalStatistics: function() {
+      const { averageSpeed, activityStatistic, statisticValueFormat, totalStatistics } = this;
+
+      return activityStatistic === "averageSpeed" ? statisticValueFormat(averageSpeed, true) : statisticValueFormat(totalStatistics, true) ;
+    },
+
     showStatisticsDropdown: function() {
       const { activityStatistic } = this;
+
+      // eslint-disable-next-line prettier/prettier
       return activityStatistic !== "movingTime" && activityStatistic !== "sufferScore" ? true : false;
     },
 
@@ -247,6 +255,30 @@ export default {
           [0]
         );
         return totalStatistic;
+      } else {
+        return 0;
+      }
+    },
+
+    averageSpeed: function() {
+      if (this.responseData) {
+        const {
+          responseData: { data }
+        } = this;
+
+        const totals = data.reduce((accumulator, activity) => {
+          accumulator["totalDistance"] =
+            parseFloat(accumulator["totalDistance"] || 0) +
+            parseFloat(activity["distance"]);
+          accumulator["totalMovingTime"] =
+            parseFloat(accumulator["totalMovingTime"] || 0) +
+            parseFloat(activity["movingTime"]);
+          return accumulator;
+        }, {});
+
+        const { totalDistance, totalMovingTime } = totals;
+
+        return totalDistance / totalMovingTime;
       } else {
         return 0;
       }
