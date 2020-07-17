@@ -506,8 +506,14 @@ export default {
 .activity-graph-legend {
   --activity-graph-legend-square-width: 11px;
   --activity-graph-legend-square-height: 11px;
+  --activity-graph-legend-items: calc(var(--activity-graph-legend-square-width) * 5);
+  width: calc(var(--activity-graph-legend-items) + 100px);
   padding-top: 1rem;
-  float: right;
+  display: grid;
+  justify-items: end;
+  grid-template-columns: 2fr repeat(5, 1fr) 2fr;
+  grid-template-rows: 1fr;
+  /* background-color: #ff0; */
 }
 
 .activity-graph-legend p {
