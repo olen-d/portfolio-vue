@@ -51,16 +51,16 @@
           {{ popupDateFormat(startDateOnly) }}
         </span>
       </div>
-    </div>
-    <div v-if="responseData" class="activity-graph-legend">
-      <p class="legend-text">Less</p>
-      <div class="distance-quantile-legend-1"></div>
-      <div class="distance-quantile-legend-2"></div>
-      <div class="distance-quantile-legend-3"></div>
-      <div class="distance-quantile-legend-4"></div>
-      <div class="distance-quantile-legend-5"></div>
-      <p class="legend-text">More</p>
-    </div>
+      <div class="activity-graph-legend">
+        <p class="legend-text">Less</p>
+        <div class="distance-quantile-legend-1"></div>
+        <div class="distance-quantile-legend-2"></div>
+        <div class="distance-quantile-legend-3"></div>
+        <div class="distance-quantile-legend-4"></div>
+        <div class="distance-quantile-legend-5"></div>
+        <p class="legend-text">More</p>
+      </div>
+    </div> <!-- End response-data -->
     <div v-if="responseData" class="activity-statistics-dropdown">
       Show:&nbsp;
       <ActivityStatisticsDropdown
@@ -82,7 +82,6 @@
         @use-activity-statistics="useActivityStatistics"
       />
     </div>
-    <!-- <pre>{{ responseData }}</pre> -->
   </div>
 </template>
 
@@ -119,8 +118,14 @@ export default {
 
   computed: {
     averageOrTotalStatistics: function() {
-      const { averageSpeed, activityStatistic, statisticValueFormat, totalStatistics } = this;
+      const {
+        averageSpeed,
+        activityStatistic,
+        statisticValueFormat,
+        totalStatistics
+      } = this;
 
+      // eslint-disable-next-line prettier/prettier
       return activityStatistic === "averageSpeed" ? statisticValueFormat(averageSpeed, true) : statisticValueFormat(totalStatistics, true) ;
     },
 
@@ -500,20 +505,13 @@ export default {
     );
   grid-template-rows: repeat(8, 1fr);
   gap: var(--activity-graph-gap);
-  /* align-items: center; */
 }
 
 .activity-graph-legend {
   --activity-graph-legend-square-width: 11px;
   --activity-graph-legend-square-height: 11px;
-  --activity-graph-legend-items: calc(var(--activity-graph-legend-square-width) * 5);
-  width: calc(var(--activity-graph-legend-items) + 100px);
-  padding-top: 1rem;
-  display: grid;
-  justify-items: end;
-  grid-template-columns: 2fr repeat(5, 1fr) 2fr;
-  grid-template-rows: 1fr;
-  /* background-color: #ff0; */
+  padding-top: 0.5rem;
+  grid-column: 42 / 55;
 }
 
 .activity-graph-legend p {
@@ -542,8 +540,6 @@ export default {
 .quantile-5 {
   width: var(--activity-graph-square-width);
   height: var(--activity-graph-square-height);
-  /* margin-right: 0.2em;
-  margin-bottom: 0.2em; */
 }
 
 .distance-quantile-legend-0,
@@ -562,7 +558,6 @@ export default {
   width: var(--activity-graph-day-of-week-width);
   margin: 0px;
   padding: 0px;
-  /* background-color: #f00; */
 }
 
 .month-name-text {
@@ -580,8 +575,6 @@ export default {
 
 .quantile-0,
 .distance-quantile-legend-0 {
-  /* background-color: #ffffff; */
-  /* background-color: #f2f2f2; */
   background-color: #fef4d0;
 }
 
