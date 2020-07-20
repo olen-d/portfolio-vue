@@ -53,4 +53,9 @@ export default {
   margin: 0rem;
   padding: 0rem;
 }
+
+.profile { 
+  margin-bottom: 0rem;
+  padding-bottom: 0rem;
+}
 </style>
