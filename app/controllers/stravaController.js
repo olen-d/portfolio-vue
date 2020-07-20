@@ -22,7 +22,6 @@ exports.read_auth_code = (req, res) => {
 
       const scopes = scope.split(",");
       if (scopes.indexOf("activity:read") !== -1) {
-        res.write("<p>Activity Read Found...</p>");
         (async () => {
           const formData = {
             client_id: process.env.STRAVA_CLIENT_ID,

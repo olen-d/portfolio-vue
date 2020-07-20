@@ -1,86 +1,98 @@
 <template>
-  <div class="activity-graph-wrapper">
-    <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
-    <div v-if="responseData" class="annual-total">
-      <p>
-        <span class="emphasis">
-          {{ averageOrTotalStatistics }}
-        </span>
-        <StatisticsUnitsDropdown
-          v-if="showStatisticsDropdown"
-          v-bind:activityStatistic="activityStatistic"
-          v-bind:defaultStatisticUnit="statisticsUnits[activityStatistic]"
-          @use-statistics-units="useStatisticsUnits"
-        />
-        {{ activityStatisticPastTense }} in the past year
-      </p>
-    </div>
-    <div v-if="responseData" class="response-data">
-      <div
-        v-for="{ id, monthShortName, gridPosition } in monthNames"
-        :key="id"
-        class="month-name-text"
-        :style="gridPosition"
-      >
-        {{ monthShortName }}
+  <div class="activity-graph-strava">
+    <div class="row">
+      <div class="one column">
+        &nbsp;
       </div>
-      <div
-        v-for="(day, index) in dayNames"
-        :key="day"
-        class="day-name-text"
-        :style="`grid-column: 1; grid-row: ${index + 2}`"
-      >
-        <p>
-          {{ day }}
-        </p>
+      <div class="ten columns">
+        <div class="activity-graph-wrapper">
+          <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
+          <div v-if="responseData" class="annual-total">
+            <p>
+              <span class="emphasis">
+                {{ averageOrTotalStatistics }}
+              </span>
+              <StatisticsUnitsDropdown
+                v-if="showStatisticsDropdown"
+                v-bind:activityStatistic="activityStatistic"
+                v-bind:defaultStatisticUnit="statisticsUnits[activityStatistic]"
+                @use-statistics-units="useStatisticsUnits"
+              />
+              {{ activityStatisticPastTense }} in the past year
+            </p>
+          </div>
+          <div v-if="responseData" class="response-data">
+            <div
+              v-for="{ id, monthShortName, gridPosition } in monthNames"
+              :key="id"
+              class="month-name-text"
+              :style="gridPosition"
+            >
+              {{ monthShortName }}
+            </div>
+            <div
+              v-for="(day, index) in dayNames"
+              :key="day"
+              class="day-name-text"
+              :style="`grid-column: 1; grid-row: ${index + 2}`"
+            >
+              <p>
+                {{ day }}
+              </p>
+            </div>
+            <div
+              v-for="{
+                activities,
+                gridPosition,
+                quantile,
+                startDateOnly,
+                statisticValue
+              } in statistics"
+              :key="startDateOnly"
+              :class="[`quantile-${quantile}`, 'tooltip']"
+              :style="gridPosition"
+            >
+              <span class="tooltip-text">
+                {{ statisticValueFormat(statisticValue, false) }} on
+                {{ popupDateFormat(startDateOnly) }}
+              </span>
+            </div>
+            <div class="activity-graph-legend">
+              <p class="legend-text">Less</p>
+              <div class="distance-quantile-legend-1"></div>
+              <div class="distance-quantile-legend-2"></div>
+              <div class="distance-quantile-legend-3"></div>
+              <div class="distance-quantile-legend-4"></div>
+              <div class="distance-quantile-legend-5"></div>
+              <p class="legend-text">More</p>
+            </div>
+          </div> <!-- End response-data -->
+          <div v-if="responseData" class="activity-statistics-dropdown">
+            Show:&nbsp;
+            <ActivityStatisticsDropdown
+              v-bind:defaultOptions="[
+                { _id: 'distance', name: 'distance' },
+                { _id: 'movingTime', name: 'moving time' },
+                { _id: 'elevationGain', name: 'elevation' },
+                { _id: 'sufferScore', name: 'suffer score' },
+                { _id: 'averageSpeed', name: 'average speed' }
+              ]"
+              v-bind:defaultActivityStatisticPastTenses="{
+                distance: 'ridden',
+                movingTime: 'riding',
+                elevationGain: 'climbed',
+                sufferScore: 'total suffering',
+                averageSpeed: 'average speed'
+              }"
+              v-bind:defaultActivityStatistic="activityStatistic"
+              @use-activity-statistics="useActivityStatistics"
+            />
+          </div>
+        </div>
       </div>
-      <div
-        v-for="{
-          activities,
-          gridPosition,
-          quantile,
-          startDateOnly,
-          statisticValue
-        } in statistics"
-        :key="startDateOnly"
-        :class="[`quantile-${quantile}`, 'tooltip']"
-        :style="gridPosition"
-      >
-        <span class="tooltip-text">
-          {{ statisticValueFormat(statisticValue, false) }} on
-          {{ popupDateFormat(startDateOnly) }}
-        </span>
+      <div class="one column">
+        &nbsp;
       </div>
-      <div class="activity-graph-legend">
-        <p class="legend-text">Less</p>
-        <div class="distance-quantile-legend-1"></div>
-        <div class="distance-quantile-legend-2"></div>
-        <div class="distance-quantile-legend-3"></div>
-        <div class="distance-quantile-legend-4"></div>
-        <div class="distance-quantile-legend-5"></div>
-        <p class="legend-text">More</p>
-      </div>
-    </div> <!-- End response-data -->
-    <div v-if="responseData" class="activity-statistics-dropdown">
-      Show:&nbsp;
-      <ActivityStatisticsDropdown
-        v-bind:defaultOptions="[
-          { _id: 'distance', name: 'distance' },
-          { _id: 'movingTime', name: 'moving time' },
-          { _id: 'elevationGain', name: 'elevation' },
-          { _id: 'sufferScore', name: 'suffer score' },
-          { _id: 'averageSpeed', name: 'average speed' }
-        ]"
-        v-bind:defaultActivityStatisticPastTenses="{
-          distance: 'ridden',
-          movingTime: 'riding',
-          elevationGain: 'climbed',
-          sufferScore: 'total suffering',
-          averageSpeed: 'average speed'
-        }"
-        v-bind:defaultActivityStatistic="activityStatistic"
-        @use-activity-statistics="useActivityStatistics"
-      />
     </div>
   </div>
 </template>
@@ -601,5 +613,9 @@ export default {
 .quantile-5,
 .distance-quantile-legend-5 {
   background-color: #4288af;
+}
+
+.activity-graph-strava {
+  padding-bottom: 8rem;
 }
 </style>

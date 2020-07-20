@@ -1,7 +1,7 @@
 <template>
   <div id="front-end">
     <Header></Header>
-    <div id="about" class="container">
+    <div class="about">
       <div class="row">
         <div class="twelve columns">
           <div class="hexa">
@@ -47,3 +47,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.about {
+  padding-bottom: 8rem;
+}
+</style>

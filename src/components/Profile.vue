@@ -7,17 +7,14 @@
       </h4>
       <span v-html="profile.bio"></span>
     </div>
-    <ActivityGraphStrava />
   </div>
 </template>
 
 <script>
-import ActivityGraphStrava from "./ActivityGraphStrava.vue";
 import LoadingIndicator from "./LoadingIndicator.vue";
 
 export default {
   components: {
-    ActivityGraphStrava,
     LoadingIndicator
   },
 
@@ -55,5 +52,10 @@ export default {
 .profile-wrapper {
   margin: 0rem;
   padding: 0rem;
+}
+
+.profile { 
+  margin-bottom: 0rem;
+  padding-bottom: 0rem;
 }
 </style>
