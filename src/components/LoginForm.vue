@@ -28,7 +28,9 @@
       </button>
     </form>
     <p>
-      <router-link to="/login/request-password-reset">Forgot your password?</router-link>
+      <router-link to="/login/request-password-reset">
+        Forgot your password?
+      </router-link>
     </p>
   </div>
 </template>
@@ -75,6 +77,15 @@ export default {
           }
         });
     }
+  },
+
+  mounted() {
+    this.$store.commit("setLoginPage", true);
+  },
+
+  beforeRouteLeave (to, from, next) {
+    this.$store.commit("setLoginPage", false);
+    next();
   }
 };
 </script>

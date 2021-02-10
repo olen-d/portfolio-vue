@@ -10,6 +10,17 @@ const AdminPagesProjects = () => import("./views/AdminPagesProjects.vue");
 const AdminPagesSkills = () => import("./views/AdminPagesSkills.vue");
 const AdminPagesWelcome = () => import("./views/AdminPagesWelcome.vue");
 
+// route level code-splitting
+// this generates a separate chunk (about.[hash].js) for this route
+// which is lazy-loaded when the route is visited.
+const About = () => import(/* webpackChunkName: "about" */ "./views/About.vue");
+const Contact = () => import(/* webpackChunkName: "contact" */ "./views/Contact.vue");
+const LoginRoot = () => import(/* webpackChunkName: "login" */ "./views/LoginRoot.vue");
+const Login = () => import(/* webpackChunkName: "login" */ "./components/LoginForm.vue");
+const RequestPasswordResetForm = () => import(/* webpackChunkName: "login" */ "./components/RequestPasswordResetForm.vue");
+const Projects = () => import(/* webpackChunkName: "projects" */ "./views/Projects.vue");
+const Signup = () => import(/* webpackChunkName: "signup" */ "./views/SignUp.vue");
+
 const AuthorizeStrava = () => import("./views/AuthorizeStrava.vue");
 Vue.use(Router);
 
@@ -66,11 +77,7 @@ export default new Router({
     {
       path: "/about",
       name: "about",
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () =>
-        import(/* webpackChunkName: "about" */ "./views/About.vue")
+      component: About
     },
     {
       path: "/authorize",
@@ -79,28 +86,34 @@ export default new Router({
     },
     {
       path: "/login",
-      name: "login",
-      component: () =>
-        import(/* webpackChunkName: "login" */ "./views/Login.vue")
+      component: LoginRoot,
+      children: [
+        {
+          path: "/",
+          name: "login",
+          component: Login
+        },
+        {
+          path: "request-password-reset",
+          name: "request-password-reset",
+          component: RequestPasswordResetForm
+        }
+      ]
     },
     {
       path: "/projects",
       name: "projects",
-      component: () =>
-        import(/* webpackChunkName: "projects" */ "./views/Projects.vue")
+      component: Projects
     },
     {
       path: "/signup",
       name: "signUp",
-      component: () =>
-        import(/* webpackChunkName: "signup" */ "./views/SignUp.vue")
+      component: Signup
     },
     {
       path: "/contact",
       name: "contact",
-      // component: Contact
-      component: () =>
-        import(/* webpackChunkName: "contact" */ "./views/Contact.vue")
+      component: Contact
     }
   ]
 });
