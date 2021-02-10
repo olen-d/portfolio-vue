@@ -27,6 +27,9 @@
         Sign In
       </button>
     </form>
+    <p>
+      <router-link to="/login/request-password-reset">Forgot your password?</router-link>
+    </p>
   </div>
 </template>
 
