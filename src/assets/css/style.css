@@ -245,6 +245,12 @@ p:first-child {
     padding:0rem;
 }
 
+/* Text */
+
+.text-error {
+    color: #cc0000;
+}
+
 /* Tooltip */
 
 .tooltip {
