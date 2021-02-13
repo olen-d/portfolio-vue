@@ -29,7 +29,7 @@
           </div>
           <div class="five columns">
             <label for="title">Email Address</label>
-            <input v-model="contactData.email" type="email" class="u-full-width" id="email" placeholder="Your Email Address" required>
+            <input v-model="contactData.fromAddress" type="email" class="u-full-width" id="fromAddress" placeholder="Your Email Address" required>
           </div>
           <div class="one column">
             &nbsp;
@@ -81,7 +81,7 @@ export default {
       contact: [],
       contactData: {
         name: "",
-        email: "",
+        fromAddress: "",
         message: "",
       },
       messageStatus: ""
@@ -100,15 +100,28 @@ export default {
   methods: {
     submitContactForm() {
       // TODO: Validate this mess
-      const { name, email, message } = this.contactData;
+      const {
+        contactData: { fromAddress, message, name }
+      } = this;
 
-      const formData = {
-        name: name,
-        email: email,
-        message: message
-      }
+      const html = `${message} <p>Contact Name: ${name}</p><p>Contact Email: ${fromAddress}</p>`; // ! TODO: Remember to detect html and add <html>, <body>, and convert linebreaks to <p>, <br />
+      const subjectPrefix = "[OLEN.DEV]";
+      const subject = `[OLEN.DEV] Website Contact Form Message From ${name}`;
+      // eslint-disable-next-line prettier/prettier
+      const subjectProcessed = subject.includes(subjectPrefix) ? subject : `${subjectPrefix} ${subject}`;
+      const messageStripped = message.replace(/(<([^>]+)>)/gi, ""); // ! TODO: Update this with a more robust function and convert <p> & <br> to \n
+      const text = `${messageStripped} \n\n Contact Name: ${name} \nContact Email: ${fromAddress}`;
+      const toAddress = "contact@olen.dev";
 
-      this.sendMail(formData);
+      const mailOptions = {
+        from: fromAddress,
+        to: toAddress,
+        subject: subjectProcessed,
+        text,
+        html
+      };
+
+      this.sendMail(mailOptions);
     },
 
     clearContactForm() {
@@ -119,7 +132,8 @@ export default {
       });
     },
     
-    sendMail(formData) {
+    sendMail(mailOptions) {
+
       this.messageStatus = "Sending your message...";
 
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/mail/send`, {
@@ -127,7 +141,7 @@ export default {
       headers: {
         "Content-Type": "application/json"
       },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ mailOptions })
       }).then(response => {
         return response.json();
       }).then(response => {
