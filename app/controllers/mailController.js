@@ -37,7 +37,9 @@ exports.check_mx = async (req, res) => {
 };
 
 exports.send_mail = (req, res) => {
-  const { name, email, message } = req.body;
+  const {
+    body: { mailOptions }
+  } = req;
 
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -51,13 +53,6 @@ exports.send_mail = (req, res) => {
       rejectUnauthorized: false
     }
   });
-
-  const mailOptions = {
-    from: `${email}`,
-    to: "contact@olen.dev",
-    subject: `[OLEN.DEV] Website Contact Form Message From ${name}`,
-    text: `${message} \n\n Contact Name: ${name} \nContact Email: ${email}`
-  };
 
   transporter.sendMail(mailOptions, (err, success) => {
     if (err) {
