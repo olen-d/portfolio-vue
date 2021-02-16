@@ -1,15 +1,15 @@
 <template>
   <div class="input-email">
     <label for="email" v-bind:class="{ 'text-error': isError }">
-      Email Address
+      {{ label }}
     </label>
     <input
-      v-model="inputEmailData.email"
+      v-model="inputData.email"
       v-on:blur="handleBlur"
       type="email"
       class="u-full-width"
       id="email"
-      placeholder="Your Email Address"
+      v-bind:placeholder="placeholder"
       required
     />
   </div>
@@ -18,12 +18,20 @@
 <script>
 export default {
   props: {
-    method: { type: Function }
+    label: {
+      default: "Email Address",
+      type: String
+    },
+    method: { type: Function },
+    placeholder: {
+      default: "Your Email Address",
+      type: String
+    }
   },
 
   data: () => {
     return {
-      inputEmailData: { email: "" },
+      inputData: { email: "" },
       isError: false
     };
   },
@@ -44,13 +52,13 @@ export default {
         this.isError = false;
       }
 
-      this.$emit("send-email-value", "blur", this.inputEmailData.email);
+      this.$emit("send-email-value", "blur", this.inputData.email);
     },
 
     async validate() {
       const expression = /.+@.+\..+/i;
       const {
-        inputEmailData: { email }
+        inputData: { email }
       } = this;
 
       if (expression.test(String(email).toLowerCase())) {
