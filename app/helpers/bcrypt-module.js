@@ -4,17 +4,17 @@ const saltRounds = 10;
 // Hash a password, on error, set login to false
 
 const newPass = password => {
-  return new Promise((res, rej) => {
+  return new Promise((resolve, reject) => {
     try {
       bcrypt.hash(password, saltRounds, (err, hash) => {
-        res({
+        resolve({
           status: 200,
           passwordHash: hash,
           login: true
         });
       });
     } catch (err) {
-      rej({
+      reject({
         status: 500,
         login: false,
         error: "Internal server error. Failed to hash password."
@@ -25,23 +25,23 @@ const newPass = password => {
 
 // Check the password
 const checkPass = (password, passwordHash) => {
-  return new Promise((res, rej) => {
+  return new Promise((resolve, reject) => {
     try {
       bcrypt.compare(password, passwordHash, (err, result) => {
         if (result) {
-          res({
+          resolve({
             status: 200,
             login: true
           });
         } else {
-          res({
+          resolve({
             status: 403,
             login: false
           });
         }
       });
     } catch (err) {
-      rej({
+      reject({
         status: 403,
         error: "Forbidden." + err,
         login: false
