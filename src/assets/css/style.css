@@ -110,6 +110,10 @@ a:hover {
     margin-bottom: 10rem;
 }
 
+.login-root {
+    margin-bottom: 10rem;
+}
+
 .footer {
     position:absolute;
     bottom:0px;
@@ -244,6 +248,17 @@ p:first-child {
     margin:0rem;
     padding:0rem;
 }
+
+/* Buttons */
+.button.button-primary:disabled,
+button.button-primary:disabled,
+input[type="submit"].button-primary:disabled,
+input[type="reset"].button-primary:disabled,
+input[type="button"].button-primary:disabled {
+  color: #FFF;
+  background-color: #85dbf6;
+  border-color: #85dbf6; }
+
 
 /* Text */
 
