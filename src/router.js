@@ -18,6 +18,7 @@ const Contact = () => import(/* webpackChunkName: "contact" */ "./views/Contact.
 const LoginRoot = () => import(/* webpackChunkName: "login" */ "./views/LoginRoot.vue");
 const Login = () => import(/* webpackChunkName: "login" */ "./components/LoginForm.vue");
 const RequestPasswordResetForm = () => import(/* webpackChunkName: "login" */ "./components/RequestPasswordResetForm.vue");
+const ResetPasswordForm = () => import(/* webpackChunkName: "login" */ "./components/ResetPasswordForm.vue");
 const Projects = () => import(/* webpackChunkName: "projects" */ "./views/Projects.vue");
 const Signup = () => import(/* webpackChunkName: "signup" */ "./views/SignUp.vue");
 
@@ -97,6 +98,12 @@ export default new Router({
           path: "request-password-reset",
           name: "request-password-reset",
           component: RequestPasswordResetForm
+        },
+        {
+          path: "reset-password/:token",
+          name: "reset-password",
+          props: true,
+          component: ResetPasswordForm
         }
       ]
     },
