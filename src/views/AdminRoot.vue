@@ -1,6 +1,6 @@
 <template>
-  <div id="admin">
-    <div class="container">
+  <div class="container">
+    <div class="admin-root">
       <div class="row">
         <div class="one columns">
           &nbsp;
@@ -9,21 +9,24 @@
           <h1>
             Administration
           </h1>
+          <router-view></router-view>
         </div>
         <div class="one columns">
           &nbsp;
         </div>
       </div>
     </div>
-    <router-view />
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
-  data: () => {
-    return {
-    }
+  name: "AdminRoot",
+
+  computed: {
+    ...mapGetters(["firstName"])
   }
-}
+};
 </script>

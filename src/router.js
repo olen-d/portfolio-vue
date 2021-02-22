@@ -3,12 +3,12 @@ import Router from "vue-router";
 import Home from "./views/Home.vue";
 import { store } from "./store/store";
 
-const Admin = () => import("./views/Admin.vue");
-const AdminDashboard = () => import("./views/AdminDashboard.vue");
+const AdminRoot = () => import(/* webpackChunkName: "admin" */ "./views/AdminRoot.vue");
+const AdminDashboard = () => import(/* webpackChunkName: "admin" */ "./components/AdminDashboard.vue");
 const AdminPages = () => import("./views/AdminPages.vue");
-const AdminPagesProjects = () => import("./views/AdminPagesProjects.vue");
-const AdminPagesSkills = () => import("./views/AdminPagesSkills.vue");
-const AdminPagesWelcome = () => import("./views/AdminPagesWelcome.vue");
+const AdminPagesProjects = () => import("./components/AdminPagesProjects.vue");
+const AdminPagesSkills = () => import("./components/AdminPagesSkills.vue");
+const AdminPagesWelcome = () => import("./components/AdminPagesWelcome.vue");
 
 // route level code-splitting
 // this generates a separate chunk (about.[hash].js) for this route
@@ -37,7 +37,7 @@ export default new Router({
     },
     {
       path: "/admin",
-      component: Admin,
+      component: AdminRoot,
       beforeEnter(to, from, next) {
         if (store.getters.authorized && store.getters.administrator) {
           next();
@@ -47,7 +47,7 @@ export default new Router({
       },
       children: [
         {
-          path: "dashboard",
+          path: "/",
           name: "adminDashboard",
           component: AdminDashboard
         },

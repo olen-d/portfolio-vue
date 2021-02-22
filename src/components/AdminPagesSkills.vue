@@ -1,5 +1,5 @@
 <template>
-  <div id="admin-pages-skills">
+  <div class="admin-pages-skills">
     <ModalConfirmCancel
       v-if="showModalConfirmCancel"
       v-bind:payload = modalConfirmCancelProps.payload
@@ -12,76 +12,45 @@
       @cancel-action="cancelAction"
     >
     </ModalConfirmCancel>
-    <div class="container">
-      <div class="row">
-        <div class="one columns">
-          &nbsp;
-        </div>
-        <div class="ten columns">
-          <h3>
-            Skills
-          </h3>
-        </div>
-        <div class="one columns">
-          &nbsp;
-        </div>
-      </div>
-      <div class="row">
-        <div class="one columns">
-          &nbsp;
-        </div>
-        <div class="ten columns">
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Icon</th>
-                <th scope="col">Skill</th>
-                <th scope="col">Type</th>
-                <th scope="col">Description</th>
-                <th scope="col">Sort Priority</th>
-                <th scope="col">Display</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody id="skills">
-              <tr v-for="{ _id, type, name, description, show, icon, priority } in skills" :key="_id" :id="_id">
-                <td><i :class="icon" class="table-icon"></i></td>
-                <td>{{ name }}</td>
-                <td>{{ type }}</td>
-                <td>{{ description }}</td>
-                <td>{{ priority }}</td>
-                <td>{{ formatShow(show) }}</td>
-                <td><i @click="updateSkill" class="fas fa-edit edit" :data-id="_id"></i></td>
-                <td><i @click="confirmDeleteSkill" class="fas fa-times delete" :data-id="_id" :data-name="name"></i></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="one columns">
-          &nbsp;
-        </div>
-      </div>
-      <div class="row">
-        <div class="one columns">
-          &nbsp;
-        </div>
-        <div class="ten columns">
-          <AdminSkillsForm
-            v-bind:formAction="formAction"
-            v-bind:editSkillId="editSkillId"
-            v-bind:updateSkillData="updateSkillData"
-            @skill-created="skillCreated"
-            @skill-updated="skillUpdated"
-            @cancel-edit-skill="cancelEditSkill"
-          >
-          </AdminSkillsForm>
-        </div>
-        <div class="one columns">
-          &nbsp;
-        </div>  
-      </div>
-    </div>
+    <h3>
+      Skills
+    </h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Icon</th>
+          <th scope="col">Skill</th>
+          <th scope="col">Type</th>
+          <th scope="col">Description</th>
+          <th scope="col">Sort Priority</th>
+          <th scope="col">Display</th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody id="skills">
+        <tr v-for="{ _id, type, name, description, show, icon, priority } in skills" :key="_id" :id="_id">
+          <td><i :class="icon" class="table-icon"></i></td>
+          <td>{{ name }}</td>
+          <td>{{ type }}</td>
+          <td>{{ description }}</td>
+          <td>{{ priority }}</td>
+          <td>{{ formatShow(show) }}</td>
+          <td><i @click="updateSkill" class="fas fa-edit edit" :data-id="_id"></i></td>
+          <td><i @click="confirmDeleteSkill" class="fas fa-times delete" :data-id="_id" :data-name="name"></i></td>
+        </tr>
+      </tbody>
+    </table>
+    <AdminSkillsForm
+      v-bind:formAction="formAction"
+      v-bind:editSkillId="editSkillId"
+      v-bind:updateSkillData="updateSkillData"
+      @skill-created="skillCreated"
+      @skill-updated="skillUpdated"
+      @cancel-edit-skill="cancelEditSkill"
+    >
+    </AdminSkillsForm>
   </div>
 </template>
 
@@ -127,7 +96,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters([ "jwt" ])
+    ...mapGetters(["jwt"])
   },
 
   methods: {
@@ -159,29 +128,29 @@ export default {
 
     updateSkillsTableRow(skillId) {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/id/${skillId}`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        const updatedSkillData = json.skill;
-        const index = this.findSkillIndexById(skillId);
+        .then(response => {
+          return response.json();
+        })
+        .then(json => {
+          const updatedSkillData = json.skill;
+          const index = this.findSkillIndexById(skillId);
 
-        const { type, name, description, show, icon, priority } = updatedSkillData;
+          const { type, name, description, show, icon, priority } = updatedSkillData;
 
-        const updatedSkillsObj = {
-          type,
-          name,
-          description,
-          show,
-          icon,
-          priority
-        }
+          const updatedSkillsObj = {
+            type,
+            name,
+            description,
+            show,
+            icon,
+            priority
+          }
 
-        this.skills.splice(index, 1, updatedSkillsObj);
+          this.skills.splice(index, 1, updatedSkillsObj);
 
-        this.formAction = "Add";
-        this.editSkillId = "";
-      });
+          this.formAction = "Add";
+          this.editSkillId = "";
+        });
     },
 
     skillUpdated(skillId) {
@@ -191,19 +160,19 @@ export default {
 
     deleteSkillsTableRow(skillId) {
       const index = this.findSkillIndexById(skillId);
-        if (index > -1) {
-          this.skills.splice(index, 1);
-        }
+      if (index > -1) {
+        this.skills.splice(index, 1);
+      }
     },
 
     readSkills() {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((json) => {
-        this.skills = json.skills;
-      });
+        .then(response => {
+          return response.json();
+        })
+        .then(json => {
+          this.skills = json.skills;
+        });
     },
 
     confirmDeleteSkill(e) {
@@ -222,7 +191,7 @@ export default {
     updateSkill(e) {
       const skillId = e.currentTarget.getAttribute("data-id");
       const skillIndex = this.findSkillIndexById(skillId);
-      const skill = {...this.skills[skillIndex]}; // Clone the current skill object
+      const skill = { ...this.skills[skillIndex] }; // Clone the current skill object
 
       delete skill._id;
       delete skill.userId;
@@ -234,33 +203,36 @@ export default {
 
     deleteSkill(skillId) {
       fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/delete`, {
-      method: "delete",
-      headers: {
-        "Authorization": `Bearer ${this.jwt}`,
-        "Content-Type": "application/json"
-      },
+        method: "delete",
+        headers: {
+          Authorization: `Bearer ${this.jwt}`,
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({ skillId: skillId })
-      }).then(response => {
-        return response.json();
-      }).then(dataObj => {
-        const { ok, deletedCount } = dataObj;
-        if (ok === 1 && deletedCount === 1) {
-          this.$store.commit("setStatusCategory", "success");
-          this.$store.commit("setStatusMessage", "Skill deleted successfully.");
-          this.deleteSkillsTableRow(skillId);
-        } else {
-          this.$store.commit("setStatusCategory", "error");
-          this.$store.commit("setStatusMessage", "Skill was not deleted. Database error. ");
-        }
-      }).catch(error => {
-        this.$store.commit("setStatusCategory", "error");
-        this.$store.commit("setStatusMessage", "Skill was not deleted. " + error);
-        return ({
-          errorCode: 500,
-          errorMsg: "Internal Server Error",
-          errorDetail: error
+      })
+        .then(response => {
+          return response.json();
         })
-      });
+        .then(dataObj => {
+          const { ok, deletedCount } = dataObj;
+          if (ok === 1 && deletedCount === 1) {
+            this.$store.commit("setStatusCategory", "success");
+            this.$store.commit("setStatusMessage", "Skill deleted successfully.");
+            this.deleteSkillsTableRow(skillId);
+          } else {
+            this.$store.commit("setStatusCategory", "error");
+            this.$store.commit("setStatusMessage", "Skill was not deleted. Database error. ");
+          }
+        })
+        .catch(error => {
+          this.$store.commit("setStatusCategory", "error");
+          this.$store.commit("setStatusMessage", "Skill was not deleted. " + error);
+          return {
+            errorCode: 500,
+            errorMsg: "Internal Server Error",
+            errorDetail: error
+          };
+        });
     },
 
     cancelEditSkill() {
@@ -272,7 +244,7 @@ export default {
     },
 
     cancelAction() {
-       this.setShowModalConfirmCancel(false);
+      this.setShowModalConfirmCancel(false);
     },
 
     confirmAction(v) {
@@ -293,6 +265,6 @@ export default {
 
 <style scoped>
 textarea {
-  height:16rem;
+  height: 16rem;
 }
 </style>

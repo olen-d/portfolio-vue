@@ -12,109 +12,67 @@
       @cancel-action="cancelAction"
     >
     </ModalConfirmCancel>
-    <div class="container">
-      <div class="row">
-        <div class="one columns">
-          &nbsp;
-        </div>
-        <div class="ten columns">
-          <h3>
-            Projects
-          </h3>
-        </div>
-        <div class="one columns">
-          &nbsp;
-        </div>
+    <h3>
+      Projects
+    </h3>
+    <h4>
+      Filter
+    </h4>
+    <SkillsDropdown @filter-projects-by-skill="filterProjectsBySkill" />
+    <div
+      v-for="{
+        _id,
+        deployedLink,
+        description,
+        title,
+        repoLink,
+        screenshot,
+        skills,
+        priority,
+        show
+      } in sortedProjects"
+      :key="_id"
+      :id="_id"
+      class="card-container"
+    >
+      <div class="card-actions">
+        <i
+          @click="updateProject"
+          class="fas fa-edit edit"
+          :data-id="_id"
+        ></i>
+        <i
+          @click="confirmDeleteProject"
+          class="fas fa-times delete"
+          :data-id="_id"
+          :data-title="title"
+        ></i>
       </div>
-      <div class="row">
-        <div class="one columns">
-          &nbsp;
-        </div>
-        <div class="ten columns">
-          <h4>
-            Filter
-          </h4>
-          <SkillsDropdown @filter-projects-by-skill="filterProjectsBySkill" />
-        </div>
-        <div class="one columns">
-          &nbsp;
-        </div>
-      </div>
-      <div class="row">
-        <div class="one columns">
-          &nbsp;
-        </div>
-        <div class="ten columns">
-          <div
-            v-for="{
-              _id,
-              deployedLink,
-              description,
-              title,
-              repoLink,
-              screenshot,
-              skills,
-              priority,
-              show
-            } in sortedProjects"
-            :key="_id"
-            :id="_id"
-            class="card-container"
-          >
-            <div class="card-actions">
-              <i
-                @click="updateProject"
-                class="fas fa-edit edit"
-                :data-id="_id"
-              ></i>
-              <i
-                @click="confirmDeleteProject"
-                class="fas fa-times delete"
-                :data-id="_id"
-                :data-title="title"
-              ></i>
-            </div>
-            <AdminProjectsCard
-              v-bind="{
-                _id,
-                deployedLink,
-                description,
-                title,
-                repoLink,
-                screenshot,
-                skills,
-                priority,
-                show
-              }"
-            >
-            </AdminProjectsCard>
-          </div>
-        </div>
-        <div class="one columns">
-          &nbsp;
-        </div>
-      </div>
-      <div class="row">
-        <div class="one columns">
-          &nbsp;
-        </div>
-        <div class="ten columns">
-          <AdminProjectsForm
-            v-bind:formAction="formAction"
-            v-bind:editProjectId="editProjectId"
-            v-bind:updateProjectData="updateProjectData"
-            @project-created="projectCreated"
-            @project-updated="projectUpdated"
-            @cancel-edit-project="cancelEditProject"
-            @clear-selected-skills="clearSelectedSkills"
-          >
-          </AdminProjectsForm>
-        </div>
-        <div class="one columns">
-          &nbsp;
-        </div>
-      </div>
+      <AdminProjectsCard
+        v-bind="{
+          _id,
+          deployedLink,
+          description,
+          title,
+          repoLink,
+          screenshot,
+          skills,
+          priority,
+          show
+        }"
+      >
+      </AdminProjectsCard>
     </div>
+    <AdminProjectsForm
+      v-bind:formAction="formAction"
+      v-bind:editProjectId="editProjectId"
+      v-bind:updateProjectData="updateProjectData"
+      @project-created="projectCreated"
+      @project-updated="projectUpdated"
+      @cancel-edit-project="cancelEditProject"
+      @clear-selected-skills="clearSelectedSkills"
+    >
+    </AdminProjectsForm>
   </div>
 </template>
 
