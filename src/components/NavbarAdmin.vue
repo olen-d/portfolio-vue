@@ -30,8 +30,7 @@ export default {
   data: () => { // TODO: Set up the DB to include this information. 
     return {
       adminLinks: [
-        {id: 4, sort: 4, title: "Admin", uri: "/admin"},
-        {id: 5, sort: 5, title: "Dashboard", uri: "/admin/dashboard"},
+        {id: 5, sort: 5, title: "Administration", uri: "/admin"},
         {id: 6, sort: 6, title: "Pages", uri: "/admin/pages"},
         {id: 7, sort: 7, title: "Settings", uri: "/admin/settings"}
       ]
