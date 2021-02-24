@@ -1,12 +1,9 @@
 <template>
-  <div id="adminNavContainer">
-    <nav id="adminNavigation" v-if="showStandard">
+  <div class="admin-nav-container">
+    <nav class="admin-navigation" v-if="showStandard">
       <ul>
         <li v-for="adminLink in adminLinks" :key="adminLink.id">
-          <router-link :to="adminLink.uri">{{ adminLink.title }}</router-link>
-          <ul>
-            <NavSubItems v-bind:navSubItems="adminLink.children" />
-          </ul>
+          <NavSubItem v-bind:navItem="adminLink" />
         </li>
       </ul>
     </nav>
@@ -21,7 +18,7 @@
 
 <script>
 import NavHamburger from "./NavHamburger";
-import NavSubItems from "./NavSubItems";
+import NavSubItem from "./NavSubItem";
 
 export default {
   props: {
@@ -31,7 +28,7 @@ export default {
 
   components: {
     NavHamburger,
-    NavSubItems
+    NavSubItem
   },
 
   data: () => {
@@ -65,7 +62,7 @@ export default {
             {
               id: 9,
               sort: 9,
-              title: "Skils",
+              title: "Skills",
               uri: "/admin/pages/skills"
             }
           ]
@@ -76,59 +73,53 @@ export default {
           title: "Settings",
           uri: "/admin/settings"
         }
-      ]
+      ],
+      visible: false
     };
+  },
+
+  methods: {
+    toggleSubItems() {
+      this.visible = !this.visible;
+    }
   }
 };
 </script>
 
 <style scoped>
-#adminNavContainer {
-  display: flex;
-  align-items: center;
+li {
+  display: block;
+  float: left;
+  position: relative;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+li:hover {
+  display: block;
+  background-color: #36a0ce;
+}
+
+.admin-navigation {
   position: fixed;
   top: 0rem;
   left: 0rem;
   width: 100%;
   z-index: 9000;
+  margin-top: 0rem;
+  margin-bottom: 0rem;
+  padding-top: 0rem;
+  padding-bottom: 0rem;
   background-color: #136a9b;
-  color: #ffffff;
-  height: 6rem;
 }
 
-#adminNavigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-#adminNavigation ul {
-  display: flex;
-  align-items: center;
-  list-style: none;
-  margin-bottom: 0rem;
-}
-
-#adminNavigation li {
-  margin-bottom: 0rem;
-  color: #ffffff;
-}
-
-#adminNavigation li:first-child {
+.admin-navigation li:first-child {
   margin-left: 6rem;
 }
 
-#adminNavigation li:not(first-child) {
-  margin-left: 4rem;
-}
-
-#adminNavigation li a:link,
-#adminNavigation li a:visited {
-  text-decoration: none;
-  color: #ffffff;
-}
-
-#adminNavigation li a:hover {
-  color: #fcc914;
+.admin-navigation li:not(first-child) {
+  margin-left: 0rem;
 }
 </style>
