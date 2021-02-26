@@ -7,6 +7,9 @@ const AdminRoot = () => import(/* webpackChunkName: "admin" */ "./views/AdminRoo
 const AdminDashboard = () => import(/* webpackChunkName: "admin" */ "./components/AdminDashboard.vue");
 const AdminPages = () => import("./views/AdminPages.vue");
 const AdminPagesProjects = () => import("./components/AdminPagesProjects.vue");
+const AdminPagesProjectsRoot = () => import("./views/AdminPagesProjectsRoot.vue");
+const AdminPagesProjectsAdd = () => import("./components/AdminPagesProjectsAdd.vue");
+const AdminPagesProjectsEdit = () => import("./components/AdminPagesProjectsEdit.vue");
 const AdminPagesSkills = () => import("./components/AdminPagesSkills.vue");
 const AdminPagesWelcome = () => import("./components/AdminPagesWelcome.vue");
 
@@ -53,13 +56,29 @@ export default new Router({
         },
         {
           path: "pages",
-          name: "adminPages",
+          name: "pagesRoot",
           component: AdminPages,
           children: [
             {
               path: "projects",
-              name: "adminPagesProjects",
-              component: AdminPagesProjects
+              component: AdminPagesProjectsRoot,
+              children: [
+                {
+                  path: "/",
+                  name: "adminPagesProjects",
+                  component: AdminPagesProjects
+                },
+                {
+                  path: "add",
+                  name: "adminPagesProjectsAdd",
+                  component: AdminPagesProjectsAdd
+                },
+                {
+                  path: "edit",
+                  name: "adminPagesProjectsEdit",
+                  component: AdminPagesProjectsEdit
+                }
+              ]
             },
             {
               path: "skills",
