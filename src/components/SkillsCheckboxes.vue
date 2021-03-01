@@ -25,21 +25,29 @@
 <script>
 export default {
   props: {
-    initialCheckedSkills: Array
+    initialCheckedSkills: Array,
+    shouldClearCheckedSkills: Boolean
   },
 
   data() {
     return {
-      skills: [],
-      checkedSkills: this.initialCheckedSkills
+      checkedSkills: this.initialCheckedSkills,
+      skills: []
     };
   },
 
   watch: {
-    initialCheckedSkills(newValue) {
+    initialCheckedSkills() {
       Array.isArray(this.initialCheckedSkills)
         ? (this.checkedSkills = this.initialCheckedSkills)
         : (this.checkedSkills = []); // Handle no skills returned from the API call
+    },
+
+    shouldClearCheckedSkills() {
+      if (this.shouldClearCheckedSkills) {
+        this.checkedSkills = [];
+        this.$emit("checked-skills-were-cleared");
+      }
     }
   },
 
@@ -54,7 +62,7 @@ export default {
         });
     },
 
-    onChange(event) {
+    onChange() {
       this.$emit("update-skills", this.checkedSkills);
     }
   },
