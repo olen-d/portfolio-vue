@@ -12,9 +12,12 @@
       @cancel-action="cancelAction"
     >
     </ModalConfirmCancel>
+    <router-link to="/admin/pages/projects/add">Add A Page, Plz.</router-link><br />
+    <router-link to="/admin/pages/projects/edit">Edit a Page, Yo.</router-link><br />
     <h3>
       Projects
     </h3>
+    <router-view></router-view>
     <h4>
       Filter
     </h4>
@@ -36,11 +39,7 @@
       class="card-container"
     >
       <div class="card-actions">
-        <i
-          @click="updateProject"
-          class="fas fa-edit edit"
-          :data-id="_id"
-        ></i>
+        <i @click="updateProject" class="fas fa-edit edit" :data-id="_id"></i>
         <i
           @click="confirmDeleteProject"
           class="fas fa-times delete"
