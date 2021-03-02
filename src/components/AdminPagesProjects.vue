@@ -13,10 +13,13 @@
     >
     </ModalConfirmCancel>
     <router-link to="/admin/pages/projects/add">Add A Page, Plz.</router-link><br />
-    <router-link to="/admin/pages/projects/edit">Edit a Page, Yo.</router-link><br />
+    <router-link to="/admin/pages/projects/edit/xyzzy">Edit a Page, Yo.</router-link><br />
     <h3>
       Projects
     </h3>
+    <button v-on:click="$router.push('projects/add')">
+      Add Project
+    </button>
     <router-view></router-view>
     <h4>
       Filter
