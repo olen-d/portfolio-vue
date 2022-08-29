@@ -57,8 +57,8 @@
 <script>
 import { mapGetters } from "vuex";
 
-import AdminSkillsForm from "./AdminSkillsForm";
-import ModalConfirmCancel from "./ModalConfirmCancel";
+import AdminSkillsForm from "./AdminSkillsForm.vue";
+import ModalConfirmCancel from "./ModalConfirmCancel.vue";
 
 export default {
   name: "AdminPagesSkills",

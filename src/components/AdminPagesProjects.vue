@@ -81,10 +81,10 @@
 <script>
 import { mapGetters } from "vuex";
 
-import AdminProjectsCard from "./AdminProjectsCard";
-import AdminProjectsForm from "./AdminProjectsForm";
-import ModalConfirmCancel from "./ModalConfirmCancel";
-import SkillsDropdown from "./SkillsDropdown";
+import AdminProjectsCard from "./AdminProjectsCard.vue";
+import AdminProjectsForm from "./AdminProjectsForm.vue";
+import ModalConfirmCancel from "./ModalConfirmCancel.vue";
+import SkillsDropdown from "./SkillsDropdown.vue";
 
 export default {
   name: "AdminPagesProjects",

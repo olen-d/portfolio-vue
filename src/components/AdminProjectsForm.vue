@@ -86,7 +86,7 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 
-import SkillsCheckboxes from "./SkillsCheckboxes";
+import SkillsCheckboxes from "./SkillsCheckboxes.vue";
 
 export default {
   components: {

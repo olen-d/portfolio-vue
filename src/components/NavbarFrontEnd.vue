@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import NavHamburger from "./NavHamburger";
+import NavHamburger from "./NavHamburger.vue";
 
 export default {
   props: {

@@ -20,9 +20,9 @@
 </template>
 
 <script>
-import NavbarFrontEnd from "./NavbarFrontEnd";
-import NavbarAdmin from "./NavbarAdmin";
-import UserMenu from "./UserMenu";
+import NavbarFrontEnd from "./NavbarFrontEnd.vue";
+import NavbarAdmin from "./NavbarAdmin.vue";
+import UserMenu from "./UserMenu.vue";
 
 export default {
   components: {

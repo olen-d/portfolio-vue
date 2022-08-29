@@ -35,7 +35,7 @@ export default {
 
   created() {
     this.loading = true;
-    fetch(`${process.env.VUE_APP_API_BASE_URL}/api/social/user/olen.d`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/social/user/olen.d`)
       .then(response => {
         if (response.ok) {
           return response.json();

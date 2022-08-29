@@ -78,7 +78,7 @@ export default {
       loading: false,
       projects: null,
       error: null,
-      publicPath: process.env.BASE_URL
+      publicPath: import.meta.env.BASE_URL
     };
   },
 
@@ -99,7 +99,7 @@ export default {
 
   created() {
     this.loading = true;
-    fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects`)
       .then(response => {
         if (response.ok) {
           return response.json();

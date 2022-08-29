@@ -41,7 +41,7 @@ export default {
 
   created() {
     this.loading = true;
-    fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/top/3`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/top/3`)
       .then(response => {
         if (response.ok) {
           return response.json();
