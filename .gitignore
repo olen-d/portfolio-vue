@@ -6,7 +6,9 @@ config.js
 
 # local env files
 .env
+.env.development
 .env.local
+.env.production
 .env.*.local
 
 # Log files

@@ -389,7 +389,7 @@ export default {
       try {
         const response = await fetch(
           `${
-            process.env.VUE_APP_API_BASE_URL
+            import.meta.env.VITE_API_BASE_URL
           }/api/strava/process/activities/rides`
         );
         const data = await response.json();

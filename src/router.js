@@ -3,8 +3,8 @@ import Router from "vue-router";
 import Home from "./views/Home.vue";
 import { store } from "./store/store";
 
-const AdminRoot = () => import(/* webpackChunkName: "admin" */ "./views/AdminRoot.vue");
-const AdminDashboard = () => import(/* webpackChunkName: "admin" */ "./components/AdminDashboard.vue");
+const AdminRoot = () => import("./views/AdminRoot.vue");
+const AdminDashboard = () => import("./components/AdminDashboard.vue");
 const AdminPages = () => import("./views/AdminPages.vue");
 const AdminPagesProjects = () => import("./components/AdminPagesProjects.vue");
 const AdminPagesProjectsRoot = () => import("./views/AdminPagesProjectsRoot.vue");
@@ -16,21 +16,21 @@ const AdminPagesWelcome = () => import("./components/AdminPagesWelcome.vue");
 // route level code-splitting
 // this generates a separate chunk (about.[hash].js) for this route
 // which is lazy-loaded when the route is visited.
-const About = () => import(/* webpackChunkName: "about" */ "./views/About.vue");
-const Contact = () => import(/* webpackChunkName: "contact" */ "./views/Contact.vue");
-const LoginRoot = () => import(/* webpackChunkName: "login" */ "./views/LoginRoot.vue");
-const Login = () => import(/* webpackChunkName: "login" */ "./components/LoginForm.vue");
-const RequestPasswordResetForm = () => import(/* webpackChunkName: "login" */ "./components/RequestPasswordResetForm.vue");
-const ResetPasswordForm = () => import(/* webpackChunkName: "login" */ "./components/ResetPasswordForm.vue");
-const Projects = () => import(/* webpackChunkName: "projects" */ "./views/Projects.vue");
-const Signup = () => import(/* webpackChunkName: "signup" */ "./views/SignUp.vue");
+const About = () => import("./views/About.vue");
+const Contact = () => import("./views/Contact.vue");
+const LoginRoot = () => import("./views/LoginRoot.vue");
+const Login = () => import("./components/LoginForm.vue");
+const RequestPasswordResetForm = () => import("./components/RequestPasswordResetForm.vue");
+const ResetPasswordForm = () => import("./components/ResetPasswordForm.vue");
+const Projects = () => import("./views/Projects.vue");
+const Signup = () => import("./views/SignUp.vue");
 
 const AuthorizeStrava = () => import("./views/AuthorizeStrava.vue");
 Vue.use(Router);
 
 export default new Router({
   mode: "history",
-  base: process.env.BASE_URL,
+  base: import.meta.env.BASE_URL,
   routes: [
     {
       path: "/",
