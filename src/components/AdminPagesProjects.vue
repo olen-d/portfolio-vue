@@ -99,7 +99,7 @@ export default {
   data: () => {
     return {
       projects: [],
-      publicPath: process.env.BASE_URL,
+      publicPath: import.meta.env.BASE_URL,
       formAction: "Add",
       editProjectId: "",
       updateProjectData: { skills: [0] },
@@ -165,7 +165,7 @@ export default {
     },
 
     readProjects() {
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects`)
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects`)
         .then(response => {
           return response.json();
         })
@@ -200,7 +200,7 @@ export default {
     },
 
     updateProjectCard(projectId) {
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects/id/${projectId}`)
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects/id/${projectId}`)
         .then(response => {
           return response.json();
         })
@@ -267,7 +267,7 @@ export default {
     },
 
     deleteProject(projectId) {
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects/delete`, {
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects/delete`, {
         method: "delete",
         headers: {
           Authorization: `Bearer ${this.jwt}`,

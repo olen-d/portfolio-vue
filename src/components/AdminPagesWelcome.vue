@@ -37,7 +37,7 @@ export default {
       }
 
       fetch(
-        `${process.env.VUE_APP_API_BASE_URL}/api/welcome/update/headline/${welcomeId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/welcome/update/headline/${welcomeId}`,
         {
           method: "put",
           headers: {
@@ -57,7 +57,7 @@ export default {
   },
 
   created() {
-    fetch(`${process.env.VUE_APP_API_BASE_URL}/api/welcome`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/welcome`)
       .then(response => {
         return response.json();
       })

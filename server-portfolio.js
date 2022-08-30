@@ -8,7 +8,7 @@ const path = require("path");
 
 if (process.env.ENVIRONMENT === "dev") {
   const cors = require("cors");
-  app.use(cors());
+  app.use(cors({ origin:"*" }));
 }
 
 const port = process.env.PORT || 3031;

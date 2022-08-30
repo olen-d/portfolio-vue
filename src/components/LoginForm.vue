@@ -69,7 +69,7 @@ export default {
 
       try {
         const response = await fetch(
-          `${process.env.VUE_APP_API_BASE_URL}/api/users/login`,
+          `${import.meta.env.VITE_API_BASE_URL}/api/users/login`,
           {
             method: "post",
             headers: {
