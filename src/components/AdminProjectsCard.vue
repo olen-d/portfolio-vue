@@ -53,7 +53,7 @@ export default {
 
   data: () => {
     return {
-      publicPath: process.env.BASE_URL,
+      publicPath: import.meta.env.BASE_URL,
       skillsData: [],
       skillNamesById: []
     };
@@ -87,7 +87,7 @@ export default {
     },
 
     readSkills() {
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills`)
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills`)
         .then(response => {
           return response.json();
         })

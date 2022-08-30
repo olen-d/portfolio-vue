@@ -43,7 +43,7 @@ export default {
         password: password
       }
 
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/users/create`, {
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/create`, {
       method: "post",
       headers: {
         "Content-Type": "application/json"

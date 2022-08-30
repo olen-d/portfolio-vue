@@ -105,7 +105,7 @@ export default {
     },
 
     createSkill(formData) {
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/create`, {
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/create`, {
       method: "post",
       headers: {
         "Authorization": `Bearer ${this.jwt}`,
@@ -138,7 +138,7 @@ export default {
     updateSkill(formData) {
       const skillId = this.editSkillId;
 
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/update/${skillId}`, {
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/update/${skillId}`, {
       method: "put",
       headers: {
         "Authorization": `Bearer ${this.jwt}`,

@@ -127,7 +127,7 @@ export default {
     },
 
     updateSkillsTableRow(skillId) {
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/id/${skillId}`)
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/id/${skillId}`)
         .then(response => {
           return response.json();
         })
@@ -166,7 +166,7 @@ export default {
     },
 
     readSkills() {
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills`)
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills`)
         .then(response => {
           return response.json();
         })
@@ -202,7 +202,7 @@ export default {
     },
 
     deleteSkill(skillId) {
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/delete`, {
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/delete`, {
         method: "delete",
         headers: {
           Authorization: `Bearer ${this.jwt}`,

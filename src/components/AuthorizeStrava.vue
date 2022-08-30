@@ -26,9 +26,9 @@ export default {
   },
 
   created() {
-    const stravaAuthorizeURI = process.env.VUE_APP_STRAVA_AUTHORIZE_URI;
-    const stravaClientId = process.env.VUE_APP_STRAVA_CLIENT_ID;
-    const stravaRedirectURI = process.env.VUE_APP_STRAVA_REDIRECT_URI;
+    const stravaAuthorizeURI = import.meta.env.VITE_STRAVA_AUTHORIZE_URI;
+    const stravaClientId = import.meta.env.VITE_STRAVA_CLIENT_ID;
+    const stravaRedirectURI = import.meta.env.VITE_STRAVA_REDIRECT_URI;
 
     window.location = `${stravaAuthorizeURI}?client_id=${stravaClientId}&redirect_uri=${stravaRedirectURI}&response_type=code&scope=activity:read`;
   }

@@ -47,7 +47,7 @@ export default {
         formData.append(key, value);
       }
 
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/projects/create`, {
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects/create`, {
         method: "post",
         headers: {
           Authorization: `Bearer ${this.jwt}`
