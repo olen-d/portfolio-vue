@@ -3,25 +3,28 @@
     <h3>
       Welcome
     </h3>
-    <form id="headline-form">
-      <label for="headline">Headline</label>
-      <textarea class="u-full-width" id="headline" v-model="welcome.headline" placeholder="Write an attention grabbing headline..."></textarea>
-      <div class="right">
-        <button v-on:click.prevent="submitHeadlineForm" class="button-primary" id="headline-submit">Update Headline</button>
-      </div>
-    </form>
+    <AdminFormHeadline
+      :contentId="this.welcome[0]?._id"
+      :defaultValue="this.welcome[0]?.headline"
+      :formAction="formAction"
+    />
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 
+import AdminFormHeadline from "@/components/AdminFormHeadline.vue"
+
 export default {
   name: "AdminPagesWelcome",
+
+  components: { AdminFormHeadline },
 
   data: () => {
     return {
       welcome: [],
+      formAction: "Add"
     }
   },
 
@@ -30,30 +33,7 @@ export default {
   },
 
   methods: {
-    submitHeadlineForm () {
-      const welcomeId = this.welcome._id;
-      const formData = {
-        headline: this.welcome.headline
-      }
-
-      fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/welcome/update/headline/${welcomeId}`,
-        {
-          method: "put",
-          headers: {
-            Authorization: `Bearer ${this.jwt}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(formData)
-        }
-      )
-        .then(response => {
-          return response.json();
-        })
-        .then(dataObj => {
-          // console.log("DATA OBJ\n", dataObj);
-        });
-    }
+    //
   },
 
   created() {
@@ -62,10 +42,15 @@ export default {
         return response.json();
       })
       .then(json => {
-        this.welcome = json.welcome["0"];
+        if (json.welcome.length > 0) {
+          this.welcome.push(json.welcome["0"]);
+          this.formAction = "Update"
+        } else {
+          this.formAction = "Add";
+        }
       });
   }
-};
+}
 </script>
 
 <style scoped>

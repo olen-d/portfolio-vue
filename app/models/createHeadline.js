@@ -1,16 +1,15 @@
 const db = require("../config/connection");
 const ObjectID = require("mongodb").ObjectID;
-// TODO: Add CreatedAt and UpdatedAt fields...
-const data = headlineData => {
+
+const data = headlineInfo => {
   return new Promise((resolve, reject) => {
+    const { userId, headline } = headlineInfo;
+    const createdBy = ObjectID(userId);
     try {
-      const id = ObjectID(headlineData.id);
-      db.welcome.update(
+      db.welcome.insert(
         {
-          _id: id
-        },
-        {
-          $set: { headline: headlineData.headline }
+          createdBy,
+          headline,
         },
         (error, response) => {
           if (error) {
@@ -23,10 +22,10 @@ const data = headlineData => {
     } catch (err) {
       reject({
         status: 500,
-        error: "Internal server error. Failed to update headline."
+        error: "Internal server error. Failed to create new headline."
       });
     }
   });
 };
 
-module.exports = { data: data };
+module.exports = { data };
