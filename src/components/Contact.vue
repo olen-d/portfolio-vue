@@ -197,11 +197,14 @@ export default {
   async created() {
     try {
       const response = await fetch(
-        `${process.env.VUE_APP_API_BASE_URL}/api/profiles/contact/olen.d`
+        `${import.meta.env.VITE_API_BASE_URL}/api/profiles/contact/olen.d`
       );
-
-      const json = response.ok ? await response.json() : null;
-      this.contact = json.contact;
+      if (response.ok) {
+        const json = await response.json()
+        this.contact = json.contact;
+      } else {
+        throw new Error("Network response was not ok. Unable to fetch. ");
+      }
     } catch (error) {
       this.contact = null;
     }
