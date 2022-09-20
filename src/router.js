@@ -1,5 +1,5 @@
-import Vue from "vue";
-import Router from "vue-router";
+// import Vue from "vue";
+import { createRouter, createWebHistory } from "vue-router";
 import Home from "./views/Home.vue";
 import { store } from "./store/store";
 
@@ -26,11 +26,10 @@ const Projects = () => import("./views/Projects.vue");
 const Signup = () => import("./views/SignUp.vue");
 
 const AuthorizeStrava = () => import("./views/AuthorizeStrava.vue");
-Vue.use(Router);
+// Vue.use(Router);
 
-export default new Router({
-  mode: "history",
-  base: import.meta.env.BASE_URL,
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
@@ -50,7 +49,7 @@ export default new Router({
       },
       children: [
         {
-          path: "/",
+          path: "",
           name: "adminDashboard",
           component: AdminDashboard
         },
@@ -64,7 +63,7 @@ export default new Router({
               component: AdminPagesProjectsRoot,
               children: [
                 {
-                  path: "/",
+                  path: "",
                   name: "adminPagesProjects",
                   component: AdminPagesProjects
                 },
@@ -109,7 +108,7 @@ export default new Router({
       component: LoginRoot,
       children: [
         {
-          path: "/",
+          path: "",
           name: "login",
           component: Login
         },
@@ -143,3 +142,5 @@ export default new Router({
     }
   ]
 });
+
+export { router }

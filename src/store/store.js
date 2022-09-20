@@ -1,18 +1,19 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import { createApp } from "vue";
+import { createStore } from "vuex";
 
-Vue.use(Vuex);
-
-export const store = new Vuex.Store({
-  state: {
-    currentJWT: "",
-    now: new Date(),
-    doLogout: false,
-    loginPage: false,
-    signupPage: false,
-    statusCategory: "",
-    statusMessage: "",
-    statusAction: ""
+const store = createStore({
+  state() {
+    return {
+      currentJWT: "",
+      now: new Date(),
+      doLogout: false,
+      loginPage: false,
+      signupPage: false,
+      statusCategory: "",
+      statusIcon: "",
+      statusMessage: "",
+      statusAction: ""
+    }
   },
 
   mutations: {
@@ -106,3 +107,8 @@ export const store = new Vuex.Store({
     }
   }
 });
+
+const app = createApp({})
+app.use(store)
+
+export { store }
