@@ -36,9 +36,8 @@
             >
               <div class="card-title">
                 <img
+                  class="screenshot"
                   :src="`${publicPath}/assets/images/${screenshot}`"
-                  width="350"
-                  height="auto"
                   :alt="`Screenshot of ${title}`"
                 />
                 <h2>
@@ -122,5 +121,10 @@ export default {
 <style scoped>
 .loading-indicator-wrapper {
   margin-bottom: 10rem;
+}
+
+.screenshot {
+  width: 350px;
+  height: auto;
 }
 </style>
