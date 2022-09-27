@@ -36,7 +36,7 @@
             >
               <div class="card-title">
                 <img
-                  :src="`${publicPath}assets/images/${screenshot}`"
+                  :src="`${publicPath}/assets/images/${screenshot}`"
                   width="350"
                   height="auto"
                   :alt="`Screenshot of ${title}`"
