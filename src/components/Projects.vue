@@ -78,7 +78,7 @@ export default {
       loading: false,
       projects: null,
       error: null,
-      publicPath: import.meta.env.BASE_URL
+      publicPath: import.meta.env.VITE_ASSETS_HOST
     };
   },
 
