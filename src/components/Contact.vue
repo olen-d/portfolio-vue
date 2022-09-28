@@ -169,7 +169,7 @@ export default {
 
       try {
         const response = await fetch(
-          `${process.env.VUE_APP_API_BASE_URL}/api/mail/send`,
+          `${import.meta.env.VITE_API_BASE_URL}/api/mail/send`,
           {
             method: "post",
             headers: {
