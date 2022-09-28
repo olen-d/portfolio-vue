@@ -10,8 +10,8 @@
           <h1>
             Get in Touch
           </h1>
-          <p v-if="contact.tel && contact.email">
-            You've made it this far, so please take the time to reach out and start discussing your project with me. I can be contacted at {{ contact.tel | toPhoneUS }}, or send an email to <a :href="`mailto:${contact.email}`">{{contact.email}}</a>.
+          <p v-if="!loading">
+            You've made it this far, so please take the time to reach out and start discussing your project with me. I can be contacted at {{ toPhoneUS }}, or send an email to <a :href="`mailto:${contact?.email}`">{{JSON.stringify(contact, null, 2)}}</a>.
           </p>
         </div>
         <div class="one column">
@@ -110,16 +110,22 @@ export default {
         fromAddress: "",
         message: ""
       },
+      loading: true,
       messageStatus: ""
     };
   },
 
-  filters: {
-    toPhoneUS(value) {
-      const areaCode = value.substr(0, 3);
-      const prefix = value.substr(3, 3);
-      const lineNumber = value.substr(6);
-      return `(${areaCode}) ${prefix}-${lineNumber}`;
+  computed: {
+    toPhoneUS() {
+      const value = this.contact?.tel
+      if (typeof value === 'string') {
+        const areaCode = value.substr(0, 3);
+        const prefix = value.substr(3, 3);
+        const lineNumber = value.substr(6);
+        return `(${areaCode}) ${prefix}-${lineNumber}`;
+      } else {
+        return null
+      }
     }
   },
 
@@ -202,6 +208,7 @@ export default {
       if (response.ok) {
         const json = await response.json()
         this.contact = json.contact;
+        this.loading = false
       } else {
         throw new Error("Network response was not ok. Unable to fetch. ");
       }
