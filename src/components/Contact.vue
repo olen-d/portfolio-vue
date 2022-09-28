@@ -11,7 +11,7 @@
             Get in Touch
           </h1>
           <p v-if="!loading">
-            You've made it this far, so please take the time to reach out and start discussing your project with me. I can be contacted at {{ toPhoneUS }}, or send an email to <a :href="`mailto:${contact?.email}`">{{JSON.stringify(contact, null, 2)}}</a>.
+            You've made it this far, so please take the time to reach out and start discussing your project with me. I can be contacted at {{ toPhoneUS }}, or send an email to <a :href="`mailto:${contact?.email}`">{{contact?.email}}</a>.
           </p>
         </div>
         <div class="one column">
