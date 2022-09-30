@@ -18,7 +18,7 @@ export default {
   data: () => {
     return {
       links: [
-        {id: 0, sort: 0, title: "My Profile", uri: "/profile"},
+        {id: 0, sort: 0, title: "My Profile", uri: "/admin/profile"},
       ],
       visible: false
     }
