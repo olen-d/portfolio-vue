@@ -12,6 +12,7 @@ const AdminPagesProjectsAdd = () => import("./components/AdminPagesProjectsAdd.v
 const AdminPagesProjectsEdit = () => import("./components/AdminPagesProjectsEdit.vue");
 const AdminPagesSkills = () => import("./components/AdminPagesSkills.vue");
 const AdminPagesWelcome = () => import("./components/AdminPagesWelcome.vue");
+const AdminProfile = () => import("./components/AdminProfile.vue");
 
 // route level code-splitting
 // this generates a separate chunk (about.[hash].js) for this route
@@ -90,7 +91,12 @@ const router = createRouter({
               component: AdminPagesWelcome
             }
           ]
-        }
+        },
+        {
+          path: "profile",
+          name: "adminProfile",
+          component: AdminProfile
+        },
       ]
     },
     {
