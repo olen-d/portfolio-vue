@@ -18,7 +18,7 @@ export default {
 
   methods: {
     readSkills() {
-      fetch(`${process.env.VUE_APP_API_BASE_URL}/api/skills/sort/type+name`)
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/sort/type+name`)
         .then(response => {
           return response.json();
         })
