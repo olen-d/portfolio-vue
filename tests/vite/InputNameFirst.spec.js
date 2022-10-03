@@ -20,11 +20,13 @@ test('passed props render', async () => {
   cleanup()
 })
 
-// test('input updates v-model', async () => {
-//   render(InputUsername)
+test('input updates v-model', async () => {
+  render(InputNameFirst)
 
-//   const input = screen.getByLabelText('Username *')
-//   await fireEvent.update(input, 'Fred')
+  const input = screen.getByLabelText('First Name')
+  await fireEvent.update(input, 'Bill')
 
-//   expect(input._value).toEqual('Fred')
-// })
+  expect(input._value).toEqual('Bill')
+
+  cleanup()
+})

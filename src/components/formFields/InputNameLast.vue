@@ -12,11 +12,11 @@
     },
     labeltext: {
       type: String,
-      default: 'First Name'
+      default: 'Last Name'
     },
     placeholder: {
       type: String,
-      default: 'Enter your first name...'
+      default: 'Enter your last name...'
     },
     required: {
       type: Boolean,
@@ -26,47 +26,47 @@
 
   const emit = defineEmits(['changeFormValues'])
 
-  const errorMessage = 'Please enter a valid first name'
+  const errorMessage = 'Please enter a valid last name'
   const isValid = ref(false)
-  const firstName = ref('')
+  const lastName = ref('')
   const validationStatus = ref('')
 
   onMounted(() => {
-    firstName.value = props.initialValue
-    emit('changeFormValues', { inputName: 'firstName', inputValue: firstName.value, isValid: isValid.value, errorMessage })
+    lastName.value = props.initialValue
+    emit('changeFormValues', { inputName: 'lastName', inputValue: lastName.value, isValid: isValid.value, errorMessage })
   })
 
   const handleBlur = () => {
-    isValid.value = validate(firstName.value)
+    isValid.value = validate(lasttName.value)
     validationStatus.value = isValid.value ? null : 'error'
-    emit('changeFormValues', { inputName: 'firstName', inputValue: firstName.value, isValid: isValid.value, errorMessage })
+    emit('changeFormValues', { inputName: 'lastName', inputValue: lastName.value, isValid: isValid.value, errorMessage })
   }
 
-  const validate = firstName => {
+  const validate = lastName => {
     const alphaNumeric = /^[a-zA-Z\-_]+$/
-    const isValid = alphaNumeric.test(firstName)
+    const isValid = alphaNumeric.test(lastName)
     return isValid
   }
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
     if (isServerError) {
       validationStatus.value = 'error'
-      emit('changeFormValues', { inputName: 'firstName', inputValue: firstName.value, isValid: false, errorMessage })
+      emit('changeFormValues', { inputName: 'lastName', inputValue: lastName.value, isValid: false, errorMessage })
     }
   })
 
   </script>
 
   <template>
-    <div class="input-name-first">
-      <label for="inputNameFirst" v-bind:class="{ 'text-error': isError }">
+    <div class="input-name-last">
+      <label for="inputNameLast" v-bind:class="{ 'text-error': isError }">
         {{ labeltext }}
       </label>
       <input
-        v-model="firstName"
+        v-model="lastName"
         type="email"
         class="u-full-width"
-        id="inputNameFirst"
+        id="inputNameLast"
         :placeholder="placeholder"
         :required="required"
         @blur="handleBlur"
