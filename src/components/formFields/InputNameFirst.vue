@@ -27,6 +27,7 @@
   const emit = defineEmits(['changeFormValues'])
 
   const errorMessage = 'Please enter a valid first name'
+  const isError = ref(false)
   const isValid = ref(false)
   const firstName = ref('')
   const validationStatus = ref('')
@@ -38,7 +39,7 @@
 
   const handleBlur = () => {
     isValid.value = validate(firstName.value)
-    validationStatus.value = isValid.value ? null : 'error'
+    validationStatus.value = isValid.value ? null : 'text-error'
     emit('changeFormValues', { inputName: 'firstName', inputValue: firstName.value, isValid: isValid.value, errorMessage })
   }
 
@@ -50,7 +51,7 @@
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
     if (isServerError) {
-      validationStatus.value = 'error'
+      validationStatus.value = 'text-error'
       emit('changeFormValues', { inputName: 'firstName', inputValue: firstName.value, isValid: false, errorMessage })
     }
   })
@@ -59,7 +60,7 @@
 
   <template>
     <div class="input-name-first">
-      <label for="inputNameFirst" v-bind:class="{ 'text-error': isError }">
+      <label for="inputNameFirst" v-bind:class="validationStatus">
         {{ labeltext }}
       </label>
       <input

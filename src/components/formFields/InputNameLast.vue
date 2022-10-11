@@ -37,8 +37,8 @@
   })
 
   const handleBlur = () => {
-    isValid.value = validate(lasttName.value)
-    validationStatus.value = isValid.value ? null : 'error'
+    isValid.value = validate(lastName.value)
+    validationStatus.value = isValid.value ? null : 'text-error'
     emit('changeFormValues', { inputName: 'lastName', inputValue: lastName.value, isValid: isValid.value, errorMessage })
   }
 
@@ -50,7 +50,7 @@
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
     if (isServerError) {
-      validationStatus.value = 'error'
+      validationStatus.value = 'text-error'
       emit('changeFormValues', { inputName: 'lastName', inputValue: lastName.value, isValid: false, errorMessage })
     }
   })
@@ -59,7 +59,7 @@
 
   <template>
     <div class="input-name-last">
-      <label for="inputNameLast" v-bind:class="{ 'text-error': isError }">
+      <label for="inputNameLast" v-bind:class="validationStatus">
         {{ labeltext }}
       </label>
       <input

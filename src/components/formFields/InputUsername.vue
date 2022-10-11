@@ -38,7 +38,7 @@
 
   const handleBlur = () => {
     isValid.value = validate(username.value)
-    validationStatus.value = isValid.value ? null : 'error'
+    validationStatus.value = isValid.value ? null : 'text-error'
     emit('changeFormValues', { inputName: 'username', inputValue: username.value, isValid: isValid.value, errorMessage })
   }
 
@@ -59,7 +59,7 @@
 
   <template>
     <div class="input-username">
-      <label for="inputUsername" v-bind:class="{ 'text-error': isError }">
+      <label for="inputUsername" v-bind:class="validationStatus">
         {{ labeltext }}
       </label>
       <input

@@ -39,7 +39,7 @@
   const checkMx = async emailAddress => {
     try {
       const result = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/mail/check-mx/${email}`
+        `${import.meta.env.VITE_API_BASE_URL}/api/mail/check-mx/${emailAddress}`
       );
       const data = await result.json();
       const { mxExists } = data;
@@ -52,13 +52,14 @@
 
   const handleBlur = async () => {
     isValid.value = await validate(emailAddress.value)
-    validationStatus.value = isValid.value ? null : 'error'
+    validationStatus.value = isValid.value ? null : 'text-error'
     emit('changeFormValues', { inputName: 'emailAddress', inputValue: emailAddress.value, isValid: isValid.value, errorMessage })
   }
 
   const validate = async emailAddress => {
     const expression = /.+@.+\..+/i
     const isValidFormat = expression.test(String(emailAddress).toLowerCase())
+
     if (isValidFormat) {
       return await checkMx(emailAddress)
     } else {
@@ -68,7 +69,7 @@
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
     if (isServerError) {
-      validationStatus.value = 'error'
+      validationStatus.value = 'text-error'
       emit('changeFormValues', { inputName: 'emailAddress', inputValue: emailAddress.value, isValid: false, errorMessage })
     }
   })
@@ -77,7 +78,7 @@
 
 <template>
   <div class="input-email">
-    <label for="email" v-bind:class="{ 'text-error': !isValid }">
+    <label for="email" v-bind:class="validationStatus">
       {{ labeltext }}
     </label>
     <input
