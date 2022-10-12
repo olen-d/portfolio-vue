@@ -24,8 +24,9 @@
     }
   })
 
-  const emit = defineEmits(['changeFormValues'])
+  const emits = defineEmits(['changeFormValues'])
 
+  const changedState = { isChanged: false }
   const errorMessage = 'Please enter a valid username'
   const isValid = ref(false)
   const username = ref('')
@@ -33,13 +34,20 @@
 
   onMounted(() => {
     username.value = props.initialValue
-    emit('changeFormValues', { inputName: 'username', inputValue: username.value, isValid: isValid.value, errorMessage })
+    emitChange()
   })
 
+  const emitChange = () => {
+    emits('changeFormValues', { inputName: 'username', inputValue: username.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
+  }
+
   const handleBlur = () => {
+    if (!changedState.isChanged) {
+      changedState.isChanged = true
+    }
     isValid.value = validate(username.value)
     validationStatus.value = isValid.value ? null : 'text-error'
-    emit('changeFormValues', { inputName: 'username', inputValue: username.value, isValid: isValid.value, errorMessage })
+    emitChange()
   }
 
   const validate = username => {
@@ -50,8 +58,9 @@
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
     if (isServerError) {
-      validationStatus.value = 'error'
-      emit('changeFormValues', { inputName: 'username', inputValue: lastName.value, isValid: false, errorMessage })
+      validationStatus.value = 'text-error'
+      isValid.value = false
+      emitChange()
     }
   })
 
@@ -64,7 +73,7 @@
       </label>
       <input
         v-model="username"
-        type="email"
+        type="text"
         class="u-full-width"
         id="inputUsername"
         :placeholder="placeholder"
