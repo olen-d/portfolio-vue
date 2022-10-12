@@ -24,8 +24,9 @@
     }
   })
 
-  const emit = defineEmits(['changeFormValues'])
+  const emits = defineEmits(['changeFormValues'])
 
+  const changedState = { isChanged: false }
   const errorMessage = 'Please enter a valid email address'
   const isValid = ref(false)
   const emailAddress = ref('')
@@ -33,7 +34,7 @@
 
   onMounted(() => {
    emailAddress.value = props.initialValue
-    emit('changeFormValues', { inputName: 'emailAddress', inputValue: emailAddress.value, isValid: isValid.value, errorMessage })
+   emitChange()
   })
 
   const checkMx = async emailAddress => {
@@ -50,10 +51,17 @@
     }
   }
 
+  const emitChange = () => {
+    emits('changeFormValues', { inputName: 'emailAddress', inputValue: emailAddress.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
+  }
+
   const handleBlur = async () => {
+    if (!changedState.isChanged) {
+      changedState.isChanged = true
+    }
     isValid.value = await validate(emailAddress.value)
     validationStatus.value = isValid.value ? null : 'text-error'
-    emit('changeFormValues', { inputName: 'emailAddress', inputValue: emailAddress.value, isValid: isValid.value, errorMessage })
+    emitChange()
   }
 
   const validate = async emailAddress => {
@@ -70,7 +78,8 @@
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
     if (isServerError) {
       validationStatus.value = 'text-error'
-      emit('changeFormValues', { inputName: 'emailAddress', inputValue: emailAddress.value, isValid: false, errorMessage })
+      isValid.value = false
+      emitChange()
     }
   })
 
