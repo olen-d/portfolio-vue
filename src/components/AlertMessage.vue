@@ -24,24 +24,37 @@
 </template>
 
 <style scoped>
+  .alert-message {
+    padding-bottom: 5rem;
+  }
+  .alert-message-content {
+    padding-top: 1rem
+  }
+  .alert-message-title {
+    font-weight: 700;
+    letter-spacing: 0.1rem;
+  }
+  .default, .error, .info, .success, .warning {
+    padding: 2rem;
+  }
   .default {
-    background-color: #999999;
-    color: #555555;
+    background-color: #dfdfdf;
+    color: #777;
   }
   .error {
-    background-color: #cc8888;
-    color: #aa0000;
+    background-color: #ffdfdf;
+    color: #dd0000;
   }
   .info {
-    background-color: #8888cc;
-    color: #0000aa;
+    background-color: #dfdfff;
+    color: #0000dd;
   }
   .success {
-    background-color: #88cc88;
+    background-color: #dfffdf;
     color: #00aa00
   }
   .warning {
-    color: #888800;
-    background-color: #cccc88;
+    color: #cccc00;
+    background-color: #ffffcc;
   }
 </style>
