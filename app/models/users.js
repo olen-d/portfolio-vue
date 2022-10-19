@@ -67,3 +67,21 @@ exports.updateOnePasswordByUserName = (userName, passwordHash) => {
     }
   });
 };
+
+exports.updateOneUserByUsername = async (username, userInfo) => {
+  const userInfoProcessed = { $set: {} }
+
+  for (const key of Object.keys(userInfo)) {
+    userInfoProcessed.$set[key] = userInfo[key]
+  }
+
+  try {
+    const filter = { userName: username }
+    const updateDoc = userInfoProcessed
+
+    const result = await db.collection('users').update(filter, updateDoc)
+    return 204
+  } catch (error) {
+    throw new Error(error)
+  }
+}

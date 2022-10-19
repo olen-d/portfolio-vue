@@ -52,7 +52,7 @@
   }
 
   const emitChange = () => {
-    emits('changeFormValues', { inputName: 'emailAddress', inputValue: emailAddress.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
+    emits('changeFormValues', { inputName: 'email', inputValue: emailAddress.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
   }
 
   const handleBlur = async () => {

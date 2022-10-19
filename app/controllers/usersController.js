@@ -4,6 +4,7 @@ const readOneUser = require("../models/readOneUser");
 const {
   readOneUserByEmail,
   readOneUserByUserName,
+  updateOneUserByUsername,
   updateOnePasswordByUserName
 } = require("../models/users");
 
@@ -369,6 +370,16 @@ const checkEmail = async email => {
     return false;
   }
 };
+
+exports.update_one_user_by_username = async (req, res) => {
+  // TODO - validate the input
+  const { body, params: { username} } = req
+
+  const result = await updateOneUserByUsername(username, body)
+  if (result === 204) {
+    res.status(204)
+  }
+}
 
 /**
  * Validate that a potential password meets minimum requirements
