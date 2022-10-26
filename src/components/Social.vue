@@ -5,11 +5,11 @@
     </div>
     <div v-if="social" id="social">
       <span
-        v-for="{ _id, text, href, icon } in social"
+        v-for="{ _id, anchor, uri, icon } in social"
         :key="_id"
         class="social-items"
       >
-        <a :href="href" :title="`Olen Daelhousen on ${text}`">
+        <a :href="uri" :title="`Olen Daelhousen on ${anchor}`">
           <i :class="icon"></i>
         </a>&nbsp;
       </span>
