@@ -1,9 +1,9 @@
 // Models
-const { createSocialMedia } = require("../models/socialModel")
-const readSocial = require("../models/readSocial");
+const { createSocialMedia, readSocialMedia } = require("../models/socialModel")
+
 const { response } = require("express");
 
-exports.create_social = (req, res) => {
+exports.create_social = async (req, res) => {
   const { body } = req
 
   // TODO: Trim all body properties
@@ -11,9 +11,8 @@ exports.create_social = (req, res) => {
   const socialMediaInfo = body
 
   try {
-    const result = createSocialMedia(socialMediaInfo)
-    console.log(`\n\nResult:\n${JSON.stringify(result, null, 2)}`)
-    res.send(200)
+    const result = await createSocialMedia(socialMediaInfo)
+    res.json({ status: 200, result})
   } catch (error) {
     res.json(error)
   }
@@ -21,8 +20,7 @@ exports.create_social = (req, res) => {
 
 exports.read_social = (req, res) => {
   const userName = req.params.username;
-  readSocial
-    .data(userName)
+  readSocialMedia(userName)
     .then(resolve => {
       const socialObj = {
         social: resolve
