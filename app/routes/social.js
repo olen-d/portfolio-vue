@@ -3,8 +3,10 @@ const router = express.Router()
 
 const social_controller = require("../controllers/socialController")
 
-router.get("/social/user/:username", social_controller.read_social)
+router.delete("/social/link/:linkId", social_controller.delete_social_media_link)
 
-router.post("/social", social_controller.create_social)
+router.get("/social/user/:username", social_controller.read_social_media_links)
+
+router.post("/social", social_controller.create_social_media_link)
 
 module.exports = router;
