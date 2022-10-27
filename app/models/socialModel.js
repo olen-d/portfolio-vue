@@ -35,7 +35,6 @@ const deleteSocialMediaLink = linkId => {
   return new Promise((resolve, reject) => {
     try {
       db.social.remove({ _id: mongojs.ObjectId(linkId) }, (error, doc) => {
-        console.log(`\n\nSocial Model\nERROR:\n${error}\n\n\n`)
         resolve(doc)
       })
     } catch (error) {
