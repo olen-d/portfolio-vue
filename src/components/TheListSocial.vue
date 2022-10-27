@@ -1,14 +1,31 @@
 <script setup>
   import { onMounted, ref, watch } from 'vue'
 
+  import AlertMessage from '@/components/AlertMessage.vue'
+  import ModalConfirmCancel from '@/components/ModalConfirmCancel.vue'
+
   const props = defineProps({
     newLinkData: {
       type: Object,
     }
   })
 
+  const errorDescription = ref('')
+  const errorTitle = ref('')
   const isLoading = ref(true)
+  const isError = ref(false)
+  const isSuccess = ref(false)
+  const modalAction = ref('')
+  const modalCancel = ref('')
+  const modalConfirm = ref('')
+  const modalItemId = ref('')
+  const modalMessage = ref('')
+  const modalTitle = ref('')
+  const payload = ref({}) // TODO: delete this when Action and ItemId props are fixed when ModalConfirmCancel is re-written
+  const showModalConfirmCancel = ref(false)
   const socials = ref([])
+  const successDescription = ref('')
+  const successTitle = ref('')
 
   onMounted(() => {
     const username = 'olen.d' // TODO: pass this in as a prop
@@ -18,6 +35,73 @@
   const addSocial = () => {
     socials.value.push(props.newLinkData)
     socials.value.sort((a, b) => a.order - b.order)
+  }
+
+  const cancelAction = () => {
+    showModalConfirmCancel.value = false
+  }
+
+  const confirmAction = v => {
+    switch (v.action) {
+      case "delete":
+        deleteSocial(v.data)
+        break
+    }
+    showModalConfirmCancel.value = false
+  }
+
+  const confirmDeleteItem = e => {
+      const itemId = e.currentTarget.getAttribute('data-id')
+      const itemName = e.currentTarget.getAttribute('data-name')
+
+      modalAction.value = 'delete'
+      modalCancel.value = 'cancel'
+      modalConfirm.value = 'delete'
+      modalItemId.value = itemId
+      modalMessage.value = `Do you really want to delete the social medial link: ${itemName}?`
+      modalTitle.value = 'Delete Social Media Link'
+
+      payload.value = { action: 'delete', data: itemId } // TODO: delete this when Action and ItemId props are fixed when ModalConfirmCancel is re-written
+
+      showModalConfirmCancel.value = true
+    }
+
+  const deleteSocialsTableRow = id => {
+    const index = findSocialIndexById(id)
+    if (index > -1) {
+      socials.value.splice(index, 1)
+    }
+  }
+
+  const deleteSocial = async id => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/social/link/${id}`, {
+        method: "DELETE"
+      })
+
+      const result = await response.json()
+      const {result: { ok, deletedCount }, } = result;
+
+      if (ok === 1 && deletedCount === 1) {
+        successDescription.value = 'Social media link deleted successfully.'
+        successTitle.value = 'Great Success'
+        isSuccess.value = true
+        deleteSocialsTableRow(id);
+      } else {
+        errorDescription.value = 'Social media link was not deleted. Database error.'
+        errorTitle.value = 'Server Error'
+        isError.value = true
+      }
+    } catch (error) {
+      errorDescription.value = 'Social media link was not deleted. Server error.'
+      errorTitle.value = 'Server Error'
+      isError.value = true
+    }
+  }
+
+  const findSocialIndexById = id => {
+    const index = socials.value.map(item => item._id).indexOf(id)
+    return index
   }
 
   const readSocials = async username => {
@@ -41,6 +125,28 @@
 
 <template>
   <div class="the-list-social">
+    <ModalConfirmCancel
+      v-if="showModalConfirmCancel"
+      :payload = "payload"
+      :action = "modalAction"
+      :cancel = "modalCancel"
+      :confirm = "modalConfirm"
+      :message = "modalMessage" 
+      :title = "modalTitle"
+
+      @confirm-action="confirmAction"
+      @cancel-action="cancelAction"
+    />
+    <div class="the-list-social-alert-error" v-if="isError">
+      <AlertMessage :title="errorTitle" type="error">
+        {{ errorDescription }}
+      </AlertMessage>
+    </div>
+    <div class="the-list-social-profile-alert-succes" v-if="isSuccess">
+      <AlertMessage :title="successTitle" type="success">
+        {{ successDescription }}
+      </AlertMessage>
+    </div>
     <div class="none-found" v-if="!isLoading && socials.length < 1">
       <p>No social media links were found.</p>
     </div>
@@ -60,7 +166,7 @@
           <td>{{ uri }}</td>
           <td>{{ order }}</td>
           <td><i @click="updateSkill" class="fas fa-edit edit" :data-id="_id"></i></td>
-          <td><i @click="confirmDeleteSkill" class="fas fa-times delete" :data-id="_id" :data-name="anchor"></i></td>
+          <td><i @click="confirmDeleteItem" class="fas fa-times delete" :data-id="_id" :data-name="anchor"></i></td>
         </tr>
       </tbody>
     </table>
