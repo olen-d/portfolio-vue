@@ -1,7 +1,7 @@
 <script setup>
   import { onMounted, ref, watch } from 'vue'
 
-  const emits = defineEmits(['changeFormValues'])
+  const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const props = defineProps({
     initialValue: {
@@ -21,6 +21,10 @@
       default: 'Enter the icon name...'
     },
     required: {
+      type: Boolean,
+      default: false
+    },
+    shouldClearInput: {
       type: Boolean,
       default: false
     }
@@ -60,6 +64,15 @@
       validationStatus.value = 'text-error'
       isValid.value = false
       emitChange()
+    }
+  })
+  
+  watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
+    if (newShouldClearInput) {
+      icon.value = ''
+      changedState.isChanged = false
+      isValid.value = false
+      emits('removeFormValues', { inputName: 'icon' })
     }
   })
   </script>
