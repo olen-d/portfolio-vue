@@ -1,7 +1,7 @@
 <script setup>
   import { onMounted, ref, watch } from 'vue'
 
-  const emits = defineEmits(['changeFormValues'])
+  const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const props = defineProps({
     initialValue: {
@@ -23,6 +23,10 @@
     required: {
       type: Boolean,
       default: false
+    },
+    shouldClearInput: {
+      type: Boolean,
+      default: false
     }
   })
 
@@ -36,7 +40,7 @@
     anchor.value = props.initialValue
     emitChange('anchor', anchor.value)
   })
-  
+
   const emitChange = (name, value) => {
     const isValidValue = name === 'anchor' ? isValid.value : true
     const errorMessageValue = name === 'anchor' ? errorMessage : null
@@ -63,6 +67,15 @@
       validationStatus.value = 'text-error'
       isValid.value = false
       emitChange('anchor', anchor.value)
+    }
+  })
+
+  watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
+    if (newShouldClearInput) {
+      anchor.value = ''
+      changedState.isChanged = false
+      isValid.value = false
+      emits('removeFormValues', { inputName: 'anchor' })
     }
   })
   </script>

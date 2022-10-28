@@ -1,7 +1,7 @@
 <script setup>
   import { onMounted, ref, watch } from 'vue'
 
-  const emits = defineEmits(['changeFormValues'])
+  const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const props = defineProps({
     initialValue: {
@@ -21,6 +21,10 @@
       default: 'Enter the Link URI...'
     },
     required: {
+      type: Boolean,
+      default: false
+    },
+    shouldClearInput: {
       type: Boolean,
       default: false
     }
@@ -61,6 +65,15 @@
       validationStatus.value = 'text-error'
       isValid.value = false
       emitChange()
+    }
+  })
+
+  watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
+    if (newShouldClearInput) {
+      uri.value = ''
+      changedState.isChanged = false
+      isValid.value = false
+      emits('removeFormValues', { inputName: 'uri' })
     }
   })
   </script>

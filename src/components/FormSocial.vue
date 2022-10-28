@@ -1,5 +1,5 @@
 <script setup>
-  import { onMounted, ref } from 'vue'
+  import { ref } from 'vue'
 
   import AlertMessage from '@/components/AlertMessage.vue'
   import InputAnchor from '@/components/formFields/InputAnchor.vue'
@@ -19,10 +19,16 @@
   const isSuccess = ref(false)
   const successDescription = ref('')
   const successTitle = ref('')
+  const shouldClearInputs = ref(false)
 
-  onMounted(() => {
-    formValues.value.push({ inputName: "username", inputValue: username, isChanged: true, isValid: true, errorMessage: null })
-  })
+  const clearForm = () => {
+    // Remove the username, otherwise shouldClearInputs won't reset to false because 
+    // removeFormValues is never called as username is not associated with an input component
+    const valuesIndex = formValues.value.findIndex(element => element.inputName === 'username')
+    formValues.value.splice(valuesIndex, 1) // Mutates formValues
+
+    shouldClearInputs.value = true
+  }
 
   const getFormErrorsChanged = () => {
     const formErrorsChanged = formValues.value.filter(element => {
@@ -39,6 +45,8 @@
       return
     } else {
       // Submit
+      // Add the username here, otherwise it causes issues with form clearing because it is not associated with an input component
+      formValues.value.push({ inputName: "username", inputValue: username, isChanged: true, isValid: true, errorMessage: null })
 
       const data = {}
       const changedFormValues = formValues.value.reduce((acc, element) => {
@@ -68,10 +76,10 @@
 
         if (status === 200) {
           emits('socialMediaLinkCreated', insertResult)
-          // TODO: Clear the add form
           successDescription.value = 'The social media link was added successfully'
           successTitle.value = 'Great Success'
           isSuccess.value = true
+          clearForm()
         }
         // TODO: Finish the error handling to address all cases
         if (status === 400 && result.message) {
@@ -83,6 +91,13 @@
         console.log(error)
       }
     }
+  }
+
+  const removeFormValues = event => {
+    const { inputName: name } = event
+    const valuesIndex = formValues.value.findIndex(element => element.inputName === name)
+    formValues.value.splice(valuesIndex, 1) // Mutates formValues
+    if (formValues.value.length === 0) { shouldClearInputs.value = false }
   }
 
   const updateFormValues = event => {
@@ -129,10 +144,26 @@
       </AlertMessage>
     </div>
     <form>
-      <InputIcon @change-form-values="updateFormValues($event)" />
-      <InputAnchor @change-form-values="updateFormValues($event)" />
-      <InputURI @change-form-values="updateFormValues($event)" />
-      <InputOrder @change-form-values="updateFormValues($event)" />
+      <InputIcon
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
+      <InputAnchor
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)"
+        @remove-form-values="removeFormValues($event)"
+      />
+      <InputURI
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)"
+        @remove-form-values="removeFormValues($event)"
+      />
+      <InputOrder
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)"
+        @remove-form-values="removeFormValues($event)"
+      />
       <div class="right">
         <button @click.prevent="handleSubmit" class="button-primary" id="social-submit">Add Social Media Link</button>
         <!-- <button v-if="formAction === 'Edit'" v-on:click.prevent="cancelEditSkill" class="edit-button-cancel">cancel</button> -->
