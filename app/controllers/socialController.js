@@ -1,5 +1,5 @@
 // Models
-const { createSocialMediaLink, deleteSocialMediaLink, readSocialMediaLinks } = require("../models/socialModel")
+const { createSocialMediaLink, deleteSocialMediaLink, readSocialMediaLinks, updateSocialMediaLink } = require("../models/socialModel")
 
 const { response } = require("express");
 
@@ -42,3 +42,14 @@ exports.read_social_media_links = (req, res) => {
       res.json(err);
     });
 };
+
+exports.update_social_media_links = async (req, res) => {
+  const { body: { data }, params: { linkId }} = req
+
+  try {
+    const result = await updateSocialMediaLink(linkId, data)
+    res.json(result)
+  } catch (error) {
+    res.json(error)
+  }
+}
