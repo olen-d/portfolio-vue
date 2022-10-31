@@ -7,7 +7,23 @@
   import InputOrder from '@/components/formFields/InputOrder.vue'
   import InputURI from '@/components/formFields/InputURI.vue'
 
-  const emits = defineEmits(['socialMediaLinkCreated'])
+  const emits = defineEmits(['cancelEdit', 'socialMediaLinkCreated', 'socialMediaLinkUpdated', 'updateFormAction'])
+  const props = defineProps({
+    action: {
+      type: String,
+      default: 'add'
+    },
+    editItemData: {
+      type: Object,
+    },
+    editItemId: {
+      type: String
+    },
+    submitButtonAction: {
+      type: String,
+      default: 'add'
+    }
+  })
 
   const username = 'olen.d' // Hardcoded for now, get it from the store when transition to composition API is complete
 
@@ -21,6 +37,11 @@
   const successTitle = ref('')
   const shouldClearInputs = ref(false)
 
+  const cancelEdit = () => {
+    clearForm()
+    emits('cancelEdit', true)
+  }
+
   const clearForm = () => {
     // Remove the username, otherwise shouldClearInputs won't reset to false because 
     // removeFormValues is never called as username is not associated with an input component
@@ -28,6 +49,38 @@
     formValues.value.splice(valuesIndex, 1) // Mutates formValues
 
     shouldClearInputs.value = true
+  }
+
+  const createSocialMediaLink = async data => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/social`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken.value}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        const result = await response.json()
+        const { status } = response
+        const { result: insertResult } = result 
+
+        if (status === 200) {
+          clearForm()
+          successDescription.value = 'The social media link was added successfully'
+          successTitle.value = 'Great Success'
+          isSuccess.value = true
+          emits('socialMediaLinkCreated', insertResult)
+        }
+        // TODO: Finish the error handling to address all cases
+        if (status === 400 && result.message) {
+          errorDescription.value = 'One or more required fields were not submitted to the server. Please try again in a few minutes.'
+          errorTitle.value = 'Server Error'
+          isError.value = true
+        }
+      } catch (error) {
+        console.log(error)
+      }
   }
 
   const getFormErrorsChanged = () => {
@@ -61,34 +114,14 @@
         data[inputName] = inputValue
       })
 
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/social`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken.value}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        })
-        const result = await response.json()
-        const { status } = response
-        const { result: insertResult } = result 
-
-        if (status === 200) {
-          emits('socialMediaLinkCreated', insertResult)
-          successDescription.value = 'The social media link was added successfully'
-          successTitle.value = 'Great Success'
-          isSuccess.value = true
-          clearForm()
-        }
-        // TODO: Finish the error handling to address all cases
-        if (status === 400 && result.message) {
-          errorDescription.value = 'One or more required fields were not submitted to the server. Please try again in a few minutes.'
-          errorTitle.value = 'Server Error'
-          isError.value = true
-        }
-      } catch (error) {
-        console.log(error)
+      if (props.action === 'add') {
+        createSocialMediaLink(data)
+      } else if (props.action === 'edit') {
+        updateSocialMediaLink(data)
+      } else {
+        errorDescription.value = 'An invalid action was submitted and no data was sent to the server.'
+        errorTitle.value = 'Internal Error'
+        isError.value = true
       }
     }
   }
@@ -129,6 +162,41 @@
       errorTitle.value = ''
     }
   }
+
+  const updateSocialMediaLink = async data => {
+    const updateInfo = { data }
+
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/social/${props.editItemId}`, {
+          method: 'PATCH',
+          headers: {
+            Authorization: `Bearer ${accessToken.value}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updateInfo)
+        })
+        const result = await response.json()
+        const { status } = response
+        const { data: { ok }, } = result 
+
+        if (status === 200 && ok === 1) {
+          successDescription.value = 'The social media link was updated successfully'
+          successTitle.value = 'Great Success'
+          isSuccess.value = true
+          clearForm()
+          emits('socialMediaLinkUpdated', { ok, id: props.editItemId, data })
+          emits('updateFormAction', 'add')
+        }
+        // TODO: Finish the error handling to address all cases
+        if (status === 400 && result.message) {
+          errorDescription.value = 'One or more required fields were not submitted to the server. Please try again in a few minutes.'
+          errorTitle.value = 'Server Error'
+          isError.value = true
+        }
+      } catch (error) {
+        console.log(error)
+      }
+  }
 </script>
 
 <template>
@@ -145,28 +213,32 @@
     </div>
     <form>
       <InputIcon
+        :editValue="editItemData.icon"
         :shouldClearInput="shouldClearInputs"
         @change-form-values="updateFormValues($event)" 
         @remove-form-values="removeFormValues($event)"
       />
       <InputAnchor
+        :editValue="editItemData.anchor"
         :shouldClearInput="shouldClearInputs"
         @change-form-values="updateFormValues($event)"
         @remove-form-values="removeFormValues($event)"
       />
       <InputURI
+        :editValue="editItemData.uri"
         :shouldClearInput="shouldClearInputs"
         @change-form-values="updateFormValues($event)"
         @remove-form-values="removeFormValues($event)"
       />
       <InputOrder
+        :editValue="editItemData.order"
         :shouldClearInput="shouldClearInputs"
         @change-form-values="updateFormValues($event)"
         @remove-form-values="removeFormValues($event)"
       />
       <div class="right">
-        <button @click.prevent="handleSubmit" class="button-primary" id="social-submit">Add Social Media Link</button>
-        <!-- <button v-if="formAction === 'Edit'" v-on:click.prevent="cancelEditSkill" class="edit-button-cancel">cancel</button> -->
+        <button @click.prevent="handleSubmit" class="button-primary space-horizontal" id="social-submit">{{ submitButtonAction }} social media link</button>
+        <button v-if="action === 'edit'" @click.prevent="cancelEdit" class="edit-button-cancel spacee-horizontal">cancel</button>
       </div>
     </form>
   </div>

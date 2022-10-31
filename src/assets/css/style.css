@@ -259,7 +259,13 @@ input[type="button"].button-primary:disabled {
   background-color: #85dbf6;
   border-color: #85dbf6; }
 
+.space-horizontal {
+margin-right: 2rem;
+}
 
+.space-horizontal:last-child {
+margin-right: 0rem;
+}
 /* Text */
 
 .text-error {

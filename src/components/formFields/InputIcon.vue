@@ -4,6 +4,10 @@
   const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const props = defineProps({
+    editValue: {
+      type: String,
+      default: ''
+    },
     initialValue: {
       type: String,
       default: ''
@@ -66,7 +70,14 @@
       emitChange()
     }
   })
-  
+
+  watch(() => props.editValue, (newEditValue, prevEditValue) => {
+    icon.value = newEditValue
+    changedState.isChanged = false
+    isValid.value = false
+    emitChange('icon', icon.value)
+  })
+
   watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
     if (newShouldClearInput) {
       icon.value = ''

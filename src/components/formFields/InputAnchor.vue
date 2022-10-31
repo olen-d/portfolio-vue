@@ -4,6 +4,10 @@
   const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const props = defineProps({
+    editValue: {
+      type: String,
+      default: ''
+    },
     initialValue: {
       type: String,
       default: ''
@@ -61,6 +65,13 @@
     const isValid = alphaNumericPunctuation.test(anchor)
     return isValid
   }
+
+  watch(() => props.editValue, (newEditValue, prevEditValue) => {
+    anchor.value = newEditValue
+    changedState.isChanged = false
+    isValid.value = false
+    emitChange('anchor', anchor.value)
+  })
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
     if (isServerError) {

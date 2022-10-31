@@ -4,6 +4,10 @@
   const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const props = defineProps({
+    editValue: {
+      type: Number,
+      default: 0
+    },
     initialValue: {
       type: Number,
       default: null
@@ -59,6 +63,13 @@
     const isValid = isNumber && order >= 0
     return isValid
   }
+
+  watch(() => props.editValue, (newEditValue, prevEditValue) => {
+    order.value = newEditValue
+    changedState.isChanged = false
+    isValid.value = false
+    emitChange('order', order.value)
+  })
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
     if (isServerError) {
