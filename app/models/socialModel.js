@@ -63,4 +63,29 @@ const readSocialMediaLinks = username => {
   })
 }
 
-module.exports = { createSocialMediaLink, deleteSocialMediaLink, readSocialMediaLinks }
+const updateSocialMediaLink = (linkId, data) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const dataProcessed = { $set: {} }
+
+      for (const key of Object.keys(data)) {
+        dataProcessed.$set[key] = data[key]
+      }
+
+      const filter = { _id: mongojs.ObjectId(linkId) }
+      const updateDoc = dataProcessed
+
+      db.collection('social').update(filter, updateDoc, (error, doc) => {
+        if (error) {
+          resolve({ status: 500, error })
+        } else {
+          resolve({status: 204, data: doc })
+        }
+      })
+    } catch (error) {
+      reject({ status: 500, error })
+    }
+  })
+}
+
+module.exports = { createSocialMediaLink, deleteSocialMediaLink, readSocialMediaLinks, updateSocialMediaLink }
