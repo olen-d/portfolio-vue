@@ -4,6 +4,10 @@
   const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const props = defineProps({
+    editValue: {
+      type: String,
+      default: ''
+    },
     initialValue: {
       type: String,
       default: ''
@@ -59,6 +63,13 @@
     const isValid = uriRegEx.test(linkUri)
     return isValid
   }
+
+  watch(() => props.editValue, (newEditValue, prevEditValue) => {
+    uri.value = newEditValue
+    changedState.isChanged = false
+    isValid.value = false
+    emitChange('uri', uri.value)
+  })
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
     if (isServerError) {

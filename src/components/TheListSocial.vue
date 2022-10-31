@@ -4,9 +4,13 @@
   import AlertMessage from '@/components/AlertMessage.vue'
   import ModalConfirmCancel from '@/components/ModalConfirmCancel.vue'
 
+  const emits = defineEmits(['updateFormAction', 'updateItemData', 'updateItemId'])
   const props = defineProps({
     newLinkData: {
       type: Object,
+    },
+    updatedLinkData: {
+      type: Object
     }
   })
 
@@ -99,6 +103,17 @@
     }
   }
 
+  const editItem = event => {
+    const id = event.currentTarget.getAttribute("data-id");
+
+    const itemIndex = findSocialIndexById(id)
+    const data = { ...socials.value[itemIndex] }
+
+    emits('updateFormAction', 'edit')
+    emits('updateItemData', data)
+    emits('updateItemId', id)
+  }
+
   const findSocialIndexById = id => {
     const index = socials.value.map(item => item._id).indexOf(id)
     return index
@@ -116,9 +131,28 @@
     }
   }
 
+  const updateSocial = () => {
+    if (props.updatedLinkData.ok === 1) {
+      const itemIndex = findSocialIndexById(props.updatedLinkData.id)
+
+      const [target] =  socials.value.slice(itemIndex, itemIndex + 1)
+      const source = { ...props.updatedLinkData.data }
+      const returnedTarget = Object.assign(target, source)
+
+      socials.value.splice(itemIndex, 1, returnedTarget) // Mutates socials
+      socials.value.sort((a, b) => a.order - b.order)
+    }
+  }
+
   watch(() => props.newLinkData, (newLinkData, prevNewLinkData) => {
     if (newLinkData !== prevNewLinkData) {
       addSocial()
+    }
+  })
+
+  watch(() => props.updatedLinkData, (newUpdatedLinkData, prevUpdatedLinkData) => {
+    if (newUpdatedLinkData !== prevUpdatedLinkData) {
+      updateSocial()
     }
   })
 </script>
@@ -165,7 +199,7 @@
           <td>{{ anchor }}</td>
           <td>{{ uri }}</td>
           <td>{{ order }}</td>
-          <td><i @click="updateSkill" class="fas fa-edit edit" :data-id="_id"></i></td>
+          <td><i @click="editItem" class="fas fa-edit edit" :data-id="_id"></i></td>
           <td><i @click="confirmDeleteItem" class="fas fa-times delete" :data-id="_id" :data-name="anchor"></i></td>
         </tr>
       </tbody>
