@@ -1,34 +1,176 @@
+<script setup>
+  import { computed, onMounted, ref } from 'vue'
+
+  import { onBeforeRouteLeave, useRouter } from 'vue-router'
+
+  import { useAuthStore } from '@/store/auth.js'
+
+  import AlertMessage from '@/components/AlertMessage.vue'
+  import InputPassword from '@/components/formFields/InputPassword.vue'
+  import InputUsername from '@/components/formFields/InputUsername.vue'
+
+  const props = defineProps({
+    formName: {
+      type: String,
+      default: 'Sign In'
+    },
+    submitButtonAction: {
+      type: String,
+      default: 'Sign In'
+    }
+  })
+
+  const errorDescription = ref('')
+  const errorTitle = ref('')
+  const formValues = ref([])
+  const isError = ref(false)
+
+  const authStore = useAuthStore()
+  const router = useRouter()
+
+  onMounted(() => {
+    authStore.loginPage = true
+  })
+
+  onBeforeRouteLeave((to, from) => {
+    authStore.loginPage = false
+  })
+
+  const getFormErrorsChanged = () => {
+    const formErrorsChanged = formValues.value.filter(element => {
+      return element.isChanged !== false && element.isValid === false
+    })
+    return formErrorsChanged
+  }
+
+  const handleSubmit = async () => {
+    const formErrors = getFormErrorsChanged()
+
+    if (formErrors.length > 0) {
+      updateFormErrors(formErrors)
+      return
+    } else {
+
+      // Submit
+      const data = {}
+
+      formValues.value.forEach(element => {
+        const { inputName, inputValue } = element
+        data[inputName] = inputValue
+      })
+
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/users/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+          }
+        );
+
+        const json = response.ok ? await response.json() : null
+
+        if (json && json.status === 200) {
+          const {
+            data: { isLoggedIn, token }
+          } = json;
+
+          if (isLoggedIn && token) {
+            authStore.currentJWT = token
+            localStorage.setItem("user_token", token); // Needed to persist...
+            authStore.start
+            if (authStore.administrator) {
+              router.push({ name: "adminDashboard" })
+            } else {
+              router.push({ name: "home" });
+            }
+          }
+        } else {
+          errorDescription.value = 'One or more required fields were not submitted to the server. Please try again in a few minutes.'
+          errorTitle.value = 'Server Error'
+          isError.value = true
+        }
+      } catch (error) {
+        errorDescription.value = 'The server appears to be down. Please try again in a few minutes.'
+        errorTitle.value = 'Server Error'
+        isError.value = true
+      }
+    }
+  }
+
+  const removeFormValues = event => {
+    const { inputName: name } = event
+    const valuesIndex = formValues.value.findIndex(element => element.inputName === name)
+    formValues.value.splice(valuesIndex, 1) // Mutates formValues
+    if (formValues.value.length === 0) { shouldClearInputs.value = false }
+  }
+
+  const updateFormValues = event => {
+    const { inputName: name } = event
+    const valuesIndex = formValues.value.findIndex(element => element.inputName === name)
+    if (valuesIndex === -1) {
+      formValues.value.push(event)
+    } else {
+      formValues.value[valuesIndex] = event
+    }
+    const formErrors = getFormErrorsChanged()
+    updateFormErrors(formErrors)
+  }
+
+  const updateFormErrors = formErrors => {
+    if (formErrors.length > 0) {
+      const errorMessages = formErrors.map(element => {
+        return element.errorMessage
+      })
+      errorDescription.value = errorMessages.join('. ') + '.'
+
+      const numberAgreement = formErrors.length === 1 ? 'An Error' : 'Errors'
+      errorTitle.value = `The ${props.formName} Form Has ${numberAgreement}`
+
+      isError.value = true
+    } else {
+      isError.value = false
+      errorDescription.value = ''
+      errorTitle.value = ''
+    }
+  }
+
+  const isDisabled = computed(() => {
+    const formErrors = getFormErrorsChanged()
+    return formErrors.length > 0
+  })
+</script>
+
 <template>
-  <div id="login-form-container">
+  <div class="login-form">
     <h5>
-      Sign In
+      {{ formName }}
     </h5>
-    <form id="login-form">
-      <label for="name">Username</label>
-      <input
-        v-model="form.username"
-        type="text"
-        class="u-full-width"
-        id="name"
-        placeholder="Your Username"
-        required
+    <div class="form-login-alert-error" v-if="isError">
+      <AlertMessage :title="errorTitle" type="error">
+        {{ errorDescription }}
+      </AlertMessage>
+    </div>
+    <form>
+      <InputUsername
+        :required=true
+        @change-form-values="updateFormValues($event)"
+        @remove-form-values="removeFormValues($event)"
       />
-      <label for="password">Password</label>
-      <input
-        v-model="form.password"
-        type="password"
-        class="u-full-width"
-        id="password"
-        placeholder="Your Password"
-        required
+      <InputPassword
+        :required=true
+        @change-form-values="updateFormValues($event)"
+        @remove-form-values="removeFormValues($event)"
       />
       <button
-        v-on:click.prevent="submitLoginForm"
+        :disabled = "isDisabled"
+        @click.prevent="handleSubmit"
         class="button-primary"
-        :disabled="isDisabled"
-        id="signIn"
       >
-        Sign In
+        {{ submitButtonAction }}
       </button>
     </form>
     <p>
@@ -38,88 +180,3 @@
     </p>
   </div>
 </template>
-
-<script>
-export default {
-  data: () => {
-    return {
-      form: {
-        username: "",
-        password: ""
-      }
-    };
-  },
-
-  computed: {
-    isDisabled() {
-      const {
-        form: { username, password }
-      } = this;
-      return username.length > 0 && password.length > 0 ? false : true;
-    }
-  },
-
-  methods: {
-    async submitLoginForm() {
-      const { username, password } = this.form;
-      const formData = {
-        username,
-        password
-      };
-
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/api/users/login`,
-          {
-            method: "post",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(formData)
-          }
-        );
-
-        const json = response.ok ? await response.json() : null;
-
-        if (json && json.status === 200) {
-          const {
-            data: { isLoggedIn, token }
-          } = json;
-
-          if (isLoggedIn && token) {
-            this.$store.commit("setJWT", token);
-            localStorage.setItem("user_token", token); // Needed to persist...
-            this.$store.dispatch("start");
-            if (this.$store.getters.administrator) {
-              this.$router.push({ name: "adminDashboard" });
-            } else {
-              this.$router.push({ name: "home" });
-            }
-          }
-        } else {
-          this.$store.commit("setStatusCategory", "error");
-          this.$store.commit(
-            "setStatusMessage",
-            "Unable to sign in. Please check the username and password you entered and try again."
-          );
-        }
-      } catch (error) {
-        this.$store.commit("setStatusCategory", "error");
-        this.$store.commit(
-          "setStatusMessage",
-          "The server appears to be down. Please try again later."
-        );
-      }
-    }
-  },
-
-  mounted() {
-    this.$store.commit("setLoginPage", true);
-  },
-
-  beforeRouteLeave (to, from, next) {
-    this.$store.commit("setLoginPage", false);
-    next();
-  }
-};
-</script>

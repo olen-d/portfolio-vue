@@ -1,7 +1,9 @@
 // import Vue from "vue";
-import { createRouter, createWebHistory } from "vue-router";
 import Home from "./views/Home.vue";
-import { store } from "./store/store";
+
+import { createRouter, createWebHistory } from "vue-router";
+
+import { useAuthStore } from "@/store/auth.js";
 
 const AdminRoot = () => import("./views/AdminRoot.vue");
 const AdminDashboard = () => import("./components/AdminDashboard.vue");
@@ -43,7 +45,8 @@ const router = createRouter({
       path: "/admin",
       component: AdminRoot,
       beforeEnter(to, from, next) {
-        if (store.getters.authorized && store.getters.administrator) {
+        const authStore = useAuthStore()
+        if (authStore.authorized && authStore.administrator) {
           next();
         } else {
           next({ name: "home" });

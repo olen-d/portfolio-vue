@@ -1,8 +1,45 @@
+<script setup>
+  import Navbar from '@/components/Navbar.vue'
+  import Social from '@/components/Social.vue'
+  import StatusBar from '@/components/StatusBar.vue'
+
+  import { onMounted, watch } from 'vue'
+
+  import { useRouter } from 'vue-router'
+
+  import { useAuthStore } from '@/store/auth.js'
+
+  const authStore = useAuthStore()
+  const router = useRouter()
+
+  onMounted(() => {
+    authStore.fetchJWT
+    authStore.start
+  })
+
+  watch(() => authStore.doLogout, (newDoLogout, prevDoLogout) => {
+    if (newDoLogout) {
+      logout()
+    }
+  })
+
+  watch(() => authStore.authorized, (newAuthorized, prevAuthorized) => {
+    if (!newAuthorized) {
+      logout()
+    }
+  })
+
+  const logout =  () => {
+    authStore.$reset()
+    localStorage.removeItem('user_token')
+    router.push({ name: "home" })
+  }
+</script>
+
 <template>
   <div id="app">
     <Navbar></Navbar>
-    <StatusBar v-if="statusCategory && statusMessage">
-    </StatusBar>
+    <StatusBar v-if="statusCategory && statusMessage" />
     <router-view></router-view>
     <div class="footer">
 	    <Social />
@@ -18,7 +55,7 @@
           </div>
           <div class="four columns">
             <p class="right">
-              <router-link to="/login" v-if="!authorized && !$store.getters.loginPage" class="ntd">Login</router-link>&nbsp;<router-link to="/signup" v-if="!$store.getters.authorized && !$store.getters.signupPage" class="ntd">Signup</router-link>
+              <router-link to="/login" v-if="!authStore.authorized && !authStore.loginPage" class="ntd">Login</router-link>&nbsp;<router-link to="/signup" v-if="!authStore.authorized && !authStore.signupPage" class="ntd">Signup</router-link>
             </p>
           </div>
         </div>
@@ -27,103 +64,25 @@
   </div>
 </template>
 
-<script>
-import { mapGetters, mapState, mapActions } from "vuex";
-import { store } from "./store/store";
-import Navbar from "./components/Navbar.vue";
-import Social from "./components/Social.vue";
-import StatusBar from "./components/StatusBar.vue";
-
-export default {
-  name: "app",
-  store,
-  components: {
-    Navbar,
-    Social,
-    StatusBar
-  },
-
-  data: () => {
-    return {
-
-    } 
-  },
-
-  computed: {
-    ...mapGetters([
-      "jwt",
-      "userId",
-      "userName",
-      "firstName",
-      "lastName",
-      "administrator",
-      "editor",
-      "expiration",
-      "authorized"
-    ]),
-
-    ...mapState([
-      "doLogout",
-      "statusCategory",
-      "statusMessage"
-    ])
-   },
-
-  watch: {
-    doLogout: function(newValue) {
-      if(newValue) {
-        this.logout();
-      }
-    },
-    
-    authorized: function(newValue) {
-      if(!newValue) {
-        this.logout();
-      }
-    }
-  },
-
-  methods: {
-    ...mapActions([
-      "fetchJWT"
-    ]),
-
-    logout () {
-      this.$store.dispatch("logout");
-      localStorage.removeItem("user_token");
-      this.$router.push({ name: "home" })
-    }
-  },
-
-  mounted() {
-    this.fetchJWT();
-    this.$store.dispatch("start");
-  }
-}
-
-</script>
-
 <style>
-
   @import "./assets/css/normalize.css";
   @import "./assets/css/skeleton.css";
   @import "./assets/css/style.css";
 
-/* #nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+  /* #nav a {
+    font-weight: bold;
+    color: #2c3e50;
+  }
 
-#navigation li a.router-link-exact-active {
-  color: #f00;
-} */
+  #navigation li a.router-link-exact-active {
+    color: #f00;
+  } */
 
-.right {
-  text-align: right;
-}
+  .right {
+    text-align: right;
+  }
 
-.ntd {
-  text-decoration: none;
-}
-
+  .ntd {
+    text-decoration: none;
+  }
 </style>

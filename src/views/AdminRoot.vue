@@ -1,3 +1,9 @@
+<script setup>
+  import { useAuthStore } from '@/store/auth.js'
+
+  const authStore = useAuthStore()
+</script>
+
 <template>
   <div class="container">
     <div class="admin-root">
@@ -18,15 +24,3 @@
     </div>
   </div>
 </template>
-
-<script>
-import { mapGetters } from "vuex";
-
-export default {
-  name: "AdminRoot",
-
-  computed: {
-    ...mapGetters(["firstName"])
-  }
-};
-</script>

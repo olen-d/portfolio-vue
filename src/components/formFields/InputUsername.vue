@@ -51,7 +51,7 @@
   }
 
   const validate = username => {
-    const alphaNumeric = /^[a-zA-Z\-_]+$/
+    const alphaNumeric = /^[a-zA-Z\-_.]+$/
     const isValid = alphaNumeric.test(username)
     return isValid
   }

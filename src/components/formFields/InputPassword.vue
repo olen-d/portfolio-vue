@@ -41,11 +41,11 @@
     emits('changeFormValues', { inputName: 'password', inputValue: password.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
   }
 
-  const handleBlur = () => {
+  const handleBlur = async () => {
     if (!changedState.isChanged) {
       changedState.isChanged = true
     }
-    isValid.value = validate(password.value)
+    isValid.value = await validate(password.value)
     validationStatus.value = isValid.value ? null : 'text-error'
     emitChange()
   }
