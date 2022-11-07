@@ -85,7 +85,7 @@ exports.read_one_user_by_email = async (req, res) => {
 
 exports.read_login = async (req, res) => {
   const {
-    body: { username, password }
+    body: { userName: username, password }
   } = req;
 
   try {

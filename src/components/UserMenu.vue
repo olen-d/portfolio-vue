@@ -1,58 +1,61 @@
+<script setup>
+  import { onMounted, onUnmounted, ref } from 'vue'
+
+  import { useAuthStore } from '@/store/auth.js'
+
+  const authStore = useAuthStore()
+
+  const links = ref([{ id: 0, sort: 0, title: 'My Profile', uri: '/admin/profile' }])
+  const visible = ref(false)
+  const userMenu = ref(null)
+
+  onMounted(() => {
+    window.addEventListener('click', handleClick)
+    window.addEventListener('touchstart', handleTouchStart)
+  })
+
+  onUnmounted(() => {
+    window.removeEventListener('click', handleClick)
+    window.removeEventListener('touchstart', handleTouchStart)
+  })
+
+  const handleClick = event => {
+    if(!userMenu.value.contains(event.target)){
+        visible.value = false
+      }
+  }
+
+  const handleTouchStart = event => {
+    if(!userMenu.value.contains(event.targetTouches[0].target)){
+        visible.value = false
+      }
+  }
+
+  const toggleUserMenuDropdown = () => {
+    visible.value = !visible.value
+  }
+
+  const logout = () => {
+    authStore.doLogout = true
+  }
+</script>
+
 <template>
   <div>
-    <div id="userMenu">
-      <span v-on:click="toggleUserMenuDropdown" id="userMenuLink"><i class="fas fa-user"></i><i id="userMenuDown" class="fas fa-angle-down"></i></span>
+    <div class="user-menu" ref="userMenu">
+      <span @click="toggleUserMenuDropdown" class="user-menu-link"><i class="fas fa-user"></i><i class="user-menu-down fas fa-angle-down"></i></span>
     </div>
-    <div v-if="visible" id="userMenuDropdown">
+    <div v-if="visible" class="user-menu-dropdown">
       <ul>
         <li><a @click="logout" class="fake-menu-link">Logout</a></li>
-        <li v-for="link in links" :key="link.id"><router-link :to="link.uri">{{link.title}}</router-link></li>
+        <li v-for="link in links" :key="link.id"><router-link :to="link.uri">{{ link.title }}</router-link></li>
       </ul>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-
-  data: () => {
-    return {
-      links: [
-        {id: 0, sort: 0, title: "My Profile", uri: "/admin/profile"},
-      ],
-      visible: false
-    }
-  },
-
-  methods: {
-    toggleUserMenuDropdown() {
-      this.visible = !this.visible;
-    },
-  
-    logout() {
-      this.$store.commit("setDoLogout", true);
-    }
-  },
-
-  created() {
-    let self = this;
-    window.addEventListener("click", function(e) {
-      if(!self.$el.contains(e.target)){
-        self.visible = false;
-      }
-    });
-
-    window.addEventListener("touchstart", function(e) {
-      if(!self.$el.contains(e.targetTouches[0].target)){
-        self.visible = false;
-      }
-    });
-  }
-}
-</script>
-
 <style>
-#userMenu {
+.user-menu {
   display:flex;
   align-items:center;
   position:fixed;
@@ -64,11 +67,11 @@ export default {
   color:#ffffff;
 }
 
-#userMenuDown {
+.user-menu-down {
   margin-left:1rem;
 }
 
-#userMenuDropdown {
+.user-menu-dropdown {
   position:fixed;
   top:6rem;
   right:0px;
@@ -77,27 +80,27 @@ export default {
   background-color:#3d3d3d;
 }
 
-#userMenuDropdown ul {
+.user-menu-dropdown ul {
   list-style:none;
 }
 
-#userMenuDropdown li {
+.user-menu-dropdown li {
   margin-left:3rem;
   margin-top:3rem;
   margin-bottom:3rem;
 }
 
-#userMenuDropdown li:last-child {
+.user-menu-dropdown li:last-child {
   margin-bottom:4.5rem;
 }
 
-#userMenuDropdown li a:link, 
-#userMenuDropdown li a:visited {
+.user-menu-dropdown li a:link, 
+.user-menu-dropdown li a:visited {
   text-decoration:none;
   color:#ffffff;
 }
 
-#userMenuDropdown li a:hover {
+.user-menu-dropdown li a:hover {
   color:#fcc914;
 }
 </style>

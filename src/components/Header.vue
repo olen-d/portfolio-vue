@@ -19,7 +19,6 @@ export default {
   },
 
   created () {
-    console.log(`HOST: ${import.meta.env.VITE_ASSETS_HOST}`)
     this.viteHostURL = import.meta.env.VITE_ASSETS_HOST
   }
 }

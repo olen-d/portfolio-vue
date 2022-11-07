@@ -1,20 +1,14 @@
+<script setup>
+  import { useAuthStore } from '@/store/auth.js'
+
+  const authStore = useAuthStore()
+</script>
+
 <template>
   <div class="admin-dashboard">
     <h2>
       Dashboard
     </h2>
-    <p>Welcome {{ firstName }}!</p>
+    <p>Welcome {{ authStore.firstName }}!</p>
   </div>
 </template>
-
-<script>
-import { mapGetters } from "vuex";
-
-export default {
-  name: "AdminDashboard",
-
-  computed: {
-    ...mapGetters(["firstName"])
-  }
-};
-</script>

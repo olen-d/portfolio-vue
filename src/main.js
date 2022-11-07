@@ -10,16 +10,17 @@
 // }).$mount("#app")
 
 import { createApp } from 'vue'
-// import { createPinia } from "pinia"
+import { createPinia } from "pinia"
 
 import App from './App.vue'
 import { router } from './router'
-import { store } from './store/store'
+// import { store } from './store/store'
 
+const pinia = createPinia()
 const app = createApp(App)
 
-// app.use(createPinia())
+app.use(pinia)
 app.use(router)
-app.use(store)
+// app.use(store)
 
 app.mount("#app")
