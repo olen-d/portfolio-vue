@@ -26,6 +26,7 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
+    "@pinia/testing": "^0.0.14",
     "@testing-library/vue": "^6.6.1",
     "@vue/eslint-config-prettier": "^4.0.1",
     "eslint": "^5.16.0",

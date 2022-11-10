@@ -1,9 +1,13 @@
-import { expect, test } from 'vitest'
+import { expect, test, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/vue'
+import { createTestingPinia } from '@pinia/testing'
+
+import { useAuthStore } from '@/store/auth.js'
+
 import LoginForm from '@/components/LoginForm.vue'
 
 test('default props render', async () => {
-  render(LoginForm, { props: { } })
+  render(LoginForm, { props: { }, global: { plugins: [createTestingPinia({ createSpy: vi.fn })] } })
 
   expect(screen.getByRole('heading', { level: 5, name: 'Sign In' })).toBeTruthy()
   expect(screen.getByLabelText('Username')).toBeTruthy()
