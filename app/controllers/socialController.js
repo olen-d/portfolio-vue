@@ -30,8 +30,8 @@ exports.delete_social_media_link = async (req, res) => {
 }
 
 exports.read_social_media_links = (req, res) => {
-  const userName = req.params.username;
-  readSocialMediaLinks(userName)
+  const username = req.params.username;
+  readSocialMediaLinks(username)
     .then(resolve => {
       const socialObj = {
         social: resolve

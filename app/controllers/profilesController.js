@@ -3,9 +3,9 @@ const readOneProfile = require("../models/readOneProfile");
 const readProfileContact = require("../models/readOneProfileContact");
 
 exports.read_one_profile = (req, res) => {
-  let userName = req.params.username;
+  let username = req.params.username;
   readOneProfile
-    .data(userName)
+    .data(username)
     .then(resolve => {
       // TODO: Delete user password
       const userObj = {
@@ -19,9 +19,9 @@ exports.read_one_profile = (req, res) => {
 };
 
 exports.read_one_profile_contact = (req, res) => {
-  let userName = req.params.username;
+  let username = req.params.username;
   readProfileContact
-    .data(userName)
+    .data(username)
     .then(resolve => {
       let contactObj = {
         contact: resolve

@@ -1,9 +1,9 @@
 const db = require("../config/connection");
 
-const data = userName => {
+const data = username => {
   return new Promise((resolve, reject) => {
     try {
-      db.users.findOne({ userName: userName }, (err, data) => {
+      db.users.findOne({ username }, (err, data) => {
         resolve(data);
       });
     } catch (err) {

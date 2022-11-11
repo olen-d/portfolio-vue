@@ -17,7 +17,7 @@ const auth = require("../helpers/auth-module");
 const bcrypt = require("../helpers/bcrypt-module");
 
 exports.create_user = (req, res) => {
-  const { body: { firstName, lastName, email, userName: username, password }, } = req;
+  const { body: { firstName, lastName, email, username, password }, } = req;
 
   bcrypt.newPass(password).then(pwdRes => {
     if (pwdRes.status === 200) {
@@ -89,7 +89,7 @@ exports.read_one_user_by_email = async (req, res) => {
 
 exports.read_login = async (req, res) => {
   const {
-    body: { userName: username, password }
+    body: { username, password }
   } = req;
 
   try {
@@ -160,7 +160,7 @@ exports.password_reset = async (req, res) => {
   } = req;
 
   const {
-    payload: { userName: decodedUserName }
+    payload: { username: decodedUserName }
   } = jwt.decode(token);
 
   try {
@@ -195,7 +195,7 @@ exports.password_reset = async (req, res) => {
             });
           } else {
             const {
-              payload: { id: verifiedUserId, userName: verifiedUserName }
+              payload: { id: verifiedUserId, username: verifiedUserName }
             } = verified;
 
             const updatePasswordResult = await updateOnePasswordByUserName(
@@ -301,8 +301,8 @@ exports.reset_password = async (req, res) => {
         }
       }
     } else {
-      const { _id: id, password, firstName, lastName, userName } = json.data; // ! TODO: fix this destructuring fail should be { data: {...}, } = json
-      const payload = { id, userName };
+      const { _id: id, password, firstName, lastName, username } = json.data; // ! TODO: fix this destructuring fail should be { data: {...}, } = json
+      const payload = { id, username };
 
       const created = new Date(parseInt(id.substring(0, 8), 16) * 1000);
       const secret = password + created.getTime();
