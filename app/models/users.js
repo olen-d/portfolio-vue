@@ -5,7 +5,7 @@ exports.readOneUserByEmail = email => {
     try {
       db.users.findOne(
         { email },
-        { _id: 1, password: 1, firstName: 1, lastName: 1, userName: 1 },
+        { _id: 1, password: 1, firstName: 1, lastName: 1, username: 1 },
         (error, data) => {
           if (error) {
             reject(error);
@@ -20,11 +20,11 @@ exports.readOneUserByEmail = email => {
   });
 };
 
-exports.readOneUserByUserName = userName => {
+exports.readOneUserByUserName = username => {
   return new Promise((resolve, reject) => {
     try {
       db.users.findOne(
-        { userName },
+        { username },
         {
           _id: 1,
           password: 1,
@@ -47,12 +47,12 @@ exports.readOneUserByUserName = userName => {
   });
 };
 
-exports.updateOnePasswordByUserName = (userName, passwordHash) => {
+exports.updateOnePasswordByUserName = (username, passwordHash) => {
   return new Promise((resolve, reject) => {
     try {
       // ! TODO: change this to updateOne when upgrading to official MongoDB package
       db.users.update(
-        { userName },
+        { username },
         { $set: { password: passwordHash } },
         (error, data) => {
           if (error) {
@@ -76,7 +76,7 @@ exports.updateOneUserByUsername = async (username, userInfo) => {
   }
 
   try {
-    const filter = { userName: username }
+    const filter = { username }
     const updateDoc = userInfoProcessed
 
     const result = await db.collection('users').update(filter, updateDoc)

@@ -38,7 +38,7 @@
   })
 
   const emitChange = () => {
-    emits('changeFormValues', { inputName: 'userName', inputValue: username.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
+    emits('changeFormValues', { inputName: 'username', inputValue: username.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
   }
 
   const handleBlur = () => {
