@@ -2,7 +2,7 @@ const db = require("../config/connection");
 
 const data = userInfo => {
   return new Promise((resolve, reject) => {
-    const { firstName, lastName, email, userName, password } = userInfo;
+    const { firstName, lastName, email, username: userName, password } = userInfo;
     try {
       db.users.insert(
         {

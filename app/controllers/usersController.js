@@ -17,7 +17,7 @@ const auth = require("../helpers/auth-module");
 const bcrypt = require("../helpers/bcrypt-module");
 
 exports.create_user = (req, res) => {
-  const { firstName, lastName, email, username, password } = req.body;
+  const { body: { firstName, lastName, email, userName: username, password }, } = req;
 
   bcrypt.newPass(password).then(pwdRes => {
     if (pwdRes.status === 200) {
@@ -38,9 +38,13 @@ exports.create_user = (req, res) => {
             process.env.secret,
             { expiresIn: "1h" },
             (err, token) => {
-              return res.send({
-                isLoggedIn: true,
-                token
+              return res.status(201).json({
+                status: 201,
+                message: "created",
+                data: {
+                  isLoggedIn: true,
+                  token
+                }
               });
             }
           );
