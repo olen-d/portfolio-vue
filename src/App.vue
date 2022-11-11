@@ -39,7 +39,7 @@
 <template>
   <div id="app">
     <Navbar></Navbar>
-    <StatusBar v-if="statusCategory && statusMessage" />
+    <StatusBar v-if="authStore.statusCategory && authStore.statusMessage" />
     <router-view></router-view>
     <div class="footer">
 	    <Social />
