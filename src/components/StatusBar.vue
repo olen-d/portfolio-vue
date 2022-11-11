@@ -1,72 +1,69 @@
+<script setup>
+  import { computed, ref } from 'vue'
+
+  import { useStatusStore } from '@/store/status.js'
+
+  const icons = ref({
+    error: 'fas fa-bomb',
+    info: 'fas fa-info-circle',
+    success: 'fas fa-check-circle',
+    warning: 'fas fa-exclamation-triangle'
+  })
+
+  const statusStore = useStatusStore()
+
+  const statusUpdate = computed(() => {
+    setTimeout(() => {
+      statusStore.statusMessage = ''
+      statusStore.statusCategory = ''
+      }, 
+      1000 * 5
+    )
+    return(statusStore.statusMessage)
+  })
+</script>
+
 <template>
-  <div id="status-bar-container" v-bind:style="statusBarStyle">
-    <i v-bind:class="icon"></i>&nbsp;{{ statusUpdate }}
+  <div class="status-bar-container">
+    <div :class="statusStore.statusCategory">
+      <i :class="icons[statusStore.statusCategory] "></i><span class="spacer-left">{{ statusUpdate }}</span>
+    </div>
   </div>
 </template>
 
-<script>
-import { mapGetters, mapState } from "vuex";
-
-export default {
-
-  data: () => {
-    return {
-      statusBarStyle: {
-        color: "#444444",
-        backgroundColor: "#cccccc"
-      },
-      icon: ""
-    }
-  },
-
-  computed: {
-    ...mapState([
-      "statusCategory",
-      "statusMessage",
-      "statusAction"
-    ]),
-
-    statusUpdate: function() {
-      switch(this.statusCategory) {
-      case "success":
-        this.statusBarStyle.backgroundColor = "#95ff95";
-        this.statusBarStyle.color = "#00aa00";
-        this.icon ="fas fa-check-circle";
-        break;
-      case "information":
-        this.statusBarStyle.backgroundColor = "#bfbfff";
-        this.statusBarStyle.color = "#0000aa";
-        this.icon = "fas fa-info-circle";
-        break;
-      case "warning":
-        this.statusBarStyle.backgroundColor = "#ffff55";
-        this.statusBarStyle.color = "#c6c600";
-        this.icon = "fas fa-exclamation-triangle";
-        break;
-      case "error":
-        this.statusBarStyle.backgroundColor = "#ff9595";
-        this.statusBarStyle.color = "#aa0000";
-        this.icon = "fas fa-bomb";
-        break;          
-      }
-      setTimeout(() => {
-        this.$store.commit("setStatusMessage", ""); 
-        this.$store.commit("setStatusCategory", "") 
-        }, 
-        1000 * 5
-      );
-      return(this.statusMessage);
-    }
-  }
-}
-</script>
-
 <style scoped>
-#status-bar-container {
+.spacer-left {
+  margin-left: 1.5rem;
+}
+
+.status-bar-container {
   position: fixed;
   top: 6rem;
-  padding: 2rem;
+  padding: 0rem;
   width: 100%;
   z-index:8000;
+}
+
+.error, .info, .success, .warning {
+  padding: 2rem;
+}
+
+.error {
+  background-color: #ff9595;
+  color: #aa0000;
+}
+
+.info {
+  background-color: #bfbfff;
+  color: #0000aa;
+}
+.success {
+  background-color: #95ff95;
+  color: #00aa00;
+}
+
+.warning {
+  background-color: #ffff55;
+  color: #c6c600;
 }
 </style>

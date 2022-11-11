@@ -8,8 +8,10 @@
   import { useRouter } from 'vue-router'
 
   import { useAuthStore } from '@/store/auth.js'
+  import { useStatusStore } from '@/store/status.js'
 
   const authStore = useAuthStore()
+  const statusStore = useStatusStore()
   const router = useRouter()
 
   onMounted(() => {
@@ -39,7 +41,7 @@
 <template>
   <div id="app">
     <Navbar></Navbar>
-    <StatusBar v-if="authStore.statusCategory && authStore.statusMessage" />
+    <StatusBar v-if="statusStore.statusCategory && statusStore.statusMessage" />
     <router-view></router-view>
     <div class="footer">
 	    <Social />

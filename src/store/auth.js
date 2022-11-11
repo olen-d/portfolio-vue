@@ -7,11 +7,7 @@ export const useAuthStore = defineStore('auth', {
       now: new Date(),
       doLogout: false,
       loginPage: false,
-      signupPage: false,
-      statusCategory: '',
-      statusIcon: '',
-      statusMessage: '',
-      statusAction: ''
+      signupPage: false
     }
   },
 
