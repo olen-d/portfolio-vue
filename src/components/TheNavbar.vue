@@ -42,11 +42,11 @@
   })
 
   const showHamburger = computed(function() {
-    return windowSize.value.width < 500;
+    return windowSize.value.width < 500
   })
 
   const showStandard = computed(function() {
-    return windowSize.value.width >= 500;
+    return windowSize.value.width >= 500
   })
 
 </script>
@@ -55,19 +55,16 @@
   <div>
     <NavbarAdmin
       v-if="isAuthorized && showAdmin"
-      v-bind:showStandard="showStandard"
-      v-bind:showHamburger="showHamburger"
-    >
-    </NavbarAdmin>
+      :showStandard="showStandard"
+      :showHamburger="showHamburger"
+    />
     <NavbarFrontEnd
       v-else
-      v-bind:showStandard="showStandard"
-      v-bind:showHamburger="showHamburger"
-    >
-    </NavbarFrontEnd>
+      :showStandard="showStandard"
+      :showHamburger="showHamburger"
+    />
     <UserMenu
       v-if="isAuthorized"
-    >
-    </UserMenu>
+    />
   </div>
 </template>

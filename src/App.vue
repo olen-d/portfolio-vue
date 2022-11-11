@@ -1,5 +1,5 @@
 <script setup>
-  import Navbar from '@/components/Navbar.vue'
+  import TheNavbar from '@/components/TheNavbar.vue'
   import Social from '@/components/Social.vue'
   import StatusBar from '@/components/StatusBar.vue'
 
@@ -34,13 +34,13 @@
   const logout =  () => {
     authStore.$reset()
     localStorage.removeItem('user_token')
-    router.push({ name: "home" })
+    router.push({ name: 'home' })
   }
 </script>
 
 <template>
   <div id="app">
-    <Navbar></Navbar>
+    <TheNavbar />
     <StatusBar v-if="statusStore.statusCategory && statusStore.statusMessage" />
     <router-view></router-view>
     <div class="footer">
