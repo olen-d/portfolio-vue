@@ -1,7 +1,7 @@
 <script setup>
   import TheNavbarAdmin from '@/components/TheNavbarAdmin.vue'
   import TheNavbarFrontEnd from '@/components/TheNavbarFrontEnd.vue'
-  import UserMenu from '@/components/UserMenu.vue'
+  import TheUserMenu from '@/components/TheUserMenu.vue'
 
   import { computed, onMounted, onUnmounted, ref } from 'vue'
 
@@ -63,7 +63,7 @@
       :showStandard="showStandard"
       :showHamburger="showHamburger"
     />
-    <UserMenu
+    <TheUserMenu
       v-if="isAuthorized"
     />
   </div>
