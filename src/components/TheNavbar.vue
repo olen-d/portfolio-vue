@@ -1,6 +1,6 @@
 <script setup>
-  import NavbarFrontEnd from '@/components/NavbarFrontEnd.vue'
   import NavbarAdmin from '@/components/NavbarAdmin.vue'
+  import TheNavbarFrontEnd from '@/components/TheNavbarFrontEnd.vue'
   import UserMenu from '@/components/UserMenu.vue'
 
   import { computed, onMounted, onUnmounted, ref } from 'vue'
@@ -58,7 +58,7 @@
       :showStandard="showStandard"
       :showHamburger="showHamburger"
     />
-    <NavbarFrontEnd
+    <TheNavbarFrontEnd
       v-else
       :showStandard="showStandard"
       :showHamburger="showHamburger"
