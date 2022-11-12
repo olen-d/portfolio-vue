@@ -1,7 +1,7 @@
 <script setup>
   import { ref } from 'vue'
 
-  import NavHamburger from '@/components/NavHamburger.vue'
+  import TheNavHamburger from '@/components/TheNavHamburger.vue'
 
   const props = defineProps({
     showStandard: {
@@ -33,7 +33,7 @@
         </li>
       </ul>
     </nav>
-    <NavHamburger
+    <TheNavHamburger
       v-if="showHamburger"
       :links="links"
       :showHamburger="showHamburger"

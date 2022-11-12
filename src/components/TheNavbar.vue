@@ -1,5 +1,5 @@
 <script setup>
-  import NavbarAdmin from '@/components/NavbarAdmin.vue'
+  import TheNavbarAdmin from '@/components/TheNavbarAdmin.vue'
   import TheNavbarFrontEnd from '@/components/TheNavbarFrontEnd.vue'
   import UserMenu from '@/components/UserMenu.vue'
 
@@ -53,7 +53,7 @@
 
 <template>
   <div>
-    <NavbarAdmin
+    <TheNavbarAdmin
       v-if="isAuthorized && showAdmin"
       :showStandard="showStandard"
       :showHamburger="showHamburger"
