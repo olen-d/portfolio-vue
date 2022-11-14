@@ -1,3 +1,16 @@
+<script setup>
+  const props = defineProps({
+    error: {
+      type: String,
+      default: 'Something went terribly wrong.'
+    },
+    loading: {
+      type: Boolean,
+      default: true
+    }
+  })
+</script>
+
 <template>
   <div class="loading-indicator">
     <div v-if="loading" class="loading">
@@ -8,15 +21,6 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    loading: Boolean,
-    error: String
-  }
-};
-</script>
 
 <style scoped>
 .loading-indicator {
