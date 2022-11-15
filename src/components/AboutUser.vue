@@ -7,7 +7,7 @@
 <template>
   <div class="about-user">
     <Header />
-    <div class="about">
+    <div class="container">
       <div class="row">
         <div class="twelve columns">
           <div class="hexa">
@@ -43,5 +43,11 @@
 <style scoped>
   .about {
     padding-bottom: 8rem;
+  }
+
+  .about-user {
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
   }
 </style>
