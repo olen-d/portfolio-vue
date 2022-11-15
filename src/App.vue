@@ -1,6 +1,6 @@
 <script setup>
   import TheNavbar from '@/components/TheNavbar.vue'
-  import Social from '@/components/Social.vue'
+  import SocialLinks from '@/components/SocialLinks.vue'
   import StatusBar from '@/components/StatusBar.vue'
 
   import { onMounted, watch } from 'vue'
@@ -44,7 +44,7 @@
     <StatusBar v-if="statusStore.statusCategory && statusStore.statusMessage" />
     <router-view></router-view>
     <div class="footer">
-	    <Social />
+	    <SocialLinks username="olen.d"/>
       <div class="container">	
         <div class="row">
           <div class="four columns">
