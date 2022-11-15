@@ -20,7 +20,7 @@ const AdminSettings = () => import("./views/AdminSettings.vue");
 // route level code-splitting
 // this generates a separate chunk (about.[hash].js) for this route
 // which is lazy-loaded when the route is visited.
-const About = () => import("./views/About.vue");
+const AboutPage = () => import("@/views/AboutPage.vue");
 const Contact = () => import("./views/Contact.vue");
 const LoginRoot = () => import("./views/LoginRoot.vue");
 const Login = () => import("./components/LoginForm.vue");
@@ -111,7 +111,7 @@ const router = createRouter({
     {
       path: "/about",
       name: "about",
-      component: About
+      component: AboutPage
     },
     {
       path: "/authorize",

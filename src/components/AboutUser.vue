@@ -1,6 +1,12 @@
+<script setup>
+  import Header from '@/components/Header.vue'
+  import Profile from '@/components/Profile.vue'
+  import UserFullName from '@/components/UserFullName.vue'
+</script>
+
 <template>
-  <div id="front-end">
-    <Header></Header>
+  <div class="about-user">
+    <Header />
     <div class="about">
       <div class="row">
         <div class="twelve columns">
@@ -34,22 +40,8 @@
   </div>
 </template>
 
-<script>
-import Header from "./Header.vue";
-import Profile from "./Profile.vue";
-import UserFullName from "./UserFullName.vue";
-
-export default {
-  components: {
-    Header,
-    Profile,
-    UserFullName
-  }
-};
-</script>
-
 <style scoped>
-.about {
-  padding-bottom: 8rem;
-}
+  .about {
+    padding-bottom: 8rem;
+  }
 </style>
