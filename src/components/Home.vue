@@ -1,6 +1,6 @@
 <template>
   <div id="front-end">
-    <Header></Header>
+    <HeaderFrontEnd />
     <div id="home" class="container">
       <div class="row">
         <div class="one column">
@@ -48,14 +48,14 @@
 </template>
 
 <script>
-import Header from "./Header.vue";
+import HeaderFrontEnd from "./HeaderFrontEnd.vue";
 import LoadingIndicator from "./LoadingIndicator.vue";
 import SkillsTop from "./SkillsTop.vue";
 import UserFullName from "./UserFullName.vue";
 
 export default {
   components: {
-    Header,
+    HeaderFrontEnd,
     LoadingIndicator,
     SkillsTop,
     UserFullName

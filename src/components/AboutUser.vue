@@ -1,12 +1,12 @@
 <script setup>
-  import Header from '@/components/Header.vue'
+  import HeaderFrontEnd from '@/components/HeaderFrontEnd.vue'
   import UserFullName from '@/components/UserFullName.vue'
   import UserProfile from '@/components/UserProfile.vue'
 </script>
 
 <template>
   <div class="about-user">
-    <Header />
+    <HeaderFrontEnd />
     <div class="container">
       <div class="row">
         <div class="twelve columns">
