@@ -7,7 +7,7 @@
           &nbsp;
         </div>
         <div class="ten columns">
-          <UserFullName />
+          <UserFullName username="olen.d" />
           <LoadingIndicator v-bind:loading="loading" v-bind:error="error" />
           <div v-if="welcome">
             <h5>
