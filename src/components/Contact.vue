@@ -1,6 +1,6 @@
 <template>
   <div id="front-end">
-    <Header></Header>
+    <HeaderFrontEnd />
     <div id="contact" class="container">
       <div class="row">
         <div class="one column">
@@ -95,11 +95,11 @@
 </template>
 
 <script>
-import Header from "./Header.vue";
+import HeaderFrontEnd from "./HeaderFrontEnd.vue";
 
 export default {
   components: {
-    Header
+    HeaderFrontEnd
   },
 
   data: () => {
