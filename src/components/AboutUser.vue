@@ -1,7 +1,7 @@
 <script setup>
   import Header from '@/components/Header.vue'
-  import Profile from '@/components/Profile.vue'
   import UserFullName from '@/components/UserFullName.vue'
+  import UserProfile from '@/components/UserProfile.vue'
 </script>
 
 <template>
@@ -30,7 +30,7 @@
         </div>
         <div class="ten columns">
           <UserFullName username="olen.d" />
-          <Profile />
+          <UserProfile username="olen.d" />
         </div>
         <div class="one column">
           &nbsp;
