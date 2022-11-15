@@ -1,61 +1,58 @@
+<script setup>
+  import { onMounted, ref } from 'vue'
+
+  import LoadingIndicator from '@/components/LoadingIndicator.vue'
+
+  const props = defineProps({
+    username: {
+      type: String
+    }
+  })
+
+  const error = ref('')
+  const loading = ref(false)
+  const user = ref({})
+
+  onMounted(async () => {
+    loading.value = true
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${props.username}`)
+
+      if (response.ok) {
+        const data = await response.json()
+        loading.value = false
+        user.value = data.user
+      } else {
+        throw new Error('Network response was not ok. Unable to fetch. ')
+        }
+    } catch (err) {
+      error.value = err.toString()
+      loading.value = false
+    }
+  })
+</script>
+
 <template>
-  <div class="user-wrapper">
+  <div class="user-full-name">
     <div v-if="loading || error" class="loading-indicator-wrapper">
-      <LoadingIndicator v-bind:loading="loading" v-bind:error="error" />
+      <LoadingIndicator :loading="loading" :error="error" />
     </div>
-    <div v-if="user" class="user">
+    <div v-if="user" class="user-information">
       <h1>{{ user.firstName }}&nbsp;{{ user.lastName }}</h1>
     </div>
   </div>
 </template>
 
-<script>
-import LoadingIndicator from "./LoadingIndicator.vue";
-
-export default {
-  components: {
-    LoadingIndicator
-  },
-
-  data: () => {
-    return {
-      loading: false,
-      user: null,
-      error: null
-    };
-  },
-
-  created() {
-    this.loading = true;
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/olen.d`)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Network response was not ok. Unable to fetch. ");
-        }
-      })
-      .then(json => {
-        this.loading = false;
-        this.user = json.user;
-      })
-      .catch(err => {
-        this.loading = false;
-        this.error = err.toString();
-      });
-  }
-};
-</script>
-
 <style scoped>
-.user-wrapper,
-.user {
-  margin: 0rem;
-  padding: 0rem;
-}
+  .user-full-name,
+  .user-information {
+    margin: 0rem;
+    padding: 0rem;
+  }
 
-.loading-indicator-wrapper {
-  margin-top: 6rem;
-  margin-bottom: 2rem;
-}
+  .loading-indicator-wrapper {
+    margin-top: 6rem;
+    margin-bottom: 2rem;
+  }
 </style>

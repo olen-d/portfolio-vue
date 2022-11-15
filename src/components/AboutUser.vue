@@ -29,7 +29,7 @@
           &nbsp;
         </div>
         <div class="ten columns">
-          <UserFullName />
+          <UserFullName username="olen.d" />
           <Profile />
         </div>
         <div class="one column">
