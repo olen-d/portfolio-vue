@@ -1,3 +1,364 @@
+<script setup>
+  import { computed, onMounted, ref } from 'vue'
+
+  import ActivityStatisticsDropdown from '@/components/ActivityStatisticsDropdown.vue'
+  import StatisticsUnitsDropdown from '@/components/StatisticsUnitsDropdown.vue'
+  import LoadingIndicator from '@/components/LoadingIndicator.vue'
+
+  const activityStatistic = ref('distance') // TODO: Set this up as a user preference. Maybe a cookie.
+  const activityStatisticPastTense = ref('ridden')
+  const statisticsUnits = ref({
+    distance: 'mi',
+    movingTime: 'elapsedTime',
+    elevationGain: 'ft',
+    sufferScore: 'suffering',
+    averageSpeed: 'mph'
+  }) // TODO: Set this up as some sort of user preference. Maybe a cookie.
+  const loading = ref(false)
+  const dayNames = ref(['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'])
+  const monthNames = ref([])
+  const responseData = ref(null)
+  const error = ref (null)
+
+  // Computed
+  const averageOrTotalStatistics = computed(() => {
+    return activityStatistic.value === 'averageSpeed' ? statisticValueFormat(averageSpeed.value, true) : statisticValueFormat(totalStatistics.value, true)
+  })
+
+  const showStatisticsDropdown = computed (() => {
+    return activityStatistic.value !== 'movingTime' && activityStatistic.value !== 'sufferScore' ? true : false
+  })
+
+  const statistics = computed(() => {
+    if (responseData.value.data) {
+      if (activityStatistic.value === 'distance') {
+        const statistics = responseData.value.data.map(item => {
+          const {
+            startDateOnly,
+            distance,
+            activities,
+            distanceQuantile,
+            gridPosition
+          } = item
+          const quantile = distanceQuantile.split('-')[2]
+          return {
+            startDateOnly,
+            statisticValue: distance,
+            activities,
+            quantile,
+            gridPosition
+          }
+        })
+        return statistics
+      } else if (activityStatistic.value === 'movingTime') {
+        const statistics = responseData.value.data.map(item => {
+          const {
+            startDateOnly,
+            movingTime,
+            activities,
+            movingTimeQuantile,
+            gridPosition
+          } = item
+          const quantile = movingTimeQuantile.split('-')[3]
+          return {
+            startDateOnly,
+            statisticValue: movingTime,
+            activities,
+            quantile,
+            gridPosition
+          }
+        })
+        return statistics
+      } else if (activityStatistic.value === 'elevationGain') {
+        const statistics = responseData.value.data.map(item => {
+          const {
+            startDateOnly,
+            elevationGain,
+            activities,
+            elevationGainQuantile,
+            gridPosition
+          } = item
+          const quantile = elevationGainQuantile.split('-')[3]
+          return {
+            startDateOnly,
+            statisticValue: elevationGain,
+            activities,
+            quantile,
+            gridPosition
+          }
+        })
+        return statistics
+      } else if (activityStatistic.value === 'sufferScore') {
+        const statistics = responseData.value.data.map(item => {
+          const {
+            startDateOnly,
+            sufferScore,
+            activities,
+            sufferScoreQuantile,
+            gridPosition
+          } = item
+          const quantile = sufferScoreQuantile.split('-')[3]
+          return {
+            startDateOnly,
+            statisticValue: sufferScore,
+            activities,
+            quantile,
+            gridPosition
+          }
+        })
+        return statistics
+      } else if (activityStatistic.value === 'averageSpeed') {
+        const statistics = responseData.value.data.map(item => {
+          const {
+            startDateOnly,
+            averageSpeed,
+            activities,
+            averageSpeedQuantile,
+            gridPosition
+          } = item
+          const quantile = averageSpeedQuantile.split('-')[3]
+          return {
+            startDateOnly,
+            statisticValue: averageSpeed,
+            activities,
+            quantile,
+            gridPosition
+          }
+        })
+        return statistics
+      }
+      return 0
+    } else {
+      return 0
+    }
+  })
+
+  const totalStatistics = computed(() => {
+    if (responseData.value.data) {
+      const totalStatistic = responseData.value.data.reduce(
+        (accumulator, activity) => {
+          return (
+            parseFloat(accumulator) + parseFloat(activity[activityStatistic.value])
+          )
+        },
+        [0]
+      )
+      return totalStatistic
+    } else {
+      return 0
+    }
+  })
+
+  const averageSpeed = computed(() => {
+    if (responseData.value.data) {
+      const totals = responseData.value.data.reduce((accumulator, activity) => {
+        accumulator['totalDistance'] =
+          parseFloat(accumulator['totalDistance'] || 0) +
+          parseFloat(activity['distance'])
+        accumulator['totalMovingTime'] =
+          parseFloat(accumulator['totalMovingTime'] || 0) +
+          parseFloat(activity['movingTime'])
+        return accumulator
+      }, {})
+
+      const { totalDistance, totalMovingTime } = totals
+
+      return totalDistance / totalMovingTime
+    } else {
+      return 0
+    }
+  })
+
+  // Functions
+  const popupDateFormat = originalDate => {
+    const dateComponents = originalDate.split('-')
+    const [y, m, d] = dateComponents
+    const dtf = new Date(Date.UTC(y, m - 1, d, 12)) // TODO - 12 is a hack to fix an edge case on the first day of the month. Refactor to address timezones in the future.
+    const shortMonth = dtf.toLocaleString('en-us', { month: 'short' })
+    const day = dtf.getUTCDate()
+    const fullYear = dtf.getUTCFullYear()
+    return `${shortMonth} ${day}, ${fullYear}`
+  }
+
+  const statisticValueFormat = (originalStatisticValue, valueOnly) => {
+    let units = ''
+    let statisticsConverted = 0
+
+    const statisticsUnitsToConvert = statisticsUnits.value[activityStatistic.value]
+    switch (statisticsUnitsToConvert) {
+      case 'ft':
+        units = 'feet'
+        statisticsConverted = Math.round(originalStatisticValue * 3.28084)
+        break
+      case 'mi':
+        units = 'miles'
+        statisticsConverted = Math.round(
+          originalStatisticValue * 0.000621371
+        )
+        break
+      case 'km':
+        units = 'kilometers'
+        statisticsConverted = Math.round(originalStatisticValue / 1000)
+        break
+      case 'elapsedTime': {
+        const decimalHours = originalStatisticValue / 3600
+        if (decimalHours >= 1) {
+          const hours = Math.floor(decimalHours)
+          const hoursText = hours !== 1 ? 'hours' : 'hour'
+          const minutes = Math.round((decimalHours - hours) * 60)
+          const minutesFormatted = minutes > 0 ? `and ${minutes} minutes` : null
+          statisticsConverted = `${hours} ${hoursText} ${minutesFormatted}`
+        } else {
+          statisticsConverted = Math.round(originalStatisticValue / 60) + ' minutes'
+        }
+        break
+      }
+      case 'suffering':
+        units = 'suffering units'
+        statisticsConverted = Math.round(originalStatisticValue)
+        break
+      case 'mph':
+        units = 'miles per hour'
+        statisticsConverted = Math.round(originalStatisticValue * 2.23694 * 10) / 10
+        break
+      case 'kph':
+        units = 'kilometers per hour'
+        statisticsConverted =
+          Math.round(originalStatisticValue * 3.6 * 10) / 10
+        break
+      default:
+        units = 'meters'
+        statisticsConverted = Math.round(originalStatisticValue)
+    }
+    if (valueOnly) {
+      units = ''
+    }
+    return originalStatisticValue > 0
+      ? `${statisticsConverted.toLocaleString()} ${units}`
+      : 'No rides'
+  }
+
+  const useActivityStatistics = eventValues => {
+    [activityStatistic.value, activityStatisticPastTense.value ] = eventValues
+  }
+
+  const useStatisticsUnits = statisticsUnit => {
+    statisticsUnits.value[activityStatistic.value] = statisticsUnit
+  }
+
+ onMounted(() => {
+  loading.value = true;
+  (async () => {
+    try {
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_API_BASE_URL
+        }/api/strava/process/activities/rides`
+      )
+      const { data } = await response.json()
+
+      if (data.length === undefined || data.length < 1) {
+        error.value = 'No rides were found. '
+        loading.value = false
+        return
+      }
+
+      // const sortedAscending = data.data.sort((a, b) =>
+      //   a.startDateOnly > b.startDateOnly ? 1 : -1
+      // );
+      const dts = new Date()
+      const dow = dts.getDay()
+      const futureDays = 7 - dow
+      const totalDays = 370 - futureDays
+
+      dts.setDate(dts.getDate() - totalDays)
+
+      const dte = new Date()
+
+      const allDates = (startDate, endDate) => {
+        const dates = []
+
+        for (
+          dates, startDate;
+          startDate <= endDate;
+          startDate.setDate(startDate.getDate() + 1)
+        ) {
+          dates.push(
+            startDate.getFullYear() +
+              '-' +
+              ('0' + (startDate.getMonth() + 1)).slice(-2) +
+              '-' +
+              ('0' + startDate.getDate()).slice(-2)
+          )
+        }
+        return dates
+      }
+
+      const prevYearDates = allDates(dts, dte)
+
+      const noDataActivityObj = {
+        distance: 0,
+        movingTime: 0,
+        elevationGain: 0,
+        sufferScore: 0,
+        averageSpeed: 0,
+        activities: 0,
+        distanceQuantile: 'distance-quantile-0',
+        movingTimeQuantile: 'moving-time-quantile-0',
+        elevationGainQuantile: 'elevation-gain-quantile-0',
+        sufferScoreQuantile: 'suffer-score-quantile-0',
+        averageSpeedQuantile: 'average-speed-quantile-0'
+      };
+
+      let col = 2
+      let row = 2
+      let lastMonthShort = dts.toLocaleString('en-us', { month: 'short' })
+      monthNames.value.push({
+        id: 0,
+        monthShortName: lastMonthShort,
+        gridPosition: 'grid-column: 2 / 4; grid-row: 1'
+      })
+      const allData = prevYearDates.map(date => {
+        const gridPosition = `grid-column: ${col}; grid-row: ${row}`
+        const currentMonthShort = new Date(date).toLocaleString('en-us', {
+          month: 'short'
+        })
+        if (lastMonthShort !== currentMonthShort) {
+          const nextMonthId = monthNames.value.length
+          monthNames.value.push({
+            id: nextMonthId,
+            monthShortName: currentMonthShort,
+            gridPosition: `grid-column: ${col} / ${col + 2}; grid-row: 1`
+          })
+          lastMonthShort = currentMonthShort;
+        }
+        if (row % 8 === 0) {
+          row = 2
+          col++
+        } else {
+          row++
+        }
+
+        const idx = data.findIndex(obj => obj.startDateOnly === date)
+        return idx === -1
+          ? { startDateOnly: date, ...noDataActivityObj, gridPosition }
+          : { ...data[idx], gridPosition }
+      });
+
+      loading.value = false;
+
+      responseData.value = { data: allData }
+      // this.responseData = { data: [...sortedAscending] }
+      // this.responseData = { data }
+    } catch (err) {
+      error.value = err.toString()
+      loading.value = false
+      // TODO: Deal with the error
+    }
+  })();
+})
+</script>
+
 <template>
   <div class="activity-graph-strava">
     <div class="row">
@@ -6,7 +367,7 @@
       </div>
       <div class="ten columns">
         <div class="activity-graph-wrapper">
-          <LoadingIndicator v-bind:loading="loading" b-bind:error="error" />
+          <LoadingIndicator v-bind:loading="loading" v-bind:error="error" />
           <div v-if="responseData" class="annual-total">
             <p>
               <span class="emphasis">
@@ -96,398 +457,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import ActivityStatisticsDropdown from "./ActivityStatisticsDropdown.vue";
-import StatisticsUnitsDropdown from "./StatisticsUnitsDropdown.vue";
-import LoadingIndicator from "./LoadingIndicator.vue";
-
-export default {
-  components: {
-    ActivityStatisticsDropdown,
-    LoadingIndicator,
-    StatisticsUnitsDropdown
-  },
-
-  data: () => {
-    return {
-      activityStatistic: "distance", // TODO: Set this up as a user preference. Maybe a cookie.
-      activityStatisticPastTense: "ridden",
-      statisticsUnits: {
-        distance: "mi",
-        movingTime: "elapsedTime",
-        elevationGain: "ft",
-        sufferScore: "suffering",
-        averageSpeed: "mph"
-      }, // TODO: Set this up as some sort of user preference. Maybe a cookie.
-      loading: false,
-      dayNames: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      monthNames: [],
-      responseData: null,
-      error: null
-    };
-  },
-
-  computed: {
-    averageOrTotalStatistics: function() {
-      const {
-        averageSpeed,
-        activityStatistic,
-        statisticValueFormat,
-        totalStatistics
-      } = this;
-
-      // eslint-disable-next-line prettier/prettier
-      return activityStatistic === "averageSpeed" ? statisticValueFormat(averageSpeed, true) : statisticValueFormat(totalStatistics, true) ;
-    },
-
-    showStatisticsDropdown: function() {
-      const { activityStatistic } = this;
-
-      // eslint-disable-next-line prettier/prettier
-      return activityStatistic !== "movingTime" && activityStatistic !== "sufferScore" ? true : false;
-    },
-
-    statistics: function() {
-      if (this.responseData) {
-        const {
-          activityStatistic,
-          responseData: { data }
-        } = this;
-        if (activityStatistic === "distance") {
-          const statistics = data.map(item => {
-            const {
-              startDateOnly,
-              distance,
-              activities,
-              distanceQuantile,
-              gridPosition
-            } = item;
-            const quantile = distanceQuantile.split("-")[2];
-            return {
-              startDateOnly,
-              statisticValue: distance,
-              activities,
-              quantile,
-              gridPosition
-            };
-          });
-          return statistics;
-        } else if (activityStatistic === "movingTime") {
-          const statistics = data.map(item => {
-            const {
-              startDateOnly,
-              movingTime,
-              activities,
-              movingTimeQuantile,
-              gridPosition
-            } = item;
-            const quantile = movingTimeQuantile.split("-")[3];
-            return {
-              startDateOnly,
-              statisticValue: movingTime,
-              activities,
-              quantile,
-              gridPosition
-            };
-          });
-          return statistics;
-        } else if (activityStatistic === "elevationGain") {
-          const statistics = data.map(item => {
-            const {
-              startDateOnly,
-              elevationGain,
-              activities,
-              elevationGainQuantile,
-              gridPosition
-            } = item;
-            const quantile = elevationGainQuantile.split("-")[3];
-            return {
-              startDateOnly,
-              statisticValue: elevationGain,
-              activities,
-              quantile,
-              gridPosition
-            };
-          });
-          return statistics;
-        } else if (activityStatistic === "sufferScore") {
-          const statistics = data.map(item => {
-            const {
-              startDateOnly,
-              sufferScore,
-              activities,
-              sufferScoreQuantile,
-              gridPosition
-            } = item;
-            const quantile = sufferScoreQuantile.split("-")[3];
-            return {
-              startDateOnly,
-              statisticValue: sufferScore,
-              activities,
-              quantile,
-              gridPosition
-            };
-          });
-          return statistics;
-        } else if (activityStatistic === "averageSpeed") {
-          const statistics = data.map(item => {
-            const {
-              startDateOnly,
-              averageSpeed,
-              activities,
-              averageSpeedQuantile,
-              gridPosition
-            } = item;
-            const quantile = averageSpeedQuantile.split("-")[3];
-            return {
-              startDateOnly,
-              statisticValue: averageSpeed,
-              activities,
-              quantile,
-              gridPosition
-            };
-          });
-          return statistics;
-        }
-        return 0;
-      } else {
-        return 0;
-      }
-    },
-
-    totalStatistics: function() {
-      if (this.responseData) {
-        const {
-          activityStatistic,
-          responseData: { data }
-        } = this;
-
-        const totalStatistic = data.reduce(
-          (accumulator, activity) => {
-            return (
-              parseFloat(accumulator) + parseFloat(activity[activityStatistic])
-            );
-          },
-          [0]
-        );
-        return totalStatistic;
-      } else {
-        return 0;
-      }
-    },
-
-    averageSpeed: function() {
-      if (this.responseData) {
-        const {
-          responseData: { data }
-        } = this;
-
-        const totals = data.reduce((accumulator, activity) => {
-          accumulator["totalDistance"] =
-            parseFloat(accumulator["totalDistance"] || 0) +
-            parseFloat(activity["distance"]);
-          accumulator["totalMovingTime"] =
-            parseFloat(accumulator["totalMovingTime"] || 0) +
-            parseFloat(activity["movingTime"]);
-          return accumulator;
-        }, {});
-
-        const { totalDistance, totalMovingTime } = totals;
-
-        return totalDistance / totalMovingTime;
-      } else {
-        return 0;
-      }
-    }
-  },
-
-  methods: {
-    popupDateFormat: originalDate => {
-      const dateComponents = originalDate.split("-");
-      const [y, m, d] = dateComponents;
-      const dtf = new Date(Date.UTC(y, m - 1, d, 12)); // TODO - 12 is a hack to fix an edge case on the first day of the month. Refactor to address timezones in the future.
-      const shortMonth = dtf.toLocaleString("en-us", { month: "short" });
-      const day = dtf.getUTCDate();
-      const fullYear = dtf.getUTCFullYear();
-      return `${shortMonth} ${day}, ${fullYear}`;
-    },
-
-    statisticValueFormat(originalStatisticValue, valueOnly) {
-      let units = "";
-      let statisticsConverted = 0;
-
-      const { activityStatistic, statisticsUnits } = this;
-      const statisticsUnitsToConvert = statisticsUnits[activityStatistic];
-
-      switch (statisticsUnitsToConvert) {
-        case "ft":
-          units = "feet";
-          statisticsConverted = Math.round(originalStatisticValue * 3.28084);
-          break;
-        case "mi":
-          units = "miles";
-          statisticsConverted = Math.round(
-            originalStatisticValue * 0.000621371
-          );
-          break;
-        case "km":
-          units = "kilometers";
-          statisticsConverted = Math.round(originalStatisticValue / 1000);
-          break;
-        case "elapsedTime": {
-          const decimalHours = originalStatisticValue / 3600;
-          if (decimalHours >= 1) {
-            const hours = Math.floor(decimalHours);
-            const hoursText = hours !== 1 ? "hours" : "hour";
-            const minutes = Math.round((decimalHours - hours) * 60)
-            const minutesFormatted = minutes > 0 ? `and ${minutes} minutes` : null;
-            statisticsConverted = `${hours} ${hoursText} ${minutesFormatted}`;
-          } else {
-            statisticsConverted = Math.round(originalStatisticValue / 60) + " minutes";
-          }
-          break;
-        }
-        case "suffering":
-          units = "suffering units";
-          statisticsConverted = Math.round(originalStatisticValue);
-          break;
-        case "mph":
-          units = "miles per hour";
-          statisticsConverted = Math.round(originalStatisticValue * 2.23694 * 10) / 10;
-          break;
-        case "kph":
-          units = "kilometers per hour";
-          statisticsConverted =
-            Math.round(originalStatisticValue * 3.6 * 10) / 10;
-          break;
-        default:
-          units = "meters";
-          statisticsConverted = Math.round(originalStatisticValue);
-      }
-      if (valueOnly) {
-        units = "";
-      }
-      return originalStatisticValue > 0
-        ? `${statisticsConverted.toLocaleString()} ${units}`
-        : "No rides ";
-    },
-
-    useActivityStatistics(eventValues) {
-      [this.activityStatistic, this.activityStatisticPastTense] = eventValues;
-    },
-
-    useStatisticsUnits(statisticsUnit) {
-      const { activityStatistic } = this;
-      this.statisticsUnits[activityStatistic] = statisticsUnit;
-    }
-  },
-
-  created() {
-    this.loading = true;
-    (async () => {
-      try {
-        const response = await fetch(
-          `${
-            import.meta.env.VITE_API_BASE_URL
-          }/api/strava/process/activities/rides`
-        );
-        const data = await response.json();
-        // const sortedAscending = data.data.sort((a, b) =>
-        //   a.startDateOnly > b.startDateOnly ? 1 : -1
-        // );
-        const dts = new Date();
-        const dow = dts.getDay();
-        const futureDays = 7 - dow;
-        const totalDays = 370 - futureDays;
-
-        dts.setDate(dts.getDate() - totalDays);
-
-        const dte = new Date();
-
-        const allDates = (startDate, endDate) => {
-          const dates = [];
-
-          for (
-            dates, startDate;
-            startDate <= endDate;
-            startDate.setDate(startDate.getDate() + 1)
-          ) {
-            dates.push(
-              startDate.getFullYear() +
-                "-" +
-                ("0" + (startDate.getMonth() + 1)).slice(-2) +
-                "-" +
-                ("0" + startDate.getDate()).slice(-2)
-            );
-          }
-          return dates;
-        };
-
-        const prevYearDates = allDates(dts, dte);
-
-        const noDataActivityObj = {
-          distance: 0,
-          movingTime: 0,
-          elevationGain: 0,
-          sufferScore: 0,
-          averageSpeed: 0,
-          activities: 0,
-          distanceQuantile: "distance-quantile-0",
-          movingTimeQuantile: "moving-time-quantile-0",
-          elevationGainQuantile: "elevation-gain-quantile-0",
-          sufferScoreQuantile: "suffer-score-quantile-0",
-          averageSpeedQuantile: "average-speed-quantile-0"
-        };
-
-        let col = 2;
-        let row = 2;
-        let lastMonthShort = dts.toLocaleString("en-us", { month: "short" });
-        this.monthNames.push({
-          id: 0,
-          monthShortName: lastMonthShort,
-          gridPosition: "gridColumn: 2 / 4; gridRow: 1"
-        });
-        const allData = prevYearDates.map(date => {
-          const gridPosition = `gridColumn: ${col}; gridRow: ${row}`;
-          const currentMonthShort = new Date(date).toLocaleString("en-us", {
-            month: "short"
-          });
-          if (lastMonthShort !== currentMonthShort) {
-            const nextMonthId = this.monthNames.length;
-            this.monthNames.push({
-              id: nextMonthId,
-              monthShortName: currentMonthShort,
-              gridPosition: `gridColumn: ${col} / ${col + 2}; gridRow: 1`
-            });
-            lastMonthShort = currentMonthShort;
-          }
-          if (row % 8 === 0) {
-            row = 2;
-            col++;
-          } else {
-            row++;
-          }
-
-          const idx = data.data.findIndex(obj => obj.startDateOnly === date);
-          return idx === -1
-            ? { startDateOnly: date, ...noDataActivityObj, gridPosition }
-            : { ...data.data[idx], gridPosition };
-        });
-
-        this.loading = false;
-
-        this.responseData = { data: allData };
-        // this.responseData = { data: [...sortedAscending] };
-        // this.responseData = { data };
-      } catch (err) {
-        this.error = err.toString();
-        // TODO: Deal with the error
-      }
-    })();
-  }
-};
-</script>
 
 <style scoped>
 .annual-total {

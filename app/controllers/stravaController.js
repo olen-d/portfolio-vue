@@ -286,6 +286,7 @@ exports.process_athlete_activities_rides = async (req, res) => {
     } = activity;
 
     let startDateOnly = startDate.split("T")[0];
+    const sufferScoreProcessed = sufferScore === undefined ? 0 : sufferScore // Substitute a zero when a suffer score is not provided
 
     const activityObj = {
       name,
@@ -298,7 +299,7 @@ exports.process_athlete_activities_rides = async (req, res) => {
       gearId,
       averageSpeed,
       maxSpeed,
-      sufferScore
+      sufferScore: sufferScoreProcessed
     };
     return activityObj;
   });
