@@ -19,8 +19,8 @@
 </template>
 
 <style scoped>
-.header-front-end {
+  .header-front-end {
     margin-top:-20rem;
     margin-left:5rem;
-}
+  }
 </style>
