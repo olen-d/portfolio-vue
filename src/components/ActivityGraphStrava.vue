@@ -375,8 +375,8 @@
               </span>
               <StatisticsUnitsDropdown
                 v-if="showStatisticsDropdown"
-                v-bind:activityStatistic="activityStatistic"
-                v-bind:defaultStatisticUnit="statisticsUnits[activityStatistic]"
+                :activityStatistic="activityStatistic"
+                :defaultStatisticUnit="statisticsUnits[activityStatistic]"
                 @use-statistics-units="useStatisticsUnits"
               />
               {{ activityStatisticPastTense }} in the past year
@@ -403,7 +403,6 @@
             </div>
             <div
               v-for="{
-                activities,
                 gridPosition,
                 quantile,
                 startDateOnly,
@@ -427,25 +426,25 @@
               <div class="distance-quantile-legend-5"></div>
               <p class="legend-text">More</p>
             </div>
-          </div> <!-- End response-data -->
+          </div>
           <div v-if="responseData" class="activity-statistics-dropdown">
             Show:&nbsp;
             <ActivityStatisticsDropdown
-              v-bind:defaultOptions="[
+              :defaultOptions="[
                 { _id: 'distance', name: 'distance' },
                 { _id: 'movingTime', name: 'moving time' },
                 { _id: 'elevationGain', name: 'elevation' },
                 { _id: 'sufferScore', name: 'suffer score' },
                 { _id: 'averageSpeed', name: 'average speed' }
               ]"
-              v-bind:defaultActivityStatisticPastTenses="{
+              :defaultActivityStatisticPastTenses="{
                 distance: 'ridden',
                 movingTime: 'riding',
                 elevationGain: 'climbed',
                 sufferScore: 'total suffering',
                 averageSpeed: 'average speed'
               }"
-              v-bind:defaultActivityStatistic="activityStatistic"
+              :defaultActivityStatistic="activityStatistic"
               @use-activity-statistics="useActivityStatistics"
             />
           </div>
