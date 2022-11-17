@@ -1,3 +1,38 @@
+<script setup>
+  import { onMounted, ref } from 'vue'
+
+  const emits = defineEmits(['useActivityStatistics'])
+  const props = defineProps({
+    defaultActivityStatistic: {
+      type: String
+    },
+    defaultActivityStatisticPastTenses: {
+      type: Object
+    },
+    defaultOptions: {
+      type: Array
+    }
+  })
+
+  const activityStatistic = ref('')
+  const activityStatistics = ref([])
+  const activityStatisticPastTenses = ref({})
+
+  onMounted(() => {
+    activityStatistic.value = props.defaultActivityStatistic
+    activityStatistics.value = props.defaultOptions
+    activityStatisticPastTenses.value = props.defaultActivityStatisticPastTenses
+  })
+
+  const onChange = () => {
+    const eventValues = [
+      activityStatistic.value,
+      activityStatisticPastTenses.value[activityStatistic.value]
+    ]
+    emits('useActivityStatistics', eventValues)
+  }
+</script>
+
 <template>
   <select
     name="activity-statistics"
@@ -9,35 +44,3 @@
     </option>
   </select>
 </template>
-
-<script>
-export default {
-  props: {
-    defaultActivityStatistic: String,
-    defaultActivityStatisticPastTenses: Object,
-    defaultOptions: Array
-  },
-
-  data: function() {
-    return {
-      activityStatistics: this.defaultOptions,
-      activityStatisticPastTenses: this.defaultActivityStatisticPastTenses,
-      activityStatistic: this.defaultActivityStatistic
-    };
-  },
-
-  methods: {
-    onChange() {
-      const { activityStatistic, activityStatisticPastTenses } = this;
-
-      const eventValues = [
-        activityStatistic,
-        activityStatisticPastTenses[activityStatistic]
-      ];
-      this.$emit("use-activity-statistics", eventValues);
-    }
-  }
-};
-</script>
-
-<style scoped></style>
