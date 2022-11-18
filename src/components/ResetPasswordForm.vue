@@ -3,8 +3,9 @@
     <h5>
       Reset Password
     </h5>
-    <Message v-bind:messageContent="['Enter your new password below.']">
-    </Message>
+    <p>
+      Enter your new password below.
+    </p>
     <InputPassword
       @send-password-value="handleSendPasswordValue"
       label="Password"
@@ -23,12 +24,10 @@
 
 <script>
 import InputPassword from "./formFields/InputPassword.vue";
-import Message from "./Message.vue";
 
 export default {
   components: {
     InputPassword,
-    Message
   },
 
   props: {
