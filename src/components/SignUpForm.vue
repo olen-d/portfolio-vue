@@ -139,11 +139,11 @@
       {{ formName }}
     </h5>
     <form>
-    <div class="form-sign-up-alert-error" v-if="isError">
-      <AlertMessage :title="errorTitle" type="error">
-        {{ errorDescription }}
-      </AlertMessage>
-    </div>
+      <div class="form-sign-up-alert-error" v-if="isError">
+        <AlertMessage :title="errorTitle" type="error">
+          {{ errorDescription }}
+        </AlertMessage>
+      </div>
       <InputNameFirst @change-form-values="updateFormValues($event)"/>
       <InputNameLast @change-form-values="updateFormValues($event)" />
       <InputEmail @change-form-values="updateFormValues($event)" />

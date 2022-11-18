@@ -63,12 +63,11 @@
       emitChange()
     }
   })
-
   </script>
 
   <template>
     <div class="input-username">
-      <label for="inputUsername" v-bind:class="validationStatus">
+      <label for="inputUsername" :class="validationStatus">
         {{ labeltext }}
       </label>
       <input

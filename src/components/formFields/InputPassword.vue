@@ -98,7 +98,7 @@
 
 <template>
   <div class="input-password">
-    <label for="inputPassword" v-bind:class="validationStatus">
+    <label for="inputPassword" :class="validationStatus">
       {{ labeltext }}
     </label>
     <input
