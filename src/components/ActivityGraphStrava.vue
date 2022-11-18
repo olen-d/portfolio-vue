@@ -367,7 +367,7 @@
       </div>
       <div class="ten columns">
         <div class="activity-graph-wrapper">
-          <LoadingIndicator v-bind:loading="loading" v-bind:error="error" />
+          <LoadingIndicator :loading="loading" :error="error" />
           <div v-if="responseData" class="annual-total">
             <p>
               <span class="emphasis">
