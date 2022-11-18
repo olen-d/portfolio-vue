@@ -9,6 +9,7 @@
       default: 3
     }
   })
+
   const error = ref('')
   const loading = ref(false)
   const skills = ref([])
