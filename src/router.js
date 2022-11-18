@@ -133,10 +133,10 @@ const router = createRouter({
           component: RequestPasswordResetForm
         },
         {
-          path: "reset-password/:token",
+          path: "reset-password",
           name: "reset-password",
-          props: true,
-          component: ResetPasswordForm
+          component: ResetPasswordForm,
+          props: (route) => ({ token: route.query.token })
         }
       ]
     },

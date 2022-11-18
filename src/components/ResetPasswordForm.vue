@@ -1,106 +1,150 @@
-<template>
-  <div class="reset-password-form">
-    <h5>
-      Reset Password
-    </h5>
-    <p>
-      Enter your new password below.
-    </p>
-    <InputPassword
-      @send-password-value="handleSendPasswordValue"
-      label="Password"
-      placeholder="Your Password"
-    >
-    </InputPassword>
-    <button
-      @click="handleSubmit"
-      class="button button-primary"
-      :disabled="isDisabled"
-    >
-      {{ content }}
-    </button>
-  </div>
-</template>
+<script setup>
+  import { computed, ref } from 'vue'
 
-<script>
-import InputPassword from "./formFields/InputPassword.vue";
+  import AlertMessage from '@/components/AlertMessage.vue'
+  import InputPassword from '@/components/formFields/InputPassword.vue'
 
-export default {
-  components: {
-    InputPassword,
-  },
-
-  props: {
-    content: {
-      default: "Reset Password",
-      type: String
+  const props = defineProps({
+    formName: {
+      type: String,
+      default: 'Reset Password'
+    },
+    submitButtonAction: {
+      type: String,
+      default: 'Reset Password'
     },
     token: {
       required: true,
       type: String
     }
-  },
+  })
 
-  data: () => {
-    return { password: "" };
-  },
+  const errorDescription = ref('')
+  const errorTitle = ref('')
+  const formValues = ref([])
+  const isError = ref(false)
+  const isSuccess = ref(false)
+  const successDescription = ref('')
+  const successTitle = ref('')
 
-  computed: {
-    isDisabled() {
-      return this.password.length > 0 ? false : true;
-    }
-  },
+  const getFormErrorsChanged = () => {
+    const formErrorsChanged = formValues.value.filter(element => {
+      return element.isChanged !== false && element.isValid === false
+    })
+    return formErrorsChanged
+  }
 
-  methods: {
-    handleSendPasswordValue(event, value) {
-      this.password = value;
-    },
+  const handleSubmit = async () => {
+    const formErrors = getFormErrorsChanged()
 
-    handleSubmit() {
-      // ! TODO: Check for errors
-      this.postRequest();
-    },
+    if (formErrors.length > 0) {
+      updateFormErrors(formErrors)
+      return
+    } else {
+      const data = {}
 
-    async postRequest() {
-      const { password, token } = this;
+      formValues.value.forEach(element => {
+        const { inputName, inputValue } = element
+        data[inputName] = inputValue
+      })
 
-      const formData = { password, token };
+      data.token = props.token
 
       try {
         const response = await fetch(
-          `${process.env.VUE_APP_API_BASE_URL}/api/users/password/reset`,
+          `${import.meta.env.VITE_API_BASE_URL}/api/users/password/reset`,
           {
             method: "put",
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify(formData)
+            body: JSON.stringify(data)
           }
-        );
+        )
 
-        const json = response.ok ? await response.json() : null;
+        const json = response.ok ? await response.json() : null
 
         if (json && json.status === 200) {
-          this.$store.commit("setStatusCategory", "success");
-          this.$store.commit(
-            "setStatusMessage",
-            "Your password was successfully reset and you can now login using your new password."
-          );
+          successDescription.value = 'Your password was successfully reset and you can now login using your new password.'
+          successTitle.value = 'Great Success'
+          isSuccess.value = true
         } else {
-          this.$store.commit("setStatusCategory", "error");
-          this.$store.commit(
-            "setStatusMessage",
-            "Invalid password. Please enter a valid password and try again."
-          );
+          errorDescription.value = 'One or more required fields were not submitted to the server. Please try again in a few minutes.'
+          errorTitle.value = 'Server Error'
+          isError.value = true
         }
       } catch (error) {
-        this.$store.commit("setStatusCategory", "error");
-        this.$store.commit(
-          "setStatusMessage",
-          `Something went terribly awry. Please check the password you entered and try again. ${error}`
-        );
+        console.log(JSON.stringify(error))
+        errorDescription.value = 'The server appears to be down. Please try again in a few minutes.'
+        errorTitle.value = 'Server Error'
+        isError.value = true
       }
     }
   }
-};
+
+  const updateFormValues = event => {
+    const { inputName: name } = event
+    const valuesIndex = formValues.value.findIndex(element => element.inputName === name)
+    if (valuesIndex === -1) {
+      formValues.value.push(event)
+    } else {
+      formValues.value[valuesIndex] = event
+    }
+    const formErrors = getFormErrorsChanged()
+    updateFormErrors(formErrors)
+  }
+
+  const updateFormErrors = formErrors => {
+    if (formErrors.length > 0) {
+      const errorMessages = formErrors.map(element => {
+        return element.errorMessage
+      })
+      errorDescription.value = errorMessages.join('. ') + '.'
+
+      const numberAgreement = formErrors.length === 1 ? 'An Error' : 'Errors'
+      errorTitle.value = `The ${props.formName} Form Has ${numberAgreement}`
+
+      isError.value = true
+    } else {
+      isError.value = false
+      errorDescription.value = ''
+      errorTitle.value = ''
+    }
+  }
+
+  const isDisabled = computed(() => {
+    const formErrors = getFormErrorsChanged()
+    return formErrors.length > 0
+  })
 </script>
+
+<template>
+  <div class="form-reset-password">
+    <h5>
+      {{ formName }}
+    </h5>
+    <div class="form-reset-password-success" v-if="isSuccess">
+      <AlertMessage :title="successTitle" type="success">
+        {{ successDescription }}
+      </AlertMessage>
+    </div>
+    <div class="form-reset-password-error" v-if="isError">
+      <AlertMessage :title="errorTitle" type="error">
+        {{ errorDescription }}
+      </AlertMessage>
+    </div>
+    <div class="form-reset-password-default">
+      <p>
+        Enter your new password below.
+      </p>
+    </div>
+    <InputPassword @change-form-values="updateFormValues($event)" />
+    <button
+      :disabled="isDisabled"
+      @click.prevent="handleSubmit"
+      class="button-primary"
+    >
+      {{ submitButtonAction }}
+    </button>
+  </div>
+</template>

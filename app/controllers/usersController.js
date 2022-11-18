@@ -159,11 +159,11 @@ exports.password_reset = async (req, res) => {
     body: { password: newPassword, token }
   } = req;
 
-  const {
-    payload: { username: decodedUserName }
-  } = jwt.decode(token);
-
   try {
+    const {
+      payload: { username: decodedUserName }
+    } = jwt.decode(token);
+  
     const data = await readOneUserByUserName(decodedUserName); // ! TODO: Update this to use readOneUserById after switch to official MongoDB driver
     const { _id: userId, firstName, lastName, password } = data;
 
@@ -312,7 +312,7 @@ exports.reset_password = async (req, res) => {
       // Create the password reset link
       const passwordResetLink = `${
         process.env.FRONT_END_URL
-      }/login/reset-password/${tempToken}`;
+      }/login/reset-password?token=${tempToken}`; // Need to use the query string instead of parameters, since Vue-Router does not like periods in URLs
 
       // Create the email
       const mailOptions = {

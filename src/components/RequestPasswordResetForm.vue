@@ -7,7 +7,7 @@
   const props = defineProps({
     formName: {
       type: String,
-      default: "Request Password Reset"
+      default: 'Request Password Reset'
     },
     submitButtonAction: {
       type: String,
