@@ -1,5 +1,5 @@
 // import Vue from "vue";
-import Home from "./views/Home.vue";
+import HomePage from "@/views/HomePage.vue";
 
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -38,7 +38,7 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
-      component: Home,
+      component: HomePage,
       alias: "/home"
     },
     {
