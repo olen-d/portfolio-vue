@@ -24,8 +24,8 @@ const AboutPage = () => import("@/views/AboutPage.vue");
 const Contact = () => import("./views/Contact.vue");
 const LoginRoot = () => import("./views/LoginRoot.vue");
 const Login = () => import("./components/LoginForm.vue");
-const RequestPasswordResetForm = () => import("./components/RequestPasswordResetForm.vue");
-const ResetPasswordForm = () => import("./components/ResetPasswordForm.vue");
+const RequestPasswordResetPage = () => import("@/views/RequestPasswordResetPage.vue");
+const ResetPasswordPage = () => import("@/views/ResetPasswordPage.vue");
 const Projects = () => import("./views/Projects.vue");
 const Signup = () => import("./views/SignUp.vue");
 
@@ -130,12 +130,12 @@ const router = createRouter({
         {
           path: "request-password-reset",
           name: "request-password-reset",
-          component: RequestPasswordResetForm
+          component: RequestPasswordResetPage
         },
         {
           path: "reset-password",
           name: "reset-password",
-          component: ResetPasswordForm,
+          component: ResetPasswordPage,
           props: (route) => ({ token: route.query.token })
         }
       ]
