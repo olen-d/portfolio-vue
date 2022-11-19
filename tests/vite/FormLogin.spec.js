@@ -4,10 +4,10 @@ import { createTestingPinia } from '@pinia/testing'
 
 import { useAuthStore } from '@/store/auth.js'
 
-import LoginForm from '@/components/LoginForm.vue'
+import FormLogin from '@/components/FormLogin.vue'
 
 test('default props render', async () => {
-  render(LoginForm, { props: { }, global: { plugins: [createTestingPinia({ createSpy: vi.fn })] } })
+  render(FormLogin, { props: { }, global: { plugins: [createTestingPinia({ createSpy: vi.fn })] } })
 
   expect(screen.getByRole('heading', { level: 5, name: 'Sign In' })).toBeTruthy()
   expect(screen.getByLabelText('Username')).toBeTruthy()
@@ -19,7 +19,7 @@ test('default props render', async () => {
 })
 
 test('passed props render', async () => {
-  render(LoginForm, { props: { formName: 'Login', submitButtonAction: 'Submit' } })
+  render(FormLogin, { props: { formName: 'Login', submitButtonAction: 'Submit' } })
 
   expect(screen.getByRole('heading', { level: 5, name: 'Login' })).toBeTruthy()
   expect(screen.getByRole('button', { name: 'Submit'})).toBeTruthy()
@@ -27,7 +27,7 @@ test('passed props render', async () => {
 })
 
 test('inputs update v-model', async () => {
-  render(LoginForm)
+  render(FormLogin)
 
   const inputUsername = screen.getByLabelText('Username')
   const inputPassword = screen.getByLabelText('Password')
