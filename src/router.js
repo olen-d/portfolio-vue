@@ -23,7 +23,7 @@ const AdminSettings = () => import("./views/AdminSettings.vue");
 const AboutPage = () => import("@/views/AboutPage.vue");
 const Contact = () => import("./views/Contact.vue");
 const LoginRoot = () => import("./views/LoginRoot.vue");
-const Login = () => import("./components/LoginForm.vue");
+const LoginPage = () => import("@/views/LoginPage.vue");
 const RequestPasswordResetPage = () => import("@/views/RequestPasswordResetPage.vue");
 const ResetPasswordPage = () => import("@/views/ResetPasswordPage.vue");
 const Projects = () => import("./views/Projects.vue");
@@ -125,7 +125,7 @@ const router = createRouter({
         {
           path: "",
           name: "login",
-          component: Login
+          component: LoginPage
         },
         {
           path: "request-password-reset",
