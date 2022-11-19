@@ -150,7 +150,7 @@
       <InputUsername @change-form-values="updateFormValues($event)" />
       <InputPassword @change-form-values="updateFormValues($event)" />
       <button
-        :disabled = "isDisabled"
+        :disabled="isDisabled"
         @click.prevent="handleSubmit"
         class="button-primary"
       >
