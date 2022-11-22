@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="view-sign-up">
+  <div class="sign-up-page">
     <SignUp />
   </div>
 </template>

@@ -27,7 +27,7 @@ const LoginPage = () => import("@/views/LoginPage.vue");
 const RequestPasswordResetPage = () => import("@/views/RequestPasswordResetPage.vue");
 const ResetPasswordPage = () => import("@/views/ResetPasswordPage.vue");
 const ProjectsPage = () => import("@/views/ProjectsPage.vue");
-const Signup = () => import("./views/SignUp.vue");
+const SignupPage = () => import("@/views/SignupPage.vue");
 
 const AuthorizeStrava = () => import("./views/AuthorizeStrava.vue");
 // Vue.use(Router);
@@ -148,7 +148,7 @@ const router = createRouter({
     {
       path: "/signup",
       name: "signUp",
-      component: Signup
+      component: SignupPage
     },
     {
       path: "/contact",
