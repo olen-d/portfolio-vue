@@ -11,15 +11,13 @@
 
   // Computed
   const displayProjects = computed(() => {
-    projects.value.filter(project => project.show === 1)
+    return projects.value.filter(project => project.show === 1)
   })
 
   const sortedProjects = computed(() => {
-    if (Array.isArray(displayProjects.value)) {
-      [...displayProjects.value].sort((a, b) => {
-        return a.priority - b.priority
-      })
-    }
+    return [...displayProjects.value].sort((a, b) => {
+      return a.priority - b.priority
+    })
   })
 
   onMounted(async () => {
@@ -64,7 +62,7 @@
           <div class="loading-indicator-wrapper">
             <LoadingIndicator :loading="loading" :error="error" />
           </div>
-          <div v-if="projects" class="projects">
+          <div v-if="!loading" class="projects">
             <div
               v-for="{
                 _id,
