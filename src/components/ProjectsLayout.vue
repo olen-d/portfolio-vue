@@ -1,7 +1,50 @@
+<script setup>
+  import { computed, onMounted, ref } from 'vue'
+
+  import HeaderFrontEnd from '@/components/HeaderFrontEnd.vue'
+  import LoadingIndicator from '@/components/LoadingIndicator.vue'
+
+  const error = ref('')
+  const loading = ref(false)
+  const projects = ref([])
+  const publicPath = ref(`${import.meta.env.VITE_ASSETS_HOST}`)
+
+  // Computed
+  const displayProjects = computed(() => {
+    projects.value.filter(project => project.show === 1)
+  })
+
+  const sortedProjects = computed(() => {
+    if (Array.isArray(displayProjects.value)) {
+      [...displayProjects.value].sort((a, b) => {
+        return a.priority - b.priority
+      })
+    }
+  })
+
+  onMounted(async () => {
+    loading.value = true
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects`)
+      if (response.ok) {
+        const data = await response.json()
+        loading.value = false
+        projects.value = data.projects
+      } else {
+        throw new Error('Network response was not ok. Unable to fetch. ')
+      }
+    } catch (err) {
+      error.value = err.toString()
+      loading.value = false
+    }
+  })
+</script>
+
 <template>
-  <div id="front-end">
+  <div class="projects-layout">
     <HeaderFrontEnd />
-    <div id="projects" class="container">
+    <div class="container">
       <div class="row">
         <div class="one column">
           &nbsp;
@@ -19,7 +62,7 @@
         </div>
         <div class="ten columns">
           <div class="loading-indicator-wrapper">
-            <LoadingIndicator v-bind:loading="loading" v-bind:error="error" />
+            <LoadingIndicator :loading="loading" :error="error" />
           </div>
           <div v-if="projects" class="projects">
             <div
@@ -61,62 +104,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import HeaderFrontEnd from "./HeaderFrontEnd.vue";
-import LoadingIndicator from "./LoadingIndicator.vue";
-
-export default {
-  components: {
-    HeaderFrontEnd,
-    LoadingIndicator
-  },
-
-  data: () => {
-    return {
-      loading: false,
-      projects: null,
-      error: null,
-      publicPath: import.meta.env.VITE_ASSETS_HOST
-    };
-  },
-
-  computed: {
-    displayProjects() {
-      const displayProjects = this.projects.filter(
-        project => project.show === 1
-      );
-      return displayProjects;
-    },
-    sortedProjects() {
-      const sortedProjects = [...this.displayProjects].sort((a, b) => {
-        return a.priority - b.priority;
-      });
-      return sortedProjects;
-    }
-  },
-
-  created() {
-    this.loading = true;
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects`)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error("Network response was not ok. Unable to fetch. ");
-        }
-      })
-      .then(json => {
-        this.loading = false;
-        this.projects = json.projects;
-      })
-      .catch(err => {
-        this.loading = false;
-        this.error = err.toString();
-      });
-  }
-};
-</script>
 
 <style scoped>
 .loading-indicator-wrapper {
