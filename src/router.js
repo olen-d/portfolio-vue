@@ -21,7 +21,7 @@ const AdminSettings = () => import("./views/AdminSettings.vue");
 // this generates a separate chunk (about.[hash].js) for this route
 // which is lazy-loaded when the route is visited.
 const AboutPage = () => import("@/views/AboutPage.vue");
-const Contact = () => import("./views/Contact.vue");
+const ContactPage = () => import("@/views/ContactPage.vue");
 const LoginRoot = () => import("./views/LoginRoot.vue");
 const LoginPage = () => import("@/views/LoginPage.vue");
 const RequestPasswordResetPage = () => import("@/views/RequestPasswordResetPage.vue");
@@ -153,7 +153,7 @@ const router = createRouter({
     {
       path: "/contact",
       name: "contact",
-      component: Contact
+      component: ContactPage
     }
   ]
 });
