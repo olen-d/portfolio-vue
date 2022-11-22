@@ -1,9 +1,9 @@
 <script setup>
-  import SignUp from '@/components/SignUp.vue'
+  import SignupLayout from '@/components/SignupLayout.vue'
 </script>
 
 <template>
   <div class="sign-up-page">
-    <SignUp />
+    <SignupLayout />
   </div>
 </template>
