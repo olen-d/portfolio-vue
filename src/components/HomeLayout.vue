@@ -10,7 +10,7 @@
   const loading = ref(false)
   const welcome = ref([])
 
-  onMounted(async() => {
+  onMounted(async () => {
     loading.value = true
 
     try {
@@ -20,7 +20,7 @@
           loading.value = false
           welcome.value = data.welcome[0]
         } else {
-          throw new Error("Network response was not ok. Unable to fetch. ");
+          throw new Error('Network response was not ok. Unable to fetch. ')
         }
     } catch (err) {
       error.value = err.toString()
@@ -30,7 +30,7 @@
 </script>
 
 <template>
-  <div class="home-page">
+  <div class="home-layout">
     <HeaderFrontEnd />
     <div class="container">
       <div class="row">
