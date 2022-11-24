@@ -2,6 +2,10 @@
   import { onMounted, ref, watch } from 'vue'
 
   const props = defineProps({
+    initialErrorMessage: {
+      type: String,
+      default: 'Please enter valid text'
+    },
     initialValue: {
       type: String,
       default: ''
@@ -12,11 +16,11 @@
     },
     labeltext: {
       type: String,
-      default: 'Email Address'
+      default: 'Text'
     },
     placeholder: {
       type: String,
-      default: 'Enter your email address...'
+      default: 'Enter some text...'
     },
     required: {
       type: Boolean,
@@ -31,52 +35,33 @@
   const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const changedState = { isChanged: false }
-  const errorMessage = 'Please enter a valid email address'
+  const errorMessage = ref('')
   const isValid = ref(false)
-  const emailAddress = ref('')
+  const genericText = ref('')
   const validationStatus = ref('')
 
   onMounted(() => {
-   emailAddress.value = props.initialValue
-   emitChange()
+    errorMessage.value = props.initialErrorMessage
+    genericText.value = props.initialValue
+    emitChange()
   })
 
-  const checkMx = async emailAddress => {
-    try {
-      const result = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/mail/check-mx/${emailAddress}`
-      );
-      const data = await result.json();
-      const { mxExists } = data;
-
-      return mxExists ? true : false;
-    } catch {
-      return false;
-    }
-  }
-
   const emitChange = () => {
-    emits('changeFormValues', { inputName: 'email', inputValue: emailAddress.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
+    emits('changeFormValues', { inputName: 'genericText', inputValue: genericText.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
   }
 
-  const handleBlur = async () => {
+  const handleBlur = () => {
     if (!changedState.isChanged) {
       changedState.isChanged = true
     }
-    isValid.value = await validate(emailAddress.value)
+    isValid.value = validate(genericText.value)
     validationStatus.value = isValid.value ? null : 'text-error'
     emitChange()
   }
 
-  const validate = async emailAddress => {
-    const expression = /.+@.+\..+/i
-    const isValidFormat = expression.test(String(emailAddress).toLowerCase())
-
-    if (isValidFormat) {
-      return await checkMx(emailAddress)
-    } else {
-      return false
-    }
+  const validate = genericText => {
+    const isValid = genericText && genericText.length > 0 ? true : false
+    return isValid
   }
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
@@ -89,27 +74,27 @@
 
   watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
     if (newShouldClearInput) {
-      emailAddress.value = ''
+      genericText.value = ''
       changedState.isChanged = false
       isValid.value = false
-      emits('removeFormValues', { inputName: 'email' })
+      emits('removeFormValues', { inputName: 'genericText' })
     }
   })
 </script>
 
 <template>
-  <div class="input-email">
-    <label for="email" v-bind:class="validationStatus">
+  <div class="text-area-generic">
+    <label for="textAreaGeneric" :class="validationStatus">
       {{ labeltext }}
     </label>
-    <input
-      v-model="emailAddress"
-      type="email"
+    <textarea
+      v-model="genericText"
       class="u-full-width"
-      id="email"
+      id="textAreaGeneric"
       :placeholder="placeholder"
       :required="required"
       @blur="handleBlur"
-    />
+    >
+    </textarea>
   </div>
 </template>
