@@ -1,9 +1,6 @@
 <script setup>
   import { computed, onMounted, ref } from 'vue'
 
-  import FormContact from '@/components/FormContact.vue'
-  import HeaderFrontEnd from '@/components/HeaderFrontEnd.vue'
-
   const contact = ref({})
   const loading = ref(false)
 
@@ -40,26 +37,9 @@
 </script>
 
 <template>
-  <div class="front-end">
-    <HeaderFrontEnd />
-    <div class="contact container">
-      <div class="row">
-        <div class="one column">
-          &nbsp;
-        </div>
-        <div class="ten columns">
-          <h1>
-            Get in Touch
-          </h1>
-          <p v-if="!loading">
-            You've made it this far, so please take the time to reach out and start discussing your project with me. I can be contacted at {{ toPhoneUS }}, or send an email to <a :href="`mailto:${contact?.email}`">{{contact?.email}}</a>.
-          </p>
-        </div>
-        <div class="one column">
-          &nbsp;
-        </div>
-      </div>
-      <FormContact formName="Send Us a Message" />
-    </div>
+  <div class="contact-information">
+    <p v-if="!loading">
+      You've made it this far, so please take the time to reach out and start discussing your project with me. I can be contacted at {{ toPhoneUS }}, or send an email to <a :href="`mailto:${contact?.email}`">{{contact?.email}}</a>.
+    </p>
   </div>
 </template>
