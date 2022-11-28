@@ -5,9 +5,9 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import { useAuthStore } from "@/store/auth.js";
 
-const AdminRoot = () => import("./views/AdminRoot.vue");
-const AdminDashboard = () => import("./components/AdminDashboard.vue");
-const AdminPages = () => import("./views/AdminPages.vue");
+const AdminRoot = () => import("@/views/AdminRoot.vue");
+const AdminDashboard = () => import("@/components/AdminDashboard.vue");
+const AdminPages = () => import("@/views/AdminPages.vue");
 const AdminPagesProjects = () => import("./components/AdminPagesProjects.vue");
 const AdminPagesProjectsRoot = () => import("./views/AdminPagesProjectsRoot.vue");
 const AdminPagesProjectsAdd = () => import("./components/AdminPagesProjectsAdd.vue");
@@ -22,7 +22,7 @@ const AdminSettings = () => import("./views/AdminSettings.vue");
 // which is lazy-loaded when the route is visited.
 const AboutPage = () => import("@/views/AboutPage.vue");
 const ContactPage = () => import("@/views/ContactPage.vue");
-const LoginRoot = () => import("./views/LoginRoot.vue");
+const LoginRoot = () => import("@/views/LoginRoot.vue");
 const LoginPage = () => import("@/views/LoginPage.vue");
 const RequestPasswordResetPage = () => import("@/views/RequestPasswordResetPage.vue");
 const ResetPasswordPage = () => import("@/views/ResetPasswordPage.vue");

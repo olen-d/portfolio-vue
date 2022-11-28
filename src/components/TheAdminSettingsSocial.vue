@@ -37,7 +37,6 @@
 const socialMediaLinkUpdated = event => {
   updatedLinkResult.value = event
 }
-
 </script>
 
 <template>

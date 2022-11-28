@@ -1,3 +1,32 @@
+<script setup>
+  const emits = defineEmits(['cancelAction', 'confirmAction'])
+  const props = defineProps({
+    payload: {
+      type: Object
+    }, 
+    title: {
+      type: String
+    },
+    message: {
+      type: String
+    },
+    confirm: {
+      type: String
+    },
+    cancel: {
+      type: String
+    }
+  })
+
+  const cancelAction = () => {
+    emits('cancelAction')
+  }
+
+  const confirmAction = () => {
+    emits('confirmAction', props.payload)
+  }
+</script>
+
 <template>
   <!-- HTML & CSS Based on Simple Modal for Skeleton.css by Paul McClean -->
   <div class="modal">
@@ -22,23 +51,3 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  props: ["payload", "title", "message", "confirm", "cancel"],
-
-  methods: {
-    cancelAction() {
-      this.$emit("cancel-action");
-    },
-
-    confirmAction() {
-      this.$emit("confirm-action", this.payload)
-    }
-  }
-}
-</script>
-
-<style scoped>
-
-</style>
