@@ -1,10 +1,95 @@
+<script setup>
+  import { computed, onMounted, ref } from 'vue'
+
+  const props = defineProps({
+    _id: {
+      type: String
+    },
+    deployedLink: {
+      type: String
+    },
+    description: {
+      type: String
+    },
+    title: {
+      type: String
+    },
+    repoLink: {
+      type: String
+    },
+    screenshot: {
+      type: String
+    },
+    skills: {
+      type: Array
+    },
+    priority: {
+      type: Number
+    },
+    show: {
+      type: Number
+    }
+  })
+
+  const publicPath = ref(`${import.meta.env.VITE_ASSETS_HOST}`)
+  const skillsData = ref([])
+  const skillNamesById = ref([])
+
+  const skillNames = computed(() => {
+    let skillNamesOutput = "";
+    if (props.skills) {
+      props.skills.forEach(skill => {
+        let index = skillNamesById.value.map(item => item._id).indexOf(skill)
+        if (index > -1) {
+          skillNamesOutput += skillNamesById.value[index].name + ", "
+        }
+      })
+    } else {
+      skillNamesOutput = 'No skills were found for this project.'
+    }
+    skillNamesOutput = skillNamesOutput.replace(/,\s*$/, '')
+    return skillNamesOutput
+  })
+
+  const formatShow = show => {
+    if (show == 1) {
+      return "Yes"
+    } else {
+      return "No"
+    }
+  }
+
+  const readSkills = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills`)
+      const data = await response.json()
+
+      skillsData.value = data.skills
+      mapSkillNames()
+
+    } catch (error) {
+      console.log(`ERROR\nAdmin Project Card\n${error}`)
+    }
+  }
+
+  const mapSkillNames = () => {
+    skillsData.value.forEach(skill => {
+      let _id = skill._id
+      let name = skill.name
+      skillNamesById.value.push({ _id, name })
+    })
+  }
+
+  onMounted(() => {
+    readSkills()
+  })
+</script>
+
 <template>
   <div class="admin-projects-card">
     <div class="screenshot">
       <img
-        :src="`${publicPath}assets/images/${screenshot}`"
-        width="200"
-        height="auto"
+        :src="`${publicPath}/assets/images/${screenshot}`"
         :alt="`Screenshot of ${title}`"
       />
     </div>
@@ -37,81 +122,13 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    _id: String,
-    deployedLink: String,
-    description: String,
-    title: String,
-    repoLink: String,
-    screenshot: String,
-    skills: Array,
-    priority: Number,
-    show: Number
-  },
-
-  data: () => {
-    return {
-      publicPath: import.meta.env.BASE_URL,
-      skillsData: [],
-      skillNamesById: []
-    };
-  },
-
-  computed: {
-    skillNames() {
-      let skillNamesOutput = "";
-      if (this.skills) {
-        this.skills.forEach(skill => {
-          let index = this.skillNamesById.map(item => item._id).indexOf(skill);
-          if (index > -1) {
-            skillNamesOutput += this.skillNamesById[index].name + ", ";
-          }
-        });
-      } else {
-        skillNamesOutput = "No skills were found for this project.";
-      }
-      skillNamesOutput = skillNamesOutput.replace(/,\s*$/, "");
-      return skillNamesOutput;
-    }
-  },
-
-  methods: {
-    formatShow: show => {
-      if (show == 1) {
-        return "Yes";
-      } else {
-        return "No";
-      }
-    },
-
-    readSkills() {
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills`)
-        .then(response => {
-          return response.json();
-        })
-        .then(json => {
-          this.skillsData = json.skills;
-        })
-        .then(() => {
-          this.mapSkillNames();
-        });
-    },
-
-    mapSkillNames() {
-      this.skillsData.forEach(skill => {
-        let _id = skill._id;
-        let name = skill.name;
-        this.skillNamesById.push({ _id, name });
-      });
-    }
-  },
-
-  created() {
-    this.readSkills();
+<style scoped>
+  .screenshot {
+    width: 350px;
   }
-};
-</script>
 
-<style scoped></style>
+  .screenshot img {
+    width: 350px;
+    object-fit: contain;
+  }
+</style>
