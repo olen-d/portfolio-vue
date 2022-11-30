@@ -1,0 +1,103 @@
+<script setup>
+  import { onMounted, ref, watch } from 'vue'
+
+  const props = defineProps({
+    errorMessage: {
+      type: String,
+      default: 'Please enter a valid title'
+    },
+    initialValue: {
+      type: String,
+      default: ''
+    },
+    inputName: {
+      type: String,
+      default: 'title'
+    },
+    isServerError: {
+      type: Boolean,
+      default: false
+    },
+    labeltext: {
+      type: String,
+      default: 'Title'
+    },
+    placeholder: {
+      type: String,
+      default: 'Enter a title...'
+    },
+    required: {
+      type: Boolean,
+      default: false
+    },
+    shouldClearInput: {
+      type: Boolean,
+      default: false
+    }
+  })
+
+  const emits = defineEmits(['changeFormValues', 'removeFormValues'])
+
+  const changedState = { isChanged: false }
+  const isValid = ref(false)
+  const inputValue = ref('')
+  const validationStatus = ref('')
+
+  onMounted(() => {
+    inputValue.value = props.initialValue
+    emitChange()
+  })
+
+  const emitChange = () => {
+    emits('changeFormValues', { inputName: props.inputName, inputValue: inputValue.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage: props.errorMessage })
+  }
+
+  const handleBlur = () => {
+    if (!changedState.isChanged) {
+      changedState.isChanged = true
+    }
+    isValid.value = validate(inputValue.value)
+    validationStatus.value = isValid.value ? null : 'text-error'
+    emitChange()
+  }
+
+  const validate = value => {
+    const alphaNumeric = /^[a-zA-Z\-]+( ?[a-zA-Z\-])+$/
+    const isValid = alphaNumeric.test(value)
+    return isValid
+  }
+
+  watch(() => props.isServerError, (isServerError, prevIsServerError) => {
+    if (isServerError) {
+      validationStatus.value = 'text-error'
+      isValid.value = false
+      emitChange()
+    }
+  })
+
+  watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
+    if (newShouldClearInput) {
+      inputValue.value = ''
+      changedState.isChanged = false
+      isValid.value = false
+      emits('removeFormValues', { inputName: props.inputName })
+    }
+  })
+  </script>
+
+  <template>
+    <div class="input-title">
+      <label for="inputTitle" :class="validationStatus">
+        {{ labeltext }}
+      </label>
+      <input
+        v-model="inputValue"
+        type="text"
+        class="u-full-width"
+        id="inputTitle"
+        :placeholder="placeholder"
+        :required="required"
+        @blur="handleBlur"
+      />
+    </div>
+  </template>
