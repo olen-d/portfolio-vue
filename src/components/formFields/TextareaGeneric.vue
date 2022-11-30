@@ -2,13 +2,17 @@
   import { onMounted, ref, watch } from 'vue'
 
   const props = defineProps({
-    initialErrorMessage: {
+    errorMessage: {
       type: String,
       default: 'Please enter valid text'
     },
     initialValue: {
       type: String,
       default: ''
+    },
+    inputName: {
+      type: String,
+      default: 'genericText'
     },
     isServerError: {
       type: Boolean,
@@ -35,32 +39,30 @@
   const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const changedState = { isChanged: false }
-  const errorMessage = ref('')
   const isValid = ref(false)
-  const genericText = ref('')
+  const inputValue = ref('')
   const validationStatus = ref('')
 
   onMounted(() => {
-    errorMessage.value = props.initialErrorMessage
-    genericText.value = props.initialValue
+    inputValue.value = props.initialValue
     emitChange()
   })
 
   const emitChange = () => {
-    emits('changeFormValues', { inputName: 'genericText', inputValue: genericText.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
+    emits('changeFormValues', { inputName: props.inputName, inputValue: inputValue.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage: props.errorMessage })
   }
 
   const handleBlur = () => {
     if (!changedState.isChanged) {
       changedState.isChanged = true
     }
-    isValid.value = validate(genericText.value)
+    isValid.value = validate(inputValue.value)
     validationStatus.value = isValid.value ? null : 'text-error'
     emitChange()
   }
 
-  const validate = genericText => {
-    const isValid = genericText && genericText.length > 0 ? true : false
+  const validate = value => {
+    const isValid = value && value.length > 0 ? true : false
     return isValid
   }
 
@@ -74,10 +76,10 @@
 
   watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
     if (newShouldClearInput) {
-      genericText.value = ''
+      inputValue.value = ''
       changedState.isChanged = false
       isValid.value = false
-      emits('removeFormValues', { inputName: 'genericText' })
+      emits('removeFormValues', { inputName: props.inputName })
     }
   })
 </script>
@@ -88,7 +90,7 @@
       {{ labeltext }}
     </label>
     <textarea
-      v-model="genericText"
+      v-model="inputValue"
       class="u-full-width"
       id="textAreaGeneric"
       :placeholder="placeholder"

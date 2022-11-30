@@ -204,7 +204,7 @@
       </div>
       <div class="ten columns">
         <TextareaGeneric 
-          initialErrorMessage="Please enter a valid message."
+          errorMessage="Please enter a valid message"
           labeltext="Message"
           placeholder="Let me know what you need..."
           :shouldClearInput="shouldClearInputs"
