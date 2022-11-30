@@ -24,7 +24,7 @@
     <h4>
       Filter
     </h4>
-    <SkillsDropdown @filter-projects-by-skill="filterProjectsBySkill" />
+    <SelectGeneric :options="options" @option-selected="optionSelected($event)" />
     <div
       v-for="{
         _id,
@@ -84,7 +84,7 @@ import { mapGetters } from "vuex";
 import AdminProjectsCard from "./AdminProjectsCard.vue";
 import AdminProjectsForm from "./AdminProjectsForm.vue";
 import ModalConfirmCancel from "./ModalConfirmCancel.vue";
-import SkillsDropdown from "./SkillsDropdown.vue";
+import SelectGeneric from "@/components/formFields/SelectGeneric.vue";
 
 export default {
   name: "AdminPagesProjects",
@@ -93,12 +93,13 @@ export default {
     AdminProjectsCard,
     AdminProjectsForm,
     ModalConfirmCancel,
-    SkillsDropdown
+    SelectGeneric
   },
 
   data: () => {
     return {
       projects: [],
+      options: [],
       publicPath: import.meta.env.BASE_URL,
       formAction: "Add",
       editProjectId: "",
@@ -171,6 +172,17 @@ export default {
         })
         .then(json => {
           this.projects = json.projects;
+        });
+    },
+
+    readSkills() {
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/sort/type+name`)
+        .then(response => {
+          return response.json();
+        })
+        .then(json => {
+          // this.skills = json.skills;
+          this.options = json.skills.map(({ _id, name: option }) => { return { _id, option } })
         });
     },
 
@@ -343,13 +355,15 @@ export default {
       this.updateProjectData.skills = [0];
     },
 
-    filterProjectsBySkill(filterSkill) {
-      this.filterSkill = filterSkill;
+    optionSelected(event) {
+      const { selectedOption } = event
+      this.filterSkill = selectedOption;
     }
   },
 
   created() {
     this.readProjects();
+    this.readSkills();
   }
 };
 </script>
