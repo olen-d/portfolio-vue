@@ -8,9 +8,17 @@
       type: String,
       default: ''
     },
+    errorMessage: {
+      type: String,
+      default: 'Please enter a valid link URI'
+    },
     initialValue: {
       type: String,
       default: ''
+    },
+    inputName: {
+      type: String,
+      default: 'uri'
     },
     isServerError: {
       type: Boolean,
@@ -35,40 +43,39 @@
   })
 
   const changedState = { isChanged: false }
-  const errorMessage = 'Please enter a valid link URI'
   const isValid = ref(false)
-  const uri = ref('')
+  const inputValue = ref('')
   const validationStatus = ref('')
 
   onMounted(() => {
-    uri.value = props.initialValue
+    inputValue.value = props.initialValue
     emitChange()
   })
 
   const emitChange = () => {
-    emits('changeFormValues', { inputName: 'uri', inputValue: uri.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
+    emits('changeFormValues', { inputName: props.inputName, inputValue: inputValue.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage: props.errorMessage })
   }
 
   const handleBlur = () => {
     if (!changedState.isChanged) {
       changedState.isChanged = true
     }
-    isValid.value = validate(uri.value)
+    isValid.value = validate(inputValue.value)
     validationStatus.value = isValid.value ? null : 'text-error'
     emitChange()
   }
 
-  const validate = linkUri => {
+  const validate = value => {
     const uriRegEx = /^(http|https):\/\/[^ "]+$/ // Extremely simple, should prevent obvious errors
-    const isValid = uriRegEx.test(linkUri)
+    const isValid = uriRegEx.test(value)
     return isValid
   }
 
   watch(() => props.editValue, (newEditValue, prevEditValue) => {
-    uri.value = newEditValue
+    inputValue.value = newEditValue
     changedState.isChanged = false
     isValid.value = false
-    emitChange('uri', uri.value)
+    emitChange('uri', inputValue.value)
   })
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
@@ -81,21 +88,21 @@
 
   watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
     if (newShouldClearInput) {
-      uri.value = ''
+      inputValue.value = ''
       changedState.isChanged = false
       isValid.value = false
-      emits('removeFormValues', { inputName: 'uri' })
+      emits('removeFormValues', { inputName: props.inputName })
     }
   })
   </script>
 
   <template>
     <div class="input-uri">
-      <label for="inputURI" v-bind:class="validationStatus">
+      <label for="inputURI" :class="validationStatus">
         {{ labeltext }}
       </label>
       <input
-        v-model="uri"
+        v-model="inputValue"
         type="url"
         class="u-full-width"
         id="inputURI"
