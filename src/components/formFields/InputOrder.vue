@@ -4,13 +4,17 @@
   const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const props = defineProps({
-    editValue: {
-      type: Number,
-      default: 0
+    errorMessage: {
+      type: String,
+      default: 'Please enter a valid order priority'
     },
     initialValue: {
       type: Number,
-      default: null
+      default: 0
+    },
+    inputName: {
+      type: String,
+      default: 'order'
     },
     isServerError: {
       type: Boolean,
@@ -35,40 +39,39 @@
   })
 
   const changedState = { isChanged: false }
-  const errorMessage = 'Please enter a valid order priority'
   const isValid = ref(false)
-  const order = ref(0)
+  const inputValue = ref(0)
   const validationStatus = ref('')
 
   onMounted(() => {
-    order.value = props.initialValue
+    inputValue.value = props.initialValue
     emitChange()
   })
 
   const emitChange = () => {
-    emits('changeFormValues', { inputName: 'order', inputValue: order.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
+    emits('changeFormValues', { inputName: props.inputName, inputValue: inputValue.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage: props.errorMessage })
   }
 
   const handleBlur = () => {
     if (!changedState.isChanged) {
       changedState.isChanged = true
     }
-    isValid.value = validate(order.value)
+    isValid.value = validate(inputValue.value)
     validationStatus.value = isValid.value ? null : 'text-error'
     emitChange()
   }
 
-  const validate = order => {
-    const isNumber = Number.isFinite(order)
-    const isValid = isNumber && order >= 0
+  const validate = value => {
+    const isNumber = Number.isFinite(value)
+    const isValid = isNumber && value >= 0
     return isValid
   }
 
-  watch(() => props.editValue, (newEditValue, prevEditValue) => {
-    order.value = newEditValue
+  watch(() => props.initialValue, (newInitialValue, prevInitialValue) => {
+    inputValue.value = newInitialValue
     changedState.isChanged = false
     isValid.value = false
-    emitChange('order', order.value)
+    emitChange(props.inputName, inputValue.value)
   })
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
@@ -81,10 +84,10 @@
 
   watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
     if (newShouldClearInput) {
-      order.value = ''
+      inputValue.value = ''
       changedState.isChanged = false
       isValid.value = false
-      emits('removeFormValues', { inputName: 'order' })
+      emits('removeFormValues', { inputName: props.inputName })
     }
   })
   </script>
@@ -95,7 +98,7 @@
         {{ labeltext }}
       </label>
       <input
-        v-model="order"
+        v-model.number="inputValue"
         type="number"
         class="u-full-width"
         id="inputOrder"
