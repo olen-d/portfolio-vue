@@ -225,13 +225,13 @@
         @remove-form-values="removeFormValues($event)"
       />
       <InputURI
-        :editValue="editItemData.uri"
+        :initialValue="editItemData.uri"
         :shouldClearInput="shouldClearInputs"
         @change-form-values="updateFormValues($event)"
         @remove-form-values="removeFormValues($event)"
       />
       <InputOrder
-        :editValue="editItemData.order"
+        :initialValue="editItemData.order"
         :shouldClearInput="shouldClearInputs"
         @change-form-values="updateFormValues($event)"
         @remove-form-values="removeFormValues($event)"
