@@ -4,10 +4,6 @@
   const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const props = defineProps({
-    editValue: {
-      type: String,
-      default: ''
-    },
     errorMessage: {
       type: String,
       default: 'Please enter a valid link URI'
@@ -71,11 +67,11 @@
     return isValid
   }
 
-  watch(() => props.editValue, (newEditValue, prevEditValue) => {
-    inputValue.value = newEditValue
+  watch(() => props.initialValue, (newInitialValue, prevInitialValue) => {
+    inputValue.value = newInitialValue
     changedState.isChanged = false
     isValid.value = false
-    emitChange('uri', inputValue.value)
+    emitChange(props.inputName, inputValue.value)
   })
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
