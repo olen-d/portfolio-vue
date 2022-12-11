@@ -10,7 +10,7 @@
     },
     initialValue: {
       type: String,
-      default: ''
+      default: null
     },
     inputName: {
       type: String,
@@ -84,10 +84,10 @@
 
   watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
     if (newShouldClearInput) {
-      inputValue.value = ''
+      inputValue.value = null
       changedState.isChanged = false
       isValid.value = false
-      emits('removeFormValues', { inputName: props.inputName })
+      emits('removeFormValues', { inputName: props.inputName, inputValue: inputValue.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage: props.errorMessage })
     }
   })
   </script>
