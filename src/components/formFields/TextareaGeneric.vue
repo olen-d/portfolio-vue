@@ -8,7 +8,7 @@
     },
     initialValue: {
       type: String,
-      default: ''
+      default: null
     },
     inputName: {
       type: String,
@@ -66,6 +66,13 @@
     return isValid
   }
 
+  watch(() => props.initialValue, (newInitialValue, prevInitialValue) => {
+    inputValue.value = newInitialValue
+    changedState.isChanged = false
+    isValid.value = false
+    emitChange(props.inputName, inputValue.value)
+  })
+
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
     if (isServerError) {
       validationStatus.value = 'text-error'
@@ -76,10 +83,10 @@
 
   watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
     if (newShouldClearInput) {
-      inputValue.value = ''
+      inputValue.value = null
       changedState.isChanged = false
       isValid.value = false
-      emits('removeFormValues', { inputName: props.inputName })
+      emits('removeFormValues', { inputName: props.inputName, inputValue: inputValue.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage: props.errorMessage })
     }
   })
 </script>
