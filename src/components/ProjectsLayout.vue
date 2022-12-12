@@ -11,7 +11,7 @@
 
   // Computed
   const displayProjects = computed(() => {
-    return projects.value.filter(project => project.show === 1)
+    return projects.value.filter(project => project.show === "Yes")
   })
 
   const sortedProjects = computed(() => {
