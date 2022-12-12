@@ -27,7 +27,7 @@
       type: Number
     },
     show: {
-      type: Number
+      type: String
     }
   })
 
@@ -52,7 +52,7 @@
   })
 
   const formatShow = show => {
-    if (show == 1) {
+    if (show === "Yes") {
       return "Yes"
     } else {
       return "No"
