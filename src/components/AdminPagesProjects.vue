@@ -12,14 +12,22 @@
       @cancel-action="cancelAction"
     >
     </ModalConfirmCancel>
-    <router-link to="/admin/pages/projects/add">Add A Page, Plz.</router-link><br />
-    <router-link to="/admin/pages/projects/edit/xyzzy">Edit a Page, Yo.</router-link><br />
     <h3>
       Projects
     </h3>
-    <button v-on:click="$router.push('projects/add')">
+    <button @click="handleShowFormProject('add')">
       Add Project
     </button>
+    <AdminProjectsForm
+      v-if="showFormProjects"
+      v-bind:formAction="formAction"
+      v-bind:editProjectId="editProjectId"
+      v-bind:updateProjectData="updateProjectData"
+      @project-created="projectCreated"
+      @project-updated="projectUpdated"
+      @cancel-edit-project="cancelEditProject"
+    >
+    </AdminProjectsForm>
     <router-view></router-view>
     <h4>
       Filter
@@ -65,16 +73,6 @@
       >
       </AdminProjectsCard>
     </div>
-    <AdminProjectsForm
-      v-bind:formAction="formAction"
-      v-bind:editProjectId="editProjectId"
-      v-bind:updateProjectData="updateProjectData"
-      @project-created="projectCreated"
-      @project-updated="projectUpdated"
-      @cancel-edit-project="cancelEditProject"
-      @clear-selected-skills="clearSelectedSkills"
-    >
-    </AdminProjectsForm>
   </div>
 </template>
 
@@ -84,7 +82,7 @@ import { mapGetters } from "vuex";
 import AdminProjectsCard from "./AdminProjectsCard.vue";
 import AdminProjectsForm from "./AdminProjectsForm.vue";
 import ModalConfirmCancel from "./ModalConfirmCancel.vue";
-import SelectGeneric from "@/components/formFields/SelectGeneric.vue";
+import SelectGeneric from "@/components/view-modifiers/SelectGeneric.vue";
 
 export default {
   name: "AdminPagesProjects",
@@ -101,9 +99,9 @@ export default {
       projects: [],
       options: [],
       publicPath: import.meta.env.BASE_URL,
-      formAction: "Add",
+      formAction: "add",
       editProjectId: "",
-      updateProjectData: { skills: [0] },
+      updateProjectData: { skills: [] },
       showModalConfirmCancel: false,
       modalConfirmCancelProps: {
         payload: {
@@ -115,7 +113,8 @@ export default {
         confirm: "ok",
         cancel: "cancel"
       },
-      filterSkill: ""
+      filterSkill: "",
+      showFormProjects: false
     };
   },
 
@@ -123,7 +122,7 @@ export default {
     ...mapGetters(["jwt"]),
     displayProjects() {
       const displayProjects = this.projects.filter(
-        project => project.show >= 0
+        project => project.show === "Yes" || project.show === "No"
       );
       return displayProjects;
     },
@@ -152,6 +151,11 @@ export default {
   },
 
   methods: {
+    handleShowFormProject(action) {
+      this.formAction = action
+      this.showFormProjects = true
+    },
+  
     formatUrl: url => {
       const urlPieces = url.split("://");
       return urlPieces[1];
@@ -250,7 +254,7 @@ export default {
 
           this.projects.splice(index, 1, updatedProjectObj);
 
-          this.formAction = "Add";
+          this.formAction = "add";
           this.projectSkillId = "";
         });
     },
@@ -261,6 +265,7 @@ export default {
     },
 
     updateProject(e) {
+      this.showFormProjects = true
       const projectId = e.currentTarget.getAttribute("data-id");
       const projectIndex = this.findProjectIndexById(projectId);
       const project = { ...this.projects[projectIndex] }; // Clone the current project object
@@ -270,12 +275,12 @@ export default {
 
       this.updateProjectData = project;
 
-      this.formAction = "Edit";
+      this.formAction = "edit";
       this.editProjectId = projectId;
     },
 
     cancelEditProject() {
-      this.formAction = "Add";
+      this.formAction = "add";
     },
 
     deleteProject(projectId) {
@@ -352,7 +357,7 @@ export default {
     },
 
     clearSelectedSkills() {
-      this.updateProjectData.skills = [0];
+      this.updateProjectData.skills = [];
     },
 
     optionSelected(event) {

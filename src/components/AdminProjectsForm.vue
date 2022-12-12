@@ -1,79 +1,341 @@
+<script setup>
+  import { computed, ref, watch } from 'vue'
+
+  import { useAuthStore } from '@/store/auth.js'
+
+  import AlertMessage from '@/components/AlertMessage.vue'
+  import InputFileSingle from '@/components/formFields/InputFileSingle.vue'
+  import InputOrder from '@/components/formFields/InputOrder.vue'
+  import InputTitle from '@/components/formFields/InputTitle.vue'
+  import InputURI from '@/components/formFields/InputURI.vue'
+  import SelectBinary from '@/components/formFields/SelectBinary.vue'
+  import SkillsCheckboxes from '@/components/SkillsCheckboxes.vue'
+  import TextareaGeneric from '@/components/formFields/TextareaGeneric.vue'
+
+  const emits  = defineEmits(['cancelEditProject', 'projectCreated', 'projectUpdated'])
+
+  const props = defineProps({
+    formAction: {
+      type: String
+    },
+    editProjectId: {
+      type: String,
+      default: null
+    },
+    method: { 
+      type: Function 
+    },
+    updateProjectData: {
+      type: Object,
+      default: () => {
+        return { skills: [] }
+      }
+    },
+    wasSubmitted: {
+      type: Boolean
+    }
+  })
+
+  const authStore = useAuthStore()
+
+  const accessToken = ref(authStore.currentJWT) // TODO: add authentication
+  const checkedSkills = ref([])
+  const errorDescription = ref('')
+  const errorTitle = ref('')
+  const formValues = ref([])
+  const isError = ref(false)
+  const isSuccess = ref(false)
+  const shouldClearInputs = ref(false)
+  const shouldClearCheckedSkills = ref(false)
+  const successDescription = ref('')
+  const successTitle = ref('')
+  const totalFields = ref(0)
+
+  const calculateChangedQuantity = () => {
+    const changedQuantity = formValues.value.reduce((acc, element) => {
+      return element.isChanged ? acc + 1 : acc
+    }, 0)
+    return changedQuantity
+  }
+
+  const cancelEditProject = () => {
+    clearForm()
+    emits('cancelEditProject')
+  }
+
+  const clearForm = () => {
+    totalFields.value = formValues.value.length
+    shouldClearCheckedSkills.value = true
+    shouldClearInputs.value = true
+  }
+
+  const createProject = async formData => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects/create`, {
+          method: 'post',
+          headers: {
+            'Authorization': `Bearer ${accessToken.value}`,
+          },
+          body: formData
+        })
+        const result = await response.json()
+        const { status } = response
+
+        if (status === 200) {
+          clearForm()
+          successDescription.value = 'The project was added successfully'
+          successTitle.value = 'Great Success'
+          isSuccess.value = true
+          emits('projectCreated', result)
+        }
+        // TODO: Finish the error handling to address all cases
+        if (status === 400 && result.message) {
+          errorDescription.value = 'One or more required fields were not submitted to the server. Please try again in a few minutes.'
+          errorTitle.value = 'Server Error'
+          isError.value = true
+        }
+      } catch (error) {
+        console.log(error)
+      }
+  }
+
+  const getFormErrorsChanged = () => {
+    const formErrorsChanged = formValues.value.filter(element => {
+      return element.isChanged !== false && element.isValid === false
+    })
+    return formErrorsChanged
+  }
+
+  const handleCheckedSkillsWereCleared = () => {
+    checkedSkills.value = []
+    shouldClearCheckedSkills.value = false
+  }
+
+  const handleSubmit = () => {
+    const formErrors = getFormErrorsChanged()
+
+    if (formErrors.length > 0) {
+      updateFormErrors(formErrors)
+      return
+    } else {
+      // Submit
+
+      const formData = new FormData()
+      formData.append('userId', authStore._id)
+
+      const changedFormValues = formValues.value.reduce((acc, element) => {
+        if (element.isChanged) {
+          const { inputName, inputValue } = element
+          acc.push({ inputName, inputValue })
+        }
+        return acc
+      }, [])
+
+      changedFormValues.forEach(element => {
+        const { inputName, inputValue } = element
+        formData.append(inputName, inputValue)
+      })
+      formData.append('skills', JSON.stringify(checkedSkills.value))
+
+      if (props.formAction === 'add') {
+        createProject(formData)
+      } else if (props.formAction === 'edit') {
+        updateProject(formData)
+      } else {
+        errorDescription.value = 'An invalid action was submitted and no data was sent to the server.'
+        errorTitle.value = 'Internal Error'
+        isError.value = true
+      }
+    }
+  }
+
+  const handleUpdateSkills = newSkills => {
+    checkedSkills.value = newSkills
+  }
+
+  const removeFormValues = event => {
+    const { inputName: name } = event
+    const valuesIndex = formValues.value.findIndex(element => element.inputName === name)
+    formValues.value[valuesIndex] = event
+  
+    totalFields.value = totalFields.value - 1
+    if (totalFields.value === 0) { shouldClearInputs.value = false }
+  }
+
+  const updateFormValues = event => {
+    const { inputName: name } = event
+    const valuesIndex = formValues.value.findIndex(element => element.inputName === name)
+    if (valuesIndex === -1) {
+      formValues.value.push(event)
+    } else {
+      formValues.value[valuesIndex] = event
+    }
+    const formErrors = getFormErrorsChanged()
+    updateFormErrors(formErrors)
+  }
+
+  const updateFormErrors = formErrors => {
+    if (formErrors.length > 0) {
+      const errorMessages = formErrors.map(element => {
+        return element.errorMessage
+      })
+      errorDescription.value = errorMessages.join('. ') + '.'
+
+      const numberAgreement = formErrors.length === 1 ? 'An Error' : 'Errors'
+      errorTitle.value = `The Project Form Has ${numberAgreement}`
+
+      isError.value = true
+    } else {
+      isError.value = false
+      errorDescription.value = ''
+      errorTitle.value = ''
+    }
+  }
+
+  const updateProject = async formData => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects/${props.editProjectId}`, {
+        method: 'put',
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`,
+        },
+        body: formData
+      })
+      const result = await response.json()
+      const { status } = response
+
+      if (status === 200) {
+        clearForm()
+        successDescription.value = 'The project was updated successfully'
+        successTitle.value = 'Great Success'
+        isSuccess.value = true
+        emits('projectUpdated', props.editProjectId)
+      }
+      // TODO: Finish the error handling to address all cases
+      if (status === 400 && result.message) {
+        errorDescription.value = 'One or more required fields were not submitted to the server. Please try again in a few minutes.'
+        errorTitle.value = 'Server Error'
+        isError.value = true
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const isDisabledSubmit = computed(() => {
+    const changedQuantity = calculateChangedQuantity()
+    if (isError.value || (props.formAction === "add" && changedQuantity !== formValues.value.length) || props.formAction === 'edit' && changedQuantity < 1) {
+      return true
+    } else {
+      return false
+    }
+  })
+
+  watch(() => props.formAction, (newFormAction, prevFormAction) => {
+    if (newFormAction === 'add') { clearForm() }
+  })
+</script>
+
 <template>
   <div id="admin-projects-form">
-    <form id="projects-form" enctype="multipart/form-data">
-      <label for="name">Title</label>
-      <input
-        v-model="projectData.title"
-        type="text"
-        class="u-full-width"
-        id="title"
-        placeholder="The project title"
-        required
+    <h4 class="admin-projects-form-title">
+      {{ formAction }} a Project
+    </h4>
+    <div class="form-admin-projects-alert-error" v-if="isError">
+      <AlertMessage :title="errorTitle" type="error">
+        {{ errorDescription }}
+      </AlertMessage>
+    </div>
+    <div class="form-admin-projects-alert-succes" v-if="isSuccess">
+      <AlertMessage :title="successTitle" type="success">
+        {{ successDescription }}
+      </AlertMessage>
+    </div>
+    <form id="admin-projects-form" enctype="multipart/form-data">
+      <InputTitle
+        errorMessage="Please enter a valid project title"
+        labeltext="Project Title"
+        placeholder="Enter a project title..."
+        :initialValue="updateProjectData.title || null"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
       />
-      <label for="description">Description</label>
-      <textarea
-        class="u-full-width"
-        id="description"
-        v-model="projectData.description"
+      <TextareaGeneric
+        errorMessage="Please enter a valid project description"
+        inputName="description"
+        labeltext="Project Description"
         placeholder="Briefly explain the project and what problems it solves..."
-      ></textarea>
-      <label for="screenshot">Screenshot</label>
-      <input
-        type="file"
-        @change="onFileChange"
-        id="screenshot"
-        ref="screenshotFileInput"
+        :initialValue="updateProjectData.description || null"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
       />
-      <label for="deployedLink">Deployed Link</label>
-      <input
-        v-model="projectData.deployedLink"
-        type="text"
-        class="u-full-width"
-        id="deployedLink"
-        placeholder="Enter a link to the deployed project"
-        required
+      <InputFileSingle 
+        inputName="file"
+        labeltext="Screenshot"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
       />
-      <label for="repoLink">Repository Link</label>
-      <input
-        v-model="projectData.repoLink"
-        type="text"
-        class="u-full-width"
-        id="repoLink"
-        placeholder="Enter a link to the repository where the project source code is hosted"
-        required
+      <InputURI
+        errorMessage="Please enter a valid URI for the deployed link"
+        inputName="deployedLink"
+        labeltext="Deployed Link"
+        placeholder="Enter a link to the deployed project..."
+        :initialValue="updateProjectData.deployedLink || null"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
+      <InputURI
+        errorMessage="Please enter a valid URI for the repository link"
+        inputName="repoLink"
+        labeltext="Repository Link"
+        placeholder="Enter a link to the repository where the project source code is hosted..."
+        :initialValue="updateProjectData.repoLink || null"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
       />
       <SkillsCheckboxes
-        v-bind:initialCheckedSkills="updateProjectData.skills"
-        v-bind:shouldClearCheckedSkills="shouldClearCheckedSkills"
-        v-on:checked-skills-were-cleared="handleCheckedSkillsWereCleared"
-        v-on:update-skills="handleUpdateSkills"
+        :initialCheckedSkills="updateProjectData.skills"
+        :shouldClearCheckedSkills="shouldClearCheckedSkills"
+        @checked-skills-were-cleared="handleCheckedSkillsWereCleared"
+        @update-skills="handleUpdateSkills"
       >
       </SkillsCheckboxes>
-      <label for="priority">Sort Priority</label>
-      <input
-        v-model="projectData.priority"
-        type="number"
-        class="u-quarter-width"
-        id="priority"
-        placeholder="Number"
+      <InputOrder
+        errorMessage="Please enter a valid sort priority"
+        inputName="priority"
+        labeltext="Sort Priority"
+        placeholder="Enter number..."
+        :initialValue="updateProjectData.priority || null"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
       />
-      <label for="show">Display Project?</label>
-      <select v-model="projectData.show" class="u-quarter-width" id="show">
-        <option disabled value="">Select one...</option>
-        <option value="1">Yes</option>
-        <option value="0">No</option>
-      </select>
+      <SelectBinary
+        errorMessage="Please choose an option under Display Project"
+        inputName="show"
+        labeltext="Display Project?"
+        :initialValue="updateProjectData.show || ''"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
       <div class="right">
         <button
-          v-on:click.prevent="submitProjectForm"
+          @click.prevent="handleSubmit"
           class="button-primary"
+          :disabled="isDisabledSubmit"
           id="project-submit"
         >
           {{ formAction }} Project
         </button>
         <button
-          v-if="formAction === 'Edit'"
-          v-on:click.prevent="cancelEditProject"
+          v-if="formAction === 'edit'"
+          @click.prevent="cancelEditProject"
           class="edit-button-cancel"
         >
           cancel
@@ -83,138 +345,11 @@
   </div>
 </template>
 
-<script>
-import { mapGetters, mapState } from "vuex";
-
-import SkillsCheckboxes from "./SkillsCheckboxes.vue";
-
-export default {
-  components: {
-    SkillsCheckboxes
-  },
-
-  props: {
-    formAction: String,
-    editProjectId: String,
-    method: { type: Function },
-    updateProjectData: {
-      type: Object,
-      default: () => {
-        return { skills: [] };
-      }
-    },
-    wasSubmitted: Boolean
-  },
-
-  data: () => {
-    return {
-      projectData: {
-        title: "",
-        description: "",
-        file: "",
-        deployedLink: "",
-        repoLink: "",
-        priority: "",
-        skills: [],
-        show: ""
-      },
-      shouldClearCheckedSkills: false
-    };
-  },
-
-  computed: {
-    ...mapGetters(["jwt"]),
-
-    ...mapState(["statusCategory", "statusMessage"]),
-
-    fl() {
-      return typeof this.projectData.file;
-    }
-  },
-
-  watch: {
-    editProjectId(newValue) {
-      if (this.formAction === "Edit") {
-        this.projectData = JSON.parse(JSON.stringify(this.updateProjectData));
-      }
-    },
-    wasSubmitted() {
-      this.clearProjectForm();
-    }
-  },
-
-  methods: {
-    handleCheckedSkillsWereCleared() {
-      this.shouldClearCheckedSkills = false;
-    },
-
-    submitProjectForm() {
-      const userId = this.$store.getters.userId;
-      const {
-        title,
-        description,
-        deployedLink,
-        repoLink,
-        priority,
-        file,
-        skills,
-        show
-      } = this.projectData;
-      const priorityInt = parseInt(priority);
-      const showInt = parseInt(show);
-
-      const formInputs = {
-        userId,
-        title,
-        description,
-        deployedLink,
-        repoLink,
-        priority: priorityInt,
-        file,
-        skills: JSON.stringify(skills),
-        show: showInt
-      };
-      this.$emit("send-form-data", formInputs);
-      // if (this.formAction === "Add") {
-      //   this.createProject(formInputs);
-      // } else if (this.formAction === "Edit") {
-      //   this.updateProject(formInputs);
-      // }
-    },
-
-    onFileChange(e) {
-      this.projectData.file = e.target.files[0];
-    },
-
-    cancelEditProject() {
-      this.clearProjectForm();
-      this.$emit("cancel-edit-project");
-    },
-
-    clearProjectForm() {
-      const keys = Object.keys(this.projectData);
-
-      keys.forEach(e => {
-        this.projectData[e] = "";
-      });
-
-      this.$refs.screenshotFileInput.type = "text";
-      this.$refs.screenshotFileInput.type = "file";
-
-      // this.$emit("clear-selected-skills");
-      this.shouldClearCheckedSkills = true;
-      this.$emit("reset-was-submitted");
-    },
-
-    handleUpdateSkills(newSkills) {
-      this.projectData.skills = newSkills;
-    }
-  }
-};
-</script>
-
 <style scoped>
-.edit-button-cancel {
-  margin-left: 1rem;
-}
+  .admin-projects-form-title {
+    text-transform: capitalize;
+  }
+  .edit-button-cancel {
+      margin-left: 1rem;
+    }
 </style>
