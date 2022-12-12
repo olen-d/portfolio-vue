@@ -38,9 +38,8 @@ exports.create_project = (req, res) => {
           screenshot,
           skills: JSON.parse(skills),
           priority: parseInt(priority),
-          show: parseInt(show)
+          show
         };
-
         createProject
           .data(projectInfo)
           .then(response => {
@@ -61,7 +60,7 @@ exports.create_project = (req, res) => {
       }
     })
     .catch(err => {
-      res.status(403).json({
+      res.status(500).json({
         message: "Could not create project",
         error: err
       });
@@ -103,41 +102,13 @@ exports.update_project = (req, res) => {
     .checkAuth(req.headers)
     .then(response => {
       if (response.auth && response.administrator) {
-        const project_id = req.params.project_id;
-        const {
-          userId,
-          title,
-          description,
-          deployedLink,
-          repoLink,
-          skills,
-          priority,
-          show
-        } = req.body;
+        const { body: projectInfo, params: { project_id: projectId }, } = req
 
-        let screenshot = "";
-
-        if (typeof req.file === "object") {
-          screenshot = req.file.filename;
-        } else {
-          screenshot = req.body.screenshot;
-        }
-
-        const projectInfo = {
-          project_id,
-          userId,
-          title,
-          description,
-          deployedLink,
-          repoLink,
-          screenshot,
-          skills: JSON.parse(skills),
-          priority: parseInt(priority),
-          show: parseInt(show)
-        };
+        if ('priority' in projectInfo) { projectInfo.priority = parseInt(projectInfo.priority) }
+        if ('skills' in projectInfo) { projectInfo.skills = JSON.parse(projectInfo.skills) }
 
         updateProject
-          .data(projectInfo)
+          .data(projectId, projectInfo)
           .then(response => {
             res.json(response);
           })

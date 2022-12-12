@@ -15,7 +15,7 @@ router.get("/projects", projects_controller.read_projects);
 router.get("/projects/id/:project_id", projects_controller.read_project_by_id);
 
 router.put(
-  "/projects/update/:project_id",
+  "/projects/:project_id",
   imageUpload,
   projects_controller.update_project
 );
