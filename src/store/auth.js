@@ -29,6 +29,9 @@ export const useAuthStore = defineStore('auth', {
     firstName (state) {
       return this.jwtData ? this.jwtData.firstName : null
     },
+    _id (state) {
+      return this.jwtData ? this.jwtData._id : null
+    },
     username (state) {
       return this.jwtData ? this.jwtData.username : null
     }
