@@ -1,19 +1,83 @@
+<script setup>
+  import { onMounted, ref, watch } from 'vue'
+
+  const emits = defineEmits(['checkedSkillsWereCleared', 'updateSkills'])
+  const props = defineProps({
+    initialCheckedSkills: {
+      type: Array,
+      default: []
+    },
+    shouldClearCheckedSkills: {
+      type: Boolean,
+      default: false
+    }
+  })
+
+  const checkedSkills = ref([])
+  const error = ref('')
+  const loading = ref(false)
+  const skills = ref([])
+
+  const onChange = () => {
+    emits('updateSkills', checkedSkills.value)
+  }
+
+  const readSkills = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/sort/type+name`)
+
+      if (response.ok) {
+        const data = await response.json()
+        loading.value = false
+        skills.value = data.skills
+      } else {
+        throw new Error('Network response was not ok. Unable to fetch. ')
+        }
+    } catch(err) {
+      error.value = err.toString()
+      loading.value = false
+    }
+  }
+
+  watch(() => props.initialCheckedSkills, (newInitialCheckedSkills, prevInitialCheckedSkills) => {
+    Array.isArray(newInitialCheckedSkills)
+      ? (checkedSkills.value = props.initialCheckedSkills)
+      : (checkedSkills.value = []) // Handle no skills returned from the API call
+      emits('updateSkills', checkedSkills.value)
+  })
+
+  watch(() => props.shouldClearCheckedSkills, (newShouldClearCheckedSkills, prevShouldClearCheckedSkills) => {
+    if (newShouldClearCheckedSkills) {
+      checkedSkills.value = []
+      emits('checkedSkillsWereCleared')
+    }
+  })
+
+  onMounted(() => {
+    readSkills()
+        Array.isArray(props.initialCheckedSkills)
+      ? (checkedSkills.value = props.initialCheckedSkills)
+      : (checkedSkills.value = [])
+      emits('updateSkills', checkedSkills.value)
+  })
+</script>
+
 <template>
-  <div class="fragment">
+  <div class="skills-checkboxes">
     <div class="skills-heading">
       Skills
     </div>
     <div class="skills">
       <div
         class="skill u-third-width"
-        v-for="{ _id, type, name } in skills"
+        v-for="{ _id, name } in skills"
         :key="_id"
       >
         <input
           type="checkbox"
+          v-model="checkedSkills"
           :id="name"
           :value="_id"
-          v-model="checkedSkills"
           @change="onChange"
         />
         <label class="skill-label" :for="name">{{ name }}</label>
@@ -22,59 +86,8 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    initialCheckedSkills: Array,
-    shouldClearCheckedSkills: Boolean
-  },
-
-  data() {
-    return {
-      checkedSkills: this.initialCheckedSkills,
-      skills: []
-    };
-  },
-
-  watch: {
-    initialCheckedSkills() {
-      Array.isArray(this.initialCheckedSkills)
-        ? (this.checkedSkills = this.initialCheckedSkills)
-        : (this.checkedSkills = []); // Handle no skills returned from the API call
-    },
-
-    shouldClearCheckedSkills() {
-      if (this.shouldClearCheckedSkills) {
-        this.checkedSkills = [];
-        this.$emit("checked-skills-were-cleared");
-      }
-    }
-  },
-
-  methods: {
-    readSkills() {
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/sort/type+name`)
-        .then(response => {
-          return response.json();
-        })
-        .then(json => {
-          this.skills = json.skills;
-        });
-    },
-
-    onChange() {
-      this.$emit("update-skills", this.checkedSkills);
-    }
-  },
-
-  created() {
-    this.readSkills();
-  }
-};
-</script>
-
 <style scoped>
-.fragment {
+.skills-checkboxes {
   margin-bottom: 1.5rem;
 }
 
