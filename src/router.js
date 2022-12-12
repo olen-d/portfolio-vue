@@ -10,7 +10,6 @@ const AdminDashboard = () => import("@/components/AdminDashboard.vue");
 const AdminPages = () => import("@/views/AdminPages.vue");
 const AdminPagesProjects = () => import("./components/AdminPagesProjects.vue");
 const AdminPagesProjectsRoot = () => import("./views/AdminPagesProjectsRoot.vue");
-const AdminPagesProjectsAdd = () => import("./components/AdminPagesProjectsAdd.vue");
 const AdminPagesProjectsEdit = () => import("./components/AdminPagesProjectsEdit.vue");
 const AdminPagesSkills = () => import("./components/AdminPagesSkills.vue");
 const AdminPagesWelcome = () => import("./components/AdminPagesWelcome.vue");
@@ -71,11 +70,6 @@ const router = createRouter({
                   path: "",
                   name: "adminPagesProjects",
                   component: AdminPagesProjects
-                },
-                {
-                  path: "add",
-                  name: "adminPagesProjectsAdd",
-                  component: AdminPagesProjectsAdd
                 },
                 {
                   path: "edit",
