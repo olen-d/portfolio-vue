@@ -1,3 +1,271 @@
+<script setup>
+  import { computed, onMounted, ref } from 'vue'
+
+  import { useAuthStore } from '@/store/auth.js'
+
+  import AdminProjectsCard from '@/components/AdminProjectsCard.vue'
+  import AdminProjectsForm from '@/components/AdminProjectsForm.vue'
+  import AlertMessage from '@/components/AlertMessage.vue'
+  import ModalConfirmCancel from '@/components/ModalConfirmCancel.vue'
+  import SelectGeneric from '@/components/view-modifiers/SelectGeneric.vue'
+
+  const authStore = useAuthStore()
+
+  const accessToken = ref(authStore.currentJWT)
+  const editProjectId = ref('')
+  const errorDescription = ref('')
+  const errorTitle = ref('')
+  const filterSkill = ref('')
+  const formAction = ref('add')
+  const isError = ref(false)
+  const isSuccess = ref(false)
+  const modalConfirmCancelProps = ref({
+    payload: {
+      action: '',
+      data: ''
+    },
+    title: '',
+    message: '',
+    confirm: 'ok',
+    cancel: 'cancel'
+  })
+  const options = ref([])
+  const projects = ref([])
+  const publicPath = ref(import.meta.env.BASE_URL)
+  const showFormProjects = ref(false)
+  const showModalConfirmCancel = ref(false)
+  const successDescription = ref('')
+  const successTitle = ref('')
+  const updateProjectData = ref({ skills: [] })
+
+  // Computed
+  const displayProjects = computed(() => {
+    const displayProjects = projects.value.filter(
+      project => project.show === 'Yes' || project.show === 'No'
+    )
+    return displayProjects
+  })
+
+  const filteredBySkillProjects = computed(() => {
+    const filteredBySkillProjects = displayProjects.value.filter(project => {
+        return project.skills.indexOf(filterSkill.value) !== -1
+      })
+    return filteredBySkillProjects.length > 0 ? filteredBySkillProjects : displayProjects.value
+  })
+
+  const sortedProjects = computed(() => {
+    const sortedProjects = [...filteredBySkillProjects.value].sort((a, b) => {
+      return a.priority - b.priority
+    })
+    return sortedProjects
+  })
+
+  // Functions
+  const cancelAction = () => {
+    showModalConfirmCancel.value = false
+  }
+
+  const cancelEditProject = () => {
+    formAction.value = 'add'
+  }
+
+  const confirmAction = event => {
+    const { action, data } = event
+    switch (action) {
+      case 'delete':
+        deleteProject(data)
+        break
+    }
+    showModalConfirmCancel.value = false
+  }
+
+  const confirmDeleteProject = event => {
+    const projectId = event.currentTarget.getAttribute('data-id')
+    const projectName = event.currentTarget.getAttribute('data-title')
+
+    // TODO: Fix this mess, just call the modal with props
+    modalConfirmCancelProps.value.payload.action = 'delete'
+    modalConfirmCancelProps.value.payload.data = projectId
+    modalConfirmCancelProps.value.title = 'Delete Project'
+    modalConfirmCancelProps.value.message = `Do you really want to delete the project: ${projectName}?`
+    modalConfirmCancelProps.value.confirm = 'delete'
+
+    showModalConfirmCancel.value = true
+  }
+
+  const createProjectsAddCard = event => {
+    projects.value.push(event)
+  }
+
+  const deleteProject = async projectId => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects/delete`, {
+        method: 'delete',
+        headers: {
+          Authorization: `Bearer ${accessToken.value}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ projectId })
+      })
+      const { status } = response
+
+      if (status === 204) {
+        const data = await response.json()
+        const { ok, deletedCount } = data
+
+        if (ok === 1 && deletedCount === 1) {
+          successDescription.value = 'The project was deleted successfully'
+          successTitle.value = 'Great Success'
+          isSuccess.value = true
+
+          deleteProjectsRemoveCard(projectId)
+        } else {
+          errorDescription.value = 'The project was not deleted. Please try again in a few minutes.'
+          errorTitle.value = 'Server Error'
+          isError.value = true
+        }
+      }
+      // TODO: Check for and handle errors
+    } catch (error) {
+      // TODO: Finish this error
+      console.log('ERROR:\nAdmin Pages Projects Delete Project\n' + error)
+    }
+  }
+
+  const deleteProjectsRemoveCard = projectId => {
+    const index = findProjectIndexById(projectId)
+    if (index > -1) {
+      projects.value.splice(index, 1)
+    }
+  }
+
+  const editProject = event => {
+    showFormProjects.value = true
+
+    const projectId = event.currentTarget.getAttribute('data-id')
+    const projectIndex = findProjectIndexById(projectId)
+    const project = { ...projects.value[projectIndex] } // Clone the current project object
+
+    project.file = ''
+    delete project._id
+
+    updateProjectData.value = project
+
+    formAction.value = 'edit'
+    editProjectId.value = projectId
+  }
+
+  const findProjectIndexById = projectId => {
+    return projects.value.map(item => item._id).indexOf(projectId)
+  }
+
+  const formatUrl = url => {
+    const urlPieces = url.split('://')
+    return urlPieces[1]
+  }
+
+  const handleShowFormProject = action => {
+    formAction.value = action
+    showFormProjects.value = true
+  }
+
+  const optionSelected = event => {
+    const { selectedOption } = event
+    filterSkill.value = selectedOption.value
+  }
+
+  const projectCreated = event => {
+    if (event._id) {
+      createProjectsAddCard(event)
+    } else {
+      // TODO: Update status bar with fail result
+    }
+  }
+
+  const projectUpdated = projectId => {
+    updateProjectCard(projectId)
+    // TODO: Consider scrolling to the project and highlighting the background for 2 seconds
+  }
+
+  const readProjectById = async projectId => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects/id/${projectId}`)
+      const { status } = response
+
+      if (status === 200) {
+        const data = await response.json()
+        return data
+      }
+      // TODO: Finish the error handling to address all cases
+      if (status === 404) {
+        errorDescription.value = `A project with the id: ${projectId} was not found`
+        errorTitle.value = 'Project Not Found'
+        isError.value = true
+        return null
+      }
+    } catch (error) {
+      // TODO: Finish this error
+      console.log('ERROR:\nAdmin Pages Projects Read Projects\n' + error)
+    }
+  }
+
+  const readProjects = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects`)
+      const { status } = response
+      if (status === 200) {
+        const data = await response.json()
+        projects.value = data.projects
+      }
+      // TODO: Finish the error handling to address all cases
+      if (status === 404) {
+        errorDescription.value = 'No projects were found. Please add a project and try again.'
+        errorTitle.value = 'No Projects Found'
+        isError.value = true
+      }
+    } catch (error) {
+      // TODO: Finish this error
+      console.log('ERROR:\nAdmin Pages Projects Read Projects\n' + error)
+    }
+  }
+
+  const readSkills = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/sort/type+name`)
+      const { status } = response
+
+      if (status === 200) {
+        const data = await response.json()
+        options.value = data.skills.map(({ _id, name: option }) => { return { _id, option } })
+      }
+      // TODO: Finish the error handling to address all cases
+      if (status === 404 && result.message) {
+        errorDescription.value = 'No projects were found. Please add a project and try again.'
+        errorTitle.value = 'No Projects Fuond'
+        isError.value = true
+      }
+    } catch (error) {
+      // TODO: Finish this error
+      console.log('ERROR:\nAdmin Pages Projects Read Skills\n' + error)
+    }
+  }
+
+  const updateProjectCard = async projectId => {
+    const { project: data } = await readProjectById(projectId)
+    const index = findProjectIndexById(projectId)
+
+    projects.value.splice(index, 1, data)
+
+    // TODO: Consider handling the following elsewhere
+    formAction.value = 'add'
+  }
+
+  onMounted(() => {
+    readProjects()
+    readSkills()
+  })
+</script>
+
 <template>
   <div id="admin-pages-projects">
     <ModalConfirmCancel
@@ -18,6 +286,16 @@
     <button @click="handleShowFormProject('add')">
       Add Project
     </button>
+    <div class="form-admin-pages-projects-alert-error" v-if="isError">
+      <AlertMessage :title="errorTitle" type="error">
+        {{ errorDescription }}
+      </AlertMessage>
+    </div>
+    <div class="form-admin-pages-projects-alert-succes" v-if="isSuccess">
+      <AlertMessage :title="successTitle" type="success">
+        {{ successDescription }}
+      </AlertMessage>
+    </div>
     <AdminProjectsForm
       v-if="showFormProjects"
       v-bind:formAction="formAction"
@@ -50,7 +328,7 @@
       class="card-container"
     >
       <div class="card-actions">
-        <i @click="updateProject" class="fas fa-edit edit" :data-id="_id"></i>
+        <i @click="editProject" class="fas fa-edit edit" :data-id="_id"></i>
         <i
           @click="confirmDeleteProject"
           class="fas fa-times delete"
@@ -76,317 +354,20 @@
   </div>
 </template>
 
-<script>
-import { mapGetters } from "vuex";
-
-import AdminProjectsCard from "./AdminProjectsCard.vue";
-import AdminProjectsForm from "./AdminProjectsForm.vue";
-import ModalConfirmCancel from "./ModalConfirmCancel.vue";
-import SelectGeneric from "@/components/view-modifiers/SelectGeneric.vue";
-
-export default {
-  name: "AdminPagesProjects",
-
-  components: {
-    AdminProjectsCard,
-    AdminProjectsForm,
-    ModalConfirmCancel,
-    SelectGeneric
-  },
-
-  data: () => {
-    return {
-      projects: [],
-      options: [],
-      publicPath: import.meta.env.BASE_URL,
-      formAction: "add",
-      editProjectId: "",
-      updateProjectData: { skills: [] },
-      showModalConfirmCancel: false,
-      modalConfirmCancelProps: {
-        payload: {
-          action: "",
-          data: ""
-        },
-        title: "",
-        message: "",
-        confirm: "ok",
-        cancel: "cancel"
-      },
-      filterSkill: "",
-      showFormProjects: false
-    };
-  },
-
-  computed: {
-    ...mapGetters(["jwt"]),
-    displayProjects() {
-      const displayProjects = this.projects.filter(
-        project => project.show === "Yes" || project.show === "No"
-      );
-      return displayProjects;
-    },
-
-    // TODO: Add ability to choose multiple skills
-    filteredBySkillProjects() {
-      let filteredBySkillProjects;
-      const filterSkill = this.filterSkill;
-
-      if (this.filterSkill != "") {
-        filteredBySkillProjects = this.displayProjects.filter(project => {
-          return project.skills.indexOf(filterSkill) !== -1;
-        });
-      } else {
-        filteredBySkillProjects = [...this.displayProjects];
-      }
-      return filteredBySkillProjects;
-    },
-
-    sortedProjects() {
-      const sortedProjects = [...this.filteredBySkillProjects].sort((a, b) => {
-        return a.priority - b.priority;
-      });
-      return sortedProjects;
-    }
-  },
-
-  methods: {
-    handleShowFormProject(action) {
-      this.formAction = action
-      this.showFormProjects = true
-    },
-  
-    formatUrl: url => {
-      const urlPieces = url.split("://");
-      return urlPieces[1];
-    },
-
-    formatShow: show => {
-      if (show == 1) {
-        return "Yes";
-      } else {
-        return "No";
-      }
-    },
-
-    readProjects() {
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects`)
-        .then(response => {
-          return response.json();
-        })
-        .then(json => {
-          this.projects = json.projects;
-        });
-    },
-
-    readSkills() {
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/sort/type+name`)
-        .then(response => {
-          return response.json();
-        })
-        .then(json => {
-          // this.skills = json.skills;
-          this.options = json.skills.map(({ _id, name: option }) => { return { _id, option } })
-        });
-    },
-
-    findProjectIndexById(projectId) {
-      const index = this.projects.map(item => item._id).indexOf(projectId);
-      return index;
-    },
-
-    createProjectsAddCard(e) {
-      this.projects.push(e);
-    },
-
-    deleteProjectsRemoveCard(projectId) {
-      const index = this.findProjectIndexById(projectId);
-      if (index > -1) {
-        this.projects.splice(index, 1);
-      }
-    },
-
-    projectCreated(e) {
-      if (e._id) {
-        this.createProjectsAddCard(e);
-        // TODO: Update status bar with success result
-      } else {
-        // TODO: Update status bar with fail result
-      }
-    },
-
-    updateProjectCard(projectId) {
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects/id/${projectId}`)
-        .then(response => {
-          return response.json();
-        })
-        .then(json => {
-          const updatedProjectData = json.project;
-          const index = this.findProjectIndexById(projectId);
-
-          const {
-            _id,
-            userId,
-            title,
-            description,
-            deployedLink,
-            repoLink,
-            screenshot,
-            skills,
-            priority,
-            show,
-            updatedAt
-          } = updatedProjectData;
-
-          const updatedProjectObj = {
-            _id,
-            userId,
-            title,
-            description,
-            deployedLink,
-            repoLink,
-            screenshot,
-            skills,
-            priority,
-            show,
-            updatedAt
-          };
-
-          this.projects.splice(index, 1, updatedProjectObj);
-
-          this.formAction = "add";
-          this.projectSkillId = "";
-        });
-    },
-
-    projectUpdated(projectId) {
-      this.updateProjectCard(projectId);
-      // Update status bar with result
-    },
-
-    updateProject(e) {
-      this.showFormProjects = true
-      const projectId = e.currentTarget.getAttribute("data-id");
-      const projectIndex = this.findProjectIndexById(projectId);
-      const project = { ...this.projects[projectIndex] }; // Clone the current project object
-      project.file = "";
-
-      delete project._id;
-
-      this.updateProjectData = project;
-
-      this.formAction = "edit";
-      this.editProjectId = projectId;
-    },
-
-    cancelEditProject() {
-      this.formAction = "add";
-    },
-
-    deleteProject(projectId) {
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/projects/delete`, {
-        method: "delete",
-        headers: {
-          Authorization: `Bearer ${this.jwt}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ projectId: projectId })
-      })
-        .then(response => {
-          return response.json();
-        })
-        .then(dataObj => {
-          const { ok, deletedCount } = dataObj;
-          if (ok === 1 && deletedCount === 1) {
-            this.$store.commit("setStatusCategory", "success");
-            this.$store.commit(
-              "setStatusMessage",
-              "Project deleted successfully."
-            );
-            this.deleteProjectsRemoveCard(projectId);
-          } else {
-            this.$store.commit("setStatusCategory", "error");
-            this.$store.commit(
-              "setStatusMessage",
-              "Project was not deleted. Database error. "
-            );
-          }
-        })
-        .catch(error => {
-          this.$store.commit("setStatusCategory", "error");
-          this.$store.commit(
-            "setStatusMessage",
-            "Project was not deleted. " + error
-          );
-          return {
-            errorCode: 500,
-            errorMsg: "Internal Server Error",
-            errorDetail: error
-          };
-        });
-    },
-
-    confirmDeleteProject(e) {
-      const projectId = e.currentTarget.getAttribute("data-id");
-      const projectName = e.currentTarget.getAttribute("data-title");
-
-      this.modalConfirmCancelProps.payload.action = "delete";
-      this.modalConfirmCancelProps.payload.data = projectId;
-      this.modalConfirmCancelProps.title = "Delete Project";
-      this.modalConfirmCancelProps.message = `Do you really want to delete the project: ${projectName}?`;
-      this.modalConfirmCancelProps.confirm = "delete";
-
-      this.setShowModalConfirmCancel(true);
-    },
-
-    setShowModalConfirmCancel(value) {
-      this.showModalConfirmCancel = value;
-    },
-
-    cancelAction() {
-      this.setShowModalConfirmCancel(false);
-    },
-
-    confirmAction(v) {
-      switch (v.action) {
-        case "delete":
-          this.deleteProject(v.data);
-          break;
-      }
-      this.setShowModalConfirmCancel(false);
-    },
-
-    clearSelectedSkills() {
-      this.updateProjectData.skills = [];
-    },
-
-    optionSelected(event) {
-      const { selectedOption } = event
-      this.filterSkill = selectedOption;
-    }
-  },
-
-  created() {
-    this.readProjects();
-    this.readSkills();
-  }
-};
-</script>
-
 <style scoped>
-.card-actions {
-  margin-top: 3rem;
-  margin-bottom: 3rem;
-}
+  .card-actions {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
 
-.card-container {
-  margin-top: 6rem;
-  padding: 0rem;
-  /* background-color:#aaa; */
-}
+  .card-container {
+    margin-top: 6rem;
+    padding: 0rem;
+    /* background-color:#aaa; */
+  }
 
-.url {
-  word-break: break-word;
-  /* overflow: hidden; */
-}
+  .url {
+    word-break: break-word;
+    /* overflow: hidden; */
+  }
 </style>
