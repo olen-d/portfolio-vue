@@ -4,13 +4,17 @@
   const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const props = defineProps({
-    editValue: {
+    errorMessage: {
       type: String,
-      default: ''
+      default: 'Please enter a valid icon name'
     },
     initialValue: {
       type: String,
-      default: ''
+      default: null
+    },
+    inputName: {
+      type: String,
+      default: 'icon'
     },
     isServerError: {
       type: Boolean,
@@ -35,25 +39,24 @@
   })
 
   const changedState = { isChanged: false }
-  const errorMessage = 'Please enter a valid icon name'
   const isValid = ref(false)
-  const icon = ref('')
+  const inputValue = ref('')
   const validationStatus = ref('')
 
   onMounted(() => {
-    icon.value = props.initialValue
+    inputValue.value = props.initialValue
     emitChange()
   })
 
   const emitChange = () => {
-    emits('changeFormValues', { inputName: 'icon', inputValue: icon.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
+    emits('changeFormValues', { inputName: props.inputName, inputValue: inputValue.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage: props.errorMessage })
   }
 
   const handleBlur = () => {
     if (!changedState.isChanged) {
       changedState.isChanged = true
     }
-    isValid.value = validate(icon.value)
+    isValid.value = validate(inputValue.value)
     validationStatus.value = isValid.value ? null : 'text-error'
     emitChange()
   }
@@ -63,6 +66,13 @@
     return isValid
   }
 
+  watch(() => props.initialValue, (newInitialValue, prevInitialValue) => {
+    inputValue.value = newInitialValue
+    changedState.isChanged = false
+    isValid.value = false
+    emitChange(props.inputName, inputValue.value)
+  })
+
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
     if (isServerError) {
       validationStatus.value = 'text-error'
@@ -71,30 +81,23 @@
     }
   })
 
-  watch(() => props.editValue, (newEditValue, prevEditValue) => {
-    icon.value = newEditValue
-    changedState.isChanged = false
-    isValid.value = false
-    emitChange('icon', icon.value)
-  })
-
   watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
     if (newShouldClearInput) {
-      icon.value = ''
+      inputValue.value = null
       changedState.isChanged = false
       isValid.value = false
-      emits('removeFormValues', { inputName: 'icon' })
+      emits('removeFormValues', { inputName: props.inputName, inputValue: inputValue.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage: props.errorMessage })
     }
   })
   </script>
 
   <template>
     <div class="input-icon">
-      <label for="inputIcon" v-bind:class="validationStatus">
+      <label for="inputIcon" :class="validationStatus">
         {{ labeltext }}
       </label>
       <input
-        v-model="icon"
+        v-model="inputValue"
         type="text"
         class="u-full-width"
         id="inputIcon"
