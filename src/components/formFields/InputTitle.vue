@@ -62,7 +62,7 @@
   }
 
   const validate = value => {
-    const alphaNumeric = /^[a-zA-Z\-]+( ?[a-zA-Z\-])+$/
+    const alphaNumeric = /^[a-zA-Z\-.]+( ?[a-zA-Z\-.])+$/
     const isValid = alphaNumeric.test(value)
     return isValid
   }
