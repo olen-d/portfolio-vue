@@ -255,6 +255,7 @@
     const index = findProjectIndexById(projectId)
 
     projects.value.splice(index, 1, data)
+    updateProjectData.value = { skills: [] }
 
     // TODO: Consider handling the following elsewhere
     formAction.value = 'add'
