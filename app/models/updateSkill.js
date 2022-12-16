@@ -1,38 +1,25 @@
 const db = require("../config/connection");
 const ObjectID = require("mongodb").ObjectID;
 
-const data = skillInfo => {
+const data = (skillId, skillInfo) => {
   return new Promise((resolve, reject) => {
     try {
-      const {
-        skill_id,
-        userId,
-        type,
-        name,
-        description,
-        show,
-        icon,
-        priority
-      } = skillInfo;
-      const id = ObjectID(skill_id);
+      const skillInfoProcessed = { $set: {} }
+      const skillInfoObjId = ObjectID(skillId)
+
+      for (const key of Object.keys(skillInfo)) {
+        skillInfoProcessed.$set[key] = skillInfo[key]
+      }
+
       const now = Date.now();
+      skillInfoProcessed.$set.updatedAt = now
+
+      const filter = { _id: skillInfoObjId }
+      const updateDoc = skillInfoProcessed
 
       db.skills.update(
-        {
-          _id: id
-        },
-        {
-          $set: {
-            userId: userId,
-            type: type,
-            name: name,
-            description: description,
-            show: show,
-            icon: icon,
-            priority: priority,
-            updatedAt: now
-          }
-        },
+        filter,
+        updateDoc,
         (error, response) => {
           if (error) {
             resolve(error);

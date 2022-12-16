@@ -34,7 +34,7 @@ exports.create_skill = (req, res) => {
           type,
           name,
           description,
-          show: parseInt(show),
+          show,
           icon,
           priority: parseInt(priority)
         };
@@ -153,34 +153,17 @@ exports.update_skill = (req, res) => {
     .checkAuth(req.headers)
     .then(response => {
       if (response.auth && response.administrator) {
-        const skill_id = req.params.skill_id;
-        const {
-          userId,
-          type,
-          name,
-          description,
-          show,
-          icon,
-          priority
-        } = req.body;
+        const { body: skillInfo, params: { skill_id: skillId }, } = req
 
-        const skillInfo = {
-          skill_id,
-          userId,
-          type,
-          name,
-          description,
-          show: parseInt(show),
-          icon,
-          priority: parseInt(priority)
-        };
+        if ('priority' in skillInfo) { skillInfo.priority = parseInt(skillInfo.priority) }
 
         updateSkill
-          .data(skillInfo)
+          .data(skillId, skillInfo)
           .then(resolve => {
             return res.json(resolve);
           })
           .catch(err => {
+            console.log(`\n\nDB ERROR:\n${err}\n\n\n`)
             res.status(500).json({
               message: "Internal server error",
               error: err
@@ -195,7 +178,8 @@ exports.update_skill = (req, res) => {
       }
     })
     .catch(err => {
-      res.status(403).json({
+      console.log(`\n\nERROR:\n${err}\n\n\n`)
+      res.status(500).json({
         message: "Could not update skill",
         error: err
       });
