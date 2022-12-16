@@ -15,7 +15,9 @@
     <h3>
       Skills
     </h3>
-
+    <button @click="handleShowFormSkills('add')">
+      Add Skill
+    </button>
     <table>
       <thead>
         <tr>
@@ -36,7 +38,7 @@
           <td>{{ type }}</td>
           <td>{{ description }}</td>
           <td>{{ priority }}</td>
-          <td>{{ formatShow(show) }}</td>
+          <td>{{ show }}</td>
           <td><i @click="updateSkill" class="fas fa-edit edit" :data-id="_id"></i></td>
           <td><i @click="confirmDeleteSkill" class="fas fa-times delete" :data-id="_id" :data-name="name"></i></td>
         </tr>
@@ -71,16 +73,9 @@ export default {
   data: () => {
     return {
       skills: [],
-      formAction: "Add",
+      formAction: "add",
       editSkillId: "",
-      updateSkillData: {
-        type: "",
-        name: "",
-        description: "",
-        icon: "",
-        priority: null,
-        show: ""
-      },
+      updateSkillData: {},
       showModalConfirmCancel: false,
       modalConfirmCancelProps: {
         payload: {
@@ -100,12 +95,8 @@ export default {
   },
 
   methods: {
-    formatShow: show => {
-      if (show == 1) {
-        return "Yes";
-      } else {
-        return "No";
-      }
+    handleShowFormSkills(action) {
+      this.formAction = action
     },
 
     findSkillIndexById(skillId) {
@@ -135,21 +126,11 @@ export default {
           const updatedSkillData = json.skill;
           const index = this.findSkillIndexById(skillId);
 
-          const { type, name, description, show, icon, priority } = updatedSkillData;
+          this.skills.splice(index, 1, updatedSkillData);
 
-          const updatedSkillsObj = {
-            type,
-            name,
-            description,
-            show,
-            icon,
-            priority
-          }
-
-          this.skills.splice(index, 1, updatedSkillsObj);
-
-          this.formAction = "Add";
+          this.formAction = "add";
           this.editSkillId = "";
+          this.updateSkillData = {}
         });
     },
 
@@ -197,7 +178,7 @@ export default {
       delete skill.userId;
 
       this.updateSkillData = skill;
-      this.formAction = "Edit";
+      this.formAction = "edit";
       this.editSkillId = skillId;
     },
 
@@ -236,7 +217,7 @@ export default {
     },
 
     cancelEditSkill() {
-      this.formAction = "Add";
+      this.formAction = "add";
     },
 
     setShowModalConfirmCancel(value) {
