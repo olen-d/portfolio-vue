@@ -1,178 +1,308 @@
+<script setup>
+  import { ref, watch } from 'vue'
+
+  import { useAuthStore } from '@/store/auth.js'
+
+  import AlertMessage from '@/components/AlertMessage.vue'
+  import InputIcon from '@/components/formFields/InputIcon.vue'
+  import InputOrder from '@/components/formFields/InputOrder.vue'
+  import InputTitle from '@/components/formFields/InputTitle.vue'
+  import InputSkillType from '@/components/formFields/InputSkillType.vue'
+  import SelectBinary from '@/components/formFields/SelectBinary.vue'
+  import TextareaGeneric from '@/components/formFields/TextareaGeneric.vue'
+
+  const emits  = defineEmits(['cancelEditSkill', 'skillCreated', 'skillUpdated'])
+
+  const props = defineProps({
+    formAction: {
+      type: String,
+      default: 'add'
+    },
+    editSkillId: {
+      type: String
+    },
+    updateSkillData: {
+      type: Object
+    }
+  })
+
+  const authStore = useAuthStore()
+
+  const accessToken = ref(authStore.currentJWT) // TODO: add authentication
+  const errorDescription = ref('')
+  const errorTitle = ref('')
+  const formValues = ref([])
+  const isError = ref(false)
+  const isSuccess = ref(false)
+  const shouldClearInputs = ref(false)
+  const successDescription = ref('')
+  const successTitle = ref('')
+  const totalFields = ref(0)
+
+  const cancelEditSkill = () => {
+    clearForm()
+    emits('cancelEditSkill')
+  }
+
+  const clearForm = () => {
+    totalFields.value = formValues.value.length
+    shouldClearInputs.value = true
+  }
+
+  const createSkill = async data => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/create`, {
+          method: 'post',
+          headers: {
+            'Authorization': `Bearer ${accessToken.value}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        const result = await response.json()
+        const { status } = response
+
+        if (status === 200) {
+          const { _id } = result
+
+          if (_id) {
+            clearForm()
+            successDescription.value = 'The skill was added successfully'
+            successTitle.value = 'Great Success'
+            isSuccess.value = true
+            emits('skillCreated', result)
+          } else {
+            errorDescription.value = 'Skill was not created.'
+            errorTitle.value = 'Database Error'
+            isError.value = true
+          }
+        } else {
+          errorDescription.value = 'Skill was not created.'
+          errorTitle.value = 'Server Error'
+          isError.value = true
+        }
+        // TODO: Finish the error handling to address all cases
+        if (status === 400 && result.message) {
+          errorDescription.value = 'One or more required fields were not submitted to the server. Please try again in a few minutes.'
+          errorTitle.value = 'Server Error'
+          isError.value = true
+        }
+      } catch (error) {
+        console.log(error)
+      }
+  }
+
+  const getFormErrorsChanged = () => {
+    const formErrorsChanged = formValues.value.filter(element => {
+      return element.isChanged !== false && element.isValid === false
+    })
+    return formErrorsChanged
+  }
+
+  const handleSubmit = () => {
+    const formErrors = getFormErrorsChanged()
+
+    if (formErrors.length > 0) {
+      updateFormErrors(formErrors)
+      return
+    } else {
+      // Submit
+
+      const changedFormValues = formValues.value.reduce((acc, element) => {
+        if (element.isChanged) {
+          const { inputName, inputValue } = element
+          acc.push({ inputName, inputValue })
+        }
+        return acc
+      }, [])
+
+      const data = {'userId': authStore._id}
+      changedFormValues.forEach(element => {
+        const { inputName, inputValue } = element
+        data[inputName] = inputValue
+      })
+
+      if (props.formAction === 'add') {
+        createSkill(data)
+      } else if (props.formAction === 'edit') {
+        updateSkill(data)
+      } else {
+        errorDescription.value = 'An invalid action was submitted and no data was sent to the server.'
+        errorTitle.value = 'Internal Error'
+        isError.value = true
+      }
+    }
+  }
+
+  const removeFormValues = event => {
+    const { inputName: name } = event
+    const valuesIndex = formValues.value.findIndex(element => element.inputName === name)
+    formValues.value[valuesIndex] = event
+  
+    totalFields.value = totalFields.value - 1
+    if (totalFields.value === 0) { shouldClearInputs.value = false }
+  }
+
+  const updateFormValues = event => {
+    const { inputName: name } = event
+    const valuesIndex = formValues.value.findIndex(element => element.inputName === name)
+    if (valuesIndex === -1) {
+      formValues.value.push(event)
+    } else {
+      formValues.value[valuesIndex] = event
+    }
+    const formErrors = getFormErrorsChanged()
+    updateFormErrors(formErrors)
+  }
+
+  const updateFormErrors = formErrors => {
+    if (formErrors.length > 0) {
+      const errorMessages = formErrors.map(element => {
+        return element.errorMessage
+      })
+      errorDescription.value = errorMessages.join('. ') + '.'
+
+      const numberAgreement = formErrors.length === 1 ? 'An Error' : 'Errors'
+      errorTitle.value = `The Skills Form Has ${numberAgreement}`
+
+      isError.value = true
+    } else {
+      isError.value = false
+      errorDescription.value = ''
+      errorTitle.value = ''
+    }
+  }
+
+  const updateSkill = async data => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/update/${props.editSkillId}`, {
+        method: 'put',
+        headers: {
+          'Authorization': `Bearer ${accessToken.value}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      const result = await response.json()
+      const { status } = response
+
+      if (status === 200) {
+        const { n, ok } = result 
+
+        if(n === 1 && ok === 1) {
+          clearForm()
+          successDescription.value = 'The skill was updated successfully'
+          successTitle.value = 'Great Success'
+          isSuccess.value = true
+          emits('skillUpdated', props.editSkillId)
+        } else {
+          errorDescription.value = 'Skill was not updated.'
+          errorTitle.value = 'Database Error'
+          isError.value = true
+        }
+      } else {
+        errorDescription.value = 'Skill was not updated.'
+        errorTitle.value = 'Server Error'
+        isError.value = true
+      }
+      // TODO: Finish the error handling to address all cases
+      if (status === 400 && result.message) {
+        errorDescription.value = 'One or more required fields were not submitted to the server. Please try again in a few minutes.'
+        errorTitle.value = 'Server Error'
+        isError.value = true
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  watch(() => props.formAction, (newFormAction, prevFormAction) => {
+    if (newFormAction === 'add') { clearForm() }
+  })
+
+</script>
+
 <template>
-  <div id="admin-skills-form">
-    <h3>{{ formAction }} a Skill</h3>
-    <form id="skills-form">
-      <label for="name">Name</label>
-      <input v-model="skillData.name" type="text" class="u-full-width" id="name" placeholder="The name of the skill" required />
-      <label for="type">Type</label>
-      <input v-model="skillData.type" type="text" class="u-full-width" id="type" placeholder="The category of the skill (e.g. database, framework, library)" required />
-      <label for="description">Description</label>
-      <textarea class="u-full-width" id="description" v-model="skillData.description" placeholder="Briefly explain the skill and provide an example of how you used it..."></textarea>
-      <label for="icon">Icon</label>
-      <input v-model="skillData.icon" type="text" class="u-half-width" id="icon" placeholder="Icon style and name" />
-      <label for="priority">Sort Priority</label>
-      <input v-model="skillData.priority" type="number" class="u-quarter-width" id="priority" placeholder="Number" />
-      <label for="show">Display Skill?</label>
-      <select v-model="skillData.show" class="u-quarter-width" id="show">
-        <option disabled value="">Select one...</option>
-        <option value="1">Yes</option>
-        <option value="0">No</option>
-      </select>
+  <div class="form-skills">
+    <h3 class="form-skills-title">
+      {{ formAction }} a Skill
+    </h3>
+    <div class="form-skills-alert-error" v-if="isError">
+      <AlertMessage :title="errorTitle" type="error">
+        {{ errorDescription }}
+      </AlertMessage>
+    </div>
+    <div class="form-skills-alert-succes" v-if="isSuccess">
+      <AlertMessage :title="successTitle" type="success">
+        {{ successDescription }}
+      </AlertMessage>
+    </div>
+    <form id="form-skills">
+      <InputTitle
+        errorMessage="Please enter a valid skill name"
+        inputName="name"
+        labeltext="Skill Name"
+        placeholder="Enter a skill name..."
+        :initialValue="updateSkillData.name || null"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
+      <InputSkillType
+        placeholder="The category of the skill (e.g. database, framework, library)"
+        :initialValue="updateSkillData.type || null"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
+      <TextareaGeneric
+        errorMessage="Please enter a valid skill description"
+        inputName="description"
+        labeltext="Skill Description"
+        placeholder="Briefly explain the skill and provide an example of how you used it..."
+        :initialValue="updateSkillData.description || null"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
+      <InputIcon
+        :initialValue="updateSkillData.icon || null"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
+      <InputOrder
+        errorMessage="Please enter a valid sort priority"
+        inputName="priority"
+        labeltext="Sort Priority"
+        placeholder="Enter number..."
+        :initialValue="updateSkillData.priority || null"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
+      <SelectBinary
+        errorMessage="Please choose an option under Display Skill"
+        inputName="show"
+        labeltext="Display Skill"
+        :initialValue="updateSkillData.show || ''"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
       <div class="right">
-        <button v-on:click.prevent="submitSkillForm" class="button-primary" id="skill-submit">{{ formAction }} Skill</button>
-        <button v-if="formAction === 'Edit'" v-on:click.prevent="cancelEditSkill" class="edit-button-cancel">cancel</button>
+        <button @click.prevent="handleSubmit" class="button-primary" id="skill-submit">{{ formAction }} Skill</button>
+        <button v-if="formAction === 'edit'" @click.prevent="cancelEditSkill" class="edit-button-cancel">cancel</button>
       </div>
     </form>
   </div>
 </template>
 
-<script>
-import { mapGetters, mapState } from "vuex";
-
-export default {
-  props: {
-    formAction: String,
-    editSkillId: String,
-    updateSkillData: Object,
-  },
-
-  data () {
-    return {
-      skillData: {
-        name: "",
-        type: "",
-        description: "",
-        icon: "",
-        priority: null,
-        show: ""
-      }
-    }
-  },
-
-  computed: {
-    ...mapGetters([
-      "jwt"
-    ]),
-
-    ...mapState([
-      "statusCategory",
-      "statusMessage"
-    ])
-  },
-
-  watch: {
-    editSkillId(newValue) {
-      if (this.formAction === "Edit") {
-        this.skillData = JSON.parse(JSON.stringify(this.updateSkillData));
-      }
-    }
-  },
-
-  methods: {
-    submitSkillForm() {
-      const userId = this.$store.getters.userId;
-      const { name, type, description, icon, priority, show } = this.skillData;
-      const showInt = parseInt(show);
-
-      const formData = {
-        userId: userId,
-        type: type,
-        name: name,
-        description: description,
-        show: showInt,
-        icon: icon,
-        priority: priority
-      }
-
-      if (this.formAction === "Add") {
-        this.createSkill(formData);
-      } else if (this.formAction === "Edit") {
-        this.updateSkill(formData);
-      }
-    },
-
-    cancelEditSkill() {
-      this.clearSkillForm();
-      this.$emit("cancel-edit-skill");
-      },
-
-    clearSkillForm() {
-      const keys = Object.keys(this.skillData);
-
-      keys.forEach(e => {
-        this.skillData[e] = "";
-      });
-    },
-
-    createSkill(formData) {
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/create`, {
-      method: "post",
-      headers: {
-        "Authorization": `Bearer ${this.jwt}`,
-        "Content-Type": "application/json"
-      },
-        body: JSON.stringify(formData)
-      }).then(response => {
-        return response.json();
-      }).then(dataObj => {
-        if (dataObj._id) {
-          this.$store.commit("setStatusCategory", "success");
-          this.$store.commit("setStatusMessage", "Skill created successfully.");
-          this.$emit("skill-created", dataObj);
-          this.clearSkillForm();
-        } else {
-          this.$store.commit("setStatusCategory", "error");
-          this.$store.commit("setStatusMessage", "Skill was not created. Database error. ");          
-        }
-      }).catch(error => {
-        this.$store.commit("setStatusCategory", "error");
-        this.$store.commit("setStatusMessage", "Skill was not created. " + error);
-        return ({
-          type: "error",
-          message: "Internal server error.",
-          error: error
-        })
-      });
-    },
-
-    updateSkill(formData) {
-      const skillId = this.editSkillId;
-
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/update/${skillId}`, {
-      method: "put",
-      headers: {
-        "Authorization": `Bearer ${this.jwt}`,
-        "Content-Type": "application/json"
-      },
-        body: JSON.stringify(formData)
-      }).then(response => {
-        return response.json();
-      }).then(dataObj => {
-        if(dataObj.n === 1 && dataObj.ok === 1) {
-          this.$store.commit("setStatusCategory", "success");
-          this.$store.commit("setStatusMessage", "Skill updated successfully.");
-          this.$emit("skill-updated", skillId);
-          this.clearSkillForm();
-        } else {
-          this.$store.commit("setStatusCategory", "error");
-          this.$store.commit("setStatusMessage", "Skill was not updated. Database error. ");
-        }
-      }).catch(error => {
-        this.$store.commit("setStatusCategory", "error");
-        this.$store.commit("setStatusMessage", "Skill was not updated. " + error);
-        return ({
-          errorCode: 500,
-          errorMsg: "Internal Server Error",
-          errorDetail: error
-        })
-      });
-    }
-  }
-}
-</script>
-
 <style scoped>
-.edit-button-cancel {
-  margin-left:1rem;
-}
+  .edit-button-cancel {
+    margin-left: 1rem;
+  }
+  .form-skills-title {
+    text-transform: capitalize;
+  }
 </style>
