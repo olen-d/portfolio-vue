@@ -109,7 +109,7 @@
       })
       const { status } = response
 
-      if (status === 204) {
+      if (status === 200) {
         const data = await response.json()
         const { ok, deletedCount } = data
 
