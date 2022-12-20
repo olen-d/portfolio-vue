@@ -4,7 +4,7 @@ const data = limit => {
   return new Promise((resolve, reject) => {
     try {
       db.skills
-        .find({ show: 1 })
+        .find({ show: 'Yes' })
         .sort({ priority: 1 })
         .limit(limit)
         .toArray((err, data) => {
