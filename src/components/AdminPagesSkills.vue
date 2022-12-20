@@ -1,13 +1,199 @@
+<script setup>
+  // import { mapGetters } from "vuex";
+  import { onMounted, ref } from 'vue'
+
+  import { useAuthStore } from '@/store/auth.js'
+
+  import AdminSkillsForm from '@/components/AdminSkillsForm.vue'
+  import AlertMessage from '@/components/AlertMessage.vue'
+  import ModalConfirmCancel from '@/components/ModalConfirmCancel.vue'
+
+  const authStore = useAuthStore()
+
+  const accessToken = ref(authStore.currentJWT)
+  const editSkillId = ref(null)
+  const errorDescription = ref('')
+  const errorTitle = ref('')
+  const formAction = ref('add')
+  const isError = ref(false)
+  const isSuccess = ref(false)
+  const modalConfirmCancelProps = ref({
+    payload: {
+      action: null,
+      data: null
+    },
+    title: null,
+    message: null,
+    confirm: 'ok',
+    cancel: 'cancel'
+  })
+  const showModalConfirmCancel = ref(false)
+  const skills = ref([])
+  const successDescription = ref('')
+  const successTitle = ref('')
+  const updateSkillData = ref({})
+
+  const cancelAction = () => {
+    showModalConfirmCancel.value = false
+  }
+
+  const cancelEditSkill = () => {
+    formAction.value = 'add'
+  }
+
+  const confirmAction = event => {
+    const { action, data } = event
+    switch (action) {
+      case 'delete':
+        deleteSkill(data)
+        break
+    }
+    showModalConfirmCancel.value = false
+  }
+
+  const confirmDeleteSkill = event => {
+    const skillId = event.currentTarget.getAttribute('data-id')
+    const skillName = event.currentTarget.getAttribute('data-name')
+
+    modalConfirmCancelProps.value.payload.action = 'delete'
+    modalConfirmCancelProps.value.payload.data = skillId
+    modalConfirmCancelProps.value.title = 'Delete Skill'
+    modalConfirmCancelProps.value.message =  `Do you really want to delete the skill: ${skillName}?`
+    modalConfirmCancelProps.value.confirm = 'delete'
+
+    showModalConfirmCancel.value = true
+  }
+
+  const createSkillsTableRow =  event => {
+    skills.value.push(event)
+  }
+
+  const deleteSkill =  async skillId => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/delete`, {
+        method: "delete",
+        headers: {
+          Authorization: `Bearer ${accessToken.value}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ skillId })
+      })
+      const { status } = response
+
+      if (status === 200) {
+        const data = await response.json()
+        const { ok, deletedCount } = data
+
+        if (ok === 1 && deletedCount === 1) {
+          successDescription.value = 'The skill was deleted successfully'
+          successTitle.value = 'Great Success'
+          isSuccess.value = true
+
+          deleteSkillsTableRow(skillId)
+        } else {
+          errorDescription.value = 'The skill was not deleted. Please try again in a few minutes.'
+          errorTitle.value = 'Server Error'
+          isError.value = true
+        }
+      }
+    } catch (error) {
+      console.log(`Admin Pages Skills Delete Error:\n${error}`)
+    }
+  }
+
+  const deleteSkillsTableRow = skillId => {
+    const index = findSkillIndexById(skillId)
+    if (index > -1) {
+      skills.value.splice(index, 1);
+    }
+  }
+
+  const findSkillIndexById = skillId => {
+    const index = skills.value.map(item => item._id).indexOf(skillId)
+    return index
+  }
+
+  const handleShowFormSkills =  action => {
+    formAction.value = action
+  }
+
+  const readSkills = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills`)
+      const { status } = response
+      const result = await response.json()
+
+      if (status === 200) {
+        skills.value = result.skills
+      }
+    } catch (error) {
+      console.log(`Admin Pages Skills Read Error:\n${error}`)
+    }
+  }
+
+  const skillCreated = event => {
+    if (event._id) {
+      createSkillsTableRow(event)
+      // TODO: Update status bar with success result
+    } else {
+      // TODO: Update status bar with fail result
+    }
+  }
+
+  const skillUpdated = skillId => {
+    updateSkillsTableRow(skillId)
+    // Update status bar with result
+  }
+
+  const updateSkill = event => {
+    const skillId = event.currentTarget.getAttribute('data-id')
+    const skillIndex = findSkillIndexById(skillId)
+    const skill = { ...skills.value[skillIndex] } // Clone the current skill object
+
+    delete skill._id
+    delete skill.userId
+
+    updateSkillData.value = skill
+    formAction.value = 'edit'
+    editSkillId.value = skillId
+  }
+
+  const updateSkillsTableRow = async skillId => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/id/${skillId}`)
+      const { status } = response
+      const result = await response.json()
+
+      if (status === 200) {
+        const { skill } = result
+        const index = findSkillIndexById(skillId)
+
+        skills.value.splice(index, 1, skill);
+
+        formAction.value = 'add'
+        editSkillId.value = null
+        updateSkillData.value = {}
+      }
+    } catch (error) {
+      console.log(`Admin Pages Skills Update Error:\n${error}`)
+    }
+  }
+
+  onMounted(() => {
+    readSkills()
+  })
+</script>
+
 <template>
   <div class="admin-pages-skills">
     <ModalConfirmCancel
       v-if="showModalConfirmCancel"
-      v-bind:payload = modalConfirmCancelProps.payload
-      v-bind:action = modalConfirmCancelProps.action
-      v-bind:title = modalConfirmCancelProps.title
-      v-bind:message = modalConfirmCancelProps.message 
-      v-bind:confirm = modalConfirmCancelProps.confirm
-      v-bind:cancel = modalConfirmCancelProps.cancel
+      :payload = modalConfirmCancelProps.payload
+      :action = modalConfirmCancelProps.action
+      :title = modalConfirmCancelProps.title
+      :message = modalConfirmCancelProps.message 
+      :confirm = modalConfirmCancelProps.confirm
+      :cancel = modalConfirmCancelProps.cancel
       @confirm-action="confirmAction"
       @cancel-action="cancelAction"
     >
@@ -18,6 +204,16 @@
     <button @click="handleShowFormSkills('add')">
       Add Skill
     </button>
+    <div class="form-admin-pages-skills-alert-error" v-if="isError">
+      <AlertMessage :title="errorTitle" type="error">
+        {{ errorDescription }}
+      </AlertMessage>
+    </div>
+    <div class="form-admin-pages-skills-alert-succes" v-if="isSuccess">
+      <AlertMessage :title="successTitle" type="success">
+        {{ successDescription }}
+      </AlertMessage>
+    </div>
     <table>
       <thead>
         <tr>
@@ -45,9 +241,9 @@
       </tbody>
     </table>
     <AdminSkillsForm
-      v-bind:formAction="formAction"
-      v-bind:editSkillId="editSkillId"
-      v-bind:updateSkillData="updateSkillData"
+      :formAction="formAction"
+      :editSkillId="editSkillId"
+      :updateSkillData="updateSkillData"
       @skill-created="skillCreated"
       @skill-updated="skillUpdated"
       @cancel-edit-skill="cancelEditSkill"
@@ -56,196 +252,8 @@
   </div>
 </template>
 
-<script>
-import { mapGetters } from "vuex";
-
-import AdminSkillsForm from "./AdminSkillsForm.vue";
-import ModalConfirmCancel from "./ModalConfirmCancel.vue";
-
-export default {
-  name: "AdminPagesSkills",
-
-  components: {
-    AdminSkillsForm,
-    ModalConfirmCancel
-  },
-
-  data: () => {
-    return {
-      skills: [],
-      formAction: "add",
-      editSkillId: "",
-      updateSkillData: {},
-      showModalConfirmCancel: false,
-      modalConfirmCancelProps: {
-        payload: {
-          action: "",
-          data: ""
-        },
-        title: "",
-        message: "",
-        confirm: "ok",
-        cancel: "cancel"
-      }
-    }
-  },
-
-  computed: {
-    ...mapGetters(["jwt"])
-  },
-
-  methods: {
-    handleShowFormSkills(action) {
-      this.formAction = action
-    },
-
-    findSkillIndexById(skillId) {
-      const index = this.skills.map(item => item._id).indexOf(skillId);
-      return index;
-    },
-
-    createSkillsTableRow(e) {
-      this.skills.push(e);
-    },
-
-    skillCreated(e) {
-      if (e._id) {
-        this.createSkillsTableRow(e);
-        // TODO: Update status bar with success result
-      } else {
-        // TODO: Update status bar with fail result
-      }
-    },
-
-    updateSkillsTableRow(skillId) {
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/id/${skillId}`)
-        .then(response => {
-          return response.json();
-        })
-        .then(json => {
-          const updatedSkillData = json.skill;
-          const index = this.findSkillIndexById(skillId);
-
-          this.skills.splice(index, 1, updatedSkillData);
-
-          this.formAction = "add";
-          this.editSkillId = "";
-          this.updateSkillData = {}
-        });
-    },
-
-    skillUpdated(skillId) {
-      this.updateSkillsTableRow(skillId);
-      // Update status bar with result
-    },
-
-    deleteSkillsTableRow(skillId) {
-      const index = this.findSkillIndexById(skillId);
-      if (index > -1) {
-        this.skills.splice(index, 1);
-      }
-    },
-
-    readSkills() {
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills`)
-        .then(response => {
-          return response.json();
-        })
-        .then(json => {
-          this.skills = json.skills;
-        });
-    },
-
-    confirmDeleteSkill(e) {
-      const skillId = e.currentTarget.getAttribute("data-id");
-      const skillName = e.currentTarget.getAttribute("data-name");
-
-      this.modalConfirmCancelProps.payload.action = "delete";
-      this.modalConfirmCancelProps.payload.data = skillId;
-      this.modalConfirmCancelProps.title = "Delete Skill";
-      this.modalConfirmCancelProps.message =  `Do you really want to delete the skill: ${skillName}?`;
-      this.modalConfirmCancelProps.confirm = "delete";
-
-      this.setShowModalConfirmCancel(true);
-    },
-
-    updateSkill(e) {
-      const skillId = e.currentTarget.getAttribute("data-id");
-      const skillIndex = this.findSkillIndexById(skillId);
-      const skill = { ...this.skills[skillIndex] }; // Clone the current skill object
-
-      delete skill._id;
-      delete skill.userId;
-
-      this.updateSkillData = skill;
-      this.formAction = "edit";
-      this.editSkillId = skillId;
-    },
-
-    deleteSkill(skillId) {
-      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/skills/delete`, {
-        method: "delete",
-        headers: {
-          Authorization: `Bearer ${this.jwt}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ skillId: skillId })
-      })
-        .then(response => {
-          return response.json();
-        })
-        .then(dataObj => {
-          const { ok, deletedCount } = dataObj;
-          if (ok === 1 && deletedCount === 1) {
-            this.$store.commit("setStatusCategory", "success");
-            this.$store.commit("setStatusMessage", "Skill deleted successfully.");
-            this.deleteSkillsTableRow(skillId);
-          } else {
-            this.$store.commit("setStatusCategory", "error");
-            this.$store.commit("setStatusMessage", "Skill was not deleted. Database error. ");
-          }
-        })
-        .catch(error => {
-          this.$store.commit("setStatusCategory", "error");
-          this.$store.commit("setStatusMessage", "Skill was not deleted. " + error);
-          return {
-            errorCode: 500,
-            errorMsg: "Internal Server Error",
-            errorDetail: error
-          };
-        });
-    },
-
-    cancelEditSkill() {
-      this.formAction = "add";
-    },
-
-    setShowModalConfirmCancel(value) {
-      this.showModalConfirmCancel = value;
-    },
-
-    cancelAction() {
-      this.setShowModalConfirmCancel(false);
-    },
-
-    confirmAction(v) {
-      switch (v.action) {
-        case "delete":
-          this.deleteSkill(v.data);
-          break;
-      }
-      this.setShowModalConfirmCancel(false);
-    }
-  },
-
-  created() {
-    this.readSkills();
-  }
-}
-</script>
-
 <style scoped>
-textarea {
-  height: 16rem;
-}
+  textarea {
+    height: 16rem;
+  }
 </style>
