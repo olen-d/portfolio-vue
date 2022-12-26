@@ -4,7 +4,6 @@
   import HeaderFrontEnd from '@/components/HeaderFrontEnd.vue'
   import LoadingIndicator from '@/components/LoadingIndicator.vue'
   import SkillsTop from '@/components/SkillsTop.vue'
-  import UserFullName from '@/components/UserFullName.vue'
 
   const error = ref('')
   const loading = ref(false)
@@ -16,9 +15,11 @@
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/welcome`)
       if (response.ok) {
-          const data = await response.json()
+          const result = await response.json()
           loading.value = false
-          welcome.value = data.welcome[0]
+
+          const { data } = result
+          welcome.value = data
         } else {
           throw new Error('Network response was not ok. Unable to fetch. ')
         }
@@ -38,12 +39,16 @@
           &nbsp;
         </div>
         <div class="ten columns">
-          <UserFullName username="olen.d" />
           <LoadingIndicator :loading="loading" :error="error" />
           <div v-if="welcome">
-            <h5>
-              {{ welcome.headline }}
-            </h5>
+            <div v-for="{ _id, title, content } in welcome" :key="_id" class="welcome-items-list">
+              <h1>
+                {{ title }}
+              </h1>
+              <h5>
+                {{ content }}
+              </h5>
+            </div>
           </div>
         </div>
         <div class="one column">
