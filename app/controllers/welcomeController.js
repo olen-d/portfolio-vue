@@ -1,25 +1,32 @@
 // Models
-const createHeadline = require("../models/createHeadline");
-const readWelcome = require("../models/readWelcome");
-const updateHeadline = require("../models/updateHeadline");
+const {
+  createWelcomeItem,
+  deleteWelcomeItem,
+  readWelcomeItems,
+  readWelcomeItemsAll,
+  readWelcomeItemById,
+  updateWelcomeItem
+} = require("../models/welcome")
 
 // Helpers
 const auth = require("../helpers/auth-module");
 
-exports.create_headline = (req, res) => {
+exports.create_welcome_item = (req, res) => {
   auth
     .checkAuth(req.headers)
     .then(response => {
       if (response.auth && response.administrator) {
-        const { body: { userId, headline } } = req;
+        const { body: { createdBy, title, content, priority, show } } = req;
 
-        const headlineInfo = {
-          userId,
-          headline
+        const welcomeItemInfo = {
+          createdBy,
+          title,
+          content,
+          priority,
+          show
         };
 
-        createHeadline
-          .data(headlineInfo)
+        createWelcomeItem(welcomeItemInfo)
           .then(response => {
             res.json(response);
           })
@@ -45,54 +52,92 @@ exports.create_headline = (req, res) => {
     });
 };
 
-exports.read_welcome = (req, res) => {
-  readWelcome
-    .data()
-    .then(resolve => {
-      const welcomeObj = {
-        welcome: resolve
-      };
-      res.send(welcomeObj);
+exports.read_welcome_items = async (req, res) => {
+  try {
+    const response = await readWelcomeItems()
+    res.status(200).json({ data: response })
+  } catch (error) {
+    res.status(500).json({
+      message: 'Server error, no welcome items',
+      error
     })
-    .catch(err => {
-      res.json(err);
-    });
-};
+  }
+}
 
-exports.update_headline = (req, res) => {
-  auth
-    .checkAuth(req.headers)
-    .then(response => {
-      if (response.auth && response.administrator) {
-        const headline_id = req.params.headline_id;
-        const headline = req.body.headline;
+exports.read_welcome_items_all = async (req, res) => {
+  try {
+    const { headers } = req
+    const authResponse = await auth.checkAuth(headers)
+    const { administrator, auth: authorized } = authResponse
 
-        const headlineData = {
-          id: headline_id,
-          headline: headline
-        };
-
-        updateHeadline
-          .data(headlineData)
-          .then(resolve => {
-            return res.json(resolve);
-          })
-          .catch(err => {
-            res.status(500).json({
-              message: "Internal server error",
-              error: err
-            });
-          });
-      } else {
-        res.status(403).json({
-          message: "You must be logged in to perform this function"
-        });
-      }
-    })
-    .catch(err => {
+    if (administrator && authorized) {
+      const response = await readWelcomeItemsAll()
+      res.status(200).json({ data: response })
+    } else {
       res.status(403).json({
-        message: "Could not update headline",
-        error: err
-      });
-    });
-};
+        message: "You must be logged in to perform this function"
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: 'Server error, no welcome items',
+      error
+    })
+  }
+}
+
+exports.read_welcome_item_by_id = async (req, res) => {
+  try {
+    const { params: { welcomeItemId }, } = req
+    const response = await readWelcomeItemById(welcomeItemId)
+    res.status(200).json({ data: response })
+  } catch (error) {
+    res.status(404).json({
+      message: `Welcome item id: ${id} not found.`
+    })
+  }
+}
+
+exports.update_welcome_item = async (req, res) => {
+  try {
+    const { body, headers, params: { welcomeItemId }, } = req
+    const authResponse = await auth.checkAuth(headers)
+    const { administrator, auth: authorized } = authResponse
+
+    if (administrator && authorized) {
+      const response = await updateWelcomeItem(welcomeItemId, body)
+      res.status(200).json(response)
+    } else {
+      res.status(403).json({
+        message: "You must be logged in to perform this function"
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Could not update welcome item",
+      error
+    })
+  }
+}
+
+exports.delete_welcome_item = async (req, res) => {
+  try {
+    const { body: { id }, headers } = req
+
+    const authResponse = await auth.checkAuth(headers)
+    const { administrator, auth: authorized } = authResponse
+
+    if (administrator && authorized) {
+      const response = await deleteWelcomeItem(id)
+      res.status(200).json(response)
+    } else {
+      res.status(403).json({
+        message: "You must be logged in to perform this function"
+      })
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Could not delete welcome item."
+    })
+  }
+}
