@@ -2,9 +2,17 @@
   import { onMounted, ref, watch } from 'vue'
 
   const props = defineProps({
+    errorMessage: {
+      type: String,
+      default: 'Please enter a valid email address'
+    },
     initialValue: {
       type: String,
-      default: ''
+      default: null
+    },
+    inputName: {
+      type: String,
+      default: 'email'
     },
     isServerError: {
       type: Boolean,
@@ -31,14 +39,13 @@
   const emits = defineEmits(['changeFormValues', 'removeFormValues'])
 
   const changedState = { isChanged: false }
-  const errorMessage = 'Please enter a valid email address'
   const isValid = ref(false)
-  const emailAddress = ref('')
+  const inputValue = ref('')
   const validationStatus = ref('')
 
   onMounted(() => {
-   emailAddress.value = props.initialValue
-   emitChange()
+    inputValue.value = props.initialValue
+    emitChange()
   })
 
   const checkMx = async emailAddress => {
@@ -56,28 +63,35 @@
   }
 
   const emitChange = () => {
-    emits('changeFormValues', { inputName: 'email', inputValue: emailAddress.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage })
+    emits('changeFormValues', { inputName: props.inputName, inputValue: inputValue.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage: props.errorMessage })
   }
 
   const handleBlur = async () => {
     if (!changedState.isChanged) {
       changedState.isChanged = true
     }
-    isValid.value = await validate(emailAddress.value)
+    isValid.value = await validate(inputValue.value)
     validationStatus.value = isValid.value ? null : 'text-error'
     emitChange()
   }
 
-  const validate = async emailAddress => {
+  const validate = async value => {
     const expression = /.+@.+\..+/i
-    const isValidFormat = expression.test(String(emailAddress).toLowerCase())
+    const isValidFormat = expression.test(String(value).toLowerCase())
 
     if (isValidFormat) {
-      return await checkMx(emailAddress)
+      return await checkMx(value)
     } else {
       return false
     }
   }
+
+  watch(() => props.initialValue, (newInitialValue, prevInitialValue) => {
+    inputValue.value = newInitialValue
+    changedState.isChanged = false
+    isValid.value = false
+    emitChange(props.inputName, inputValue.value)
+  })
 
   watch(() => props.isServerError, (isServerError, prevIsServerError) => {
     if (isServerError) {
@@ -89,24 +103,24 @@
 
   watch(() => props.shouldClearInput, (newShouldClearInput, prevShouldClearInput) => {
     if (newShouldClearInput) {
-      emailAddress.value = ''
+      inputValue.value = null
       changedState.isChanged = false
       isValid.value = false
-      emits('removeFormValues', { inputName: 'email' })
+      emits('removeFormValues', { inputName: props.inputName, inputValue: inputValue.value, isChanged: changedState.isChanged, isValid: isValid.value, errorMessage: props.errorMessage })
     }
   })
 </script>
 
 <template>
   <div class="input-email">
-    <label for="email" v-bind:class="validationStatus">
+    <label for="input-email" v-bind:class="validationStatus">
       {{ labeltext }}
     </label>
     <input
-      v-model="emailAddress"
+      v-model="inputValue"
       type="email"
       class="u-full-width"
-      id="email"
+      id="input-email"
       :placeholder="placeholder"
       :required="required"
       @blur="handleBlur"
