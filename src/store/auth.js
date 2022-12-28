@@ -32,9 +32,6 @@ export const useAuthStore = defineStore('auth', {
     _id (state) {
       return this.jwtData ? this.jwtData._id : null
     },
-    username (state) {
-      return this.jwtData ? this.jwtData.username : null
-    }
   },
 
   actions: {
