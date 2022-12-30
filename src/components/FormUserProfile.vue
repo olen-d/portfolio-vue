@@ -1,7 +1,7 @@
 <script setup>
-  // import { computed, ref } from vue
   import { onMounted, ref } from 'vue'
-  // import { useStore } from vuex
+
+  import { useAuthStore } from '@/store/auth.js'
 
   import AlertMessage from '@/components/AlertMessage.vue'
   import InputNameFirst from '@/components/formFields/InputNameFirst.vue'
@@ -9,35 +9,38 @@
   import InputEmail from '@/components/formFields/InputEmail.vue'
   import InputUsername from '@/components/formFields/InputUsername.vue'
 
-  const username = 'olen.d' // Hardcoded for now, get it from the store when transition to composition API is complete
+  const props = defineProps({
+    editId: {
+      default: null,
+      type: String
+    },
+    formAction: {
+      default: 'add',
+      type: String
+    },
+    updateData: {
+      type: Object
+    }
+  })
 
-  const accessToken = ref('') // TODO: add authentication
-  const emailAddress = ref('')
+  const authStore = useAuthStore()
+
+  const accessToken = ref(authStore.currentJWT) // TODO: add authentication
   const errorDescription = ref('')
   const errorTitle = ref('')
-  const firstName = ref('')
   const formValues = ref([])
   const isError = ref(false)
-  const isLoading = ref(true)
   const isSuccess = ref(false)
-  const lastName = ref('')
   const successDescription = ref('')
   const successTitle = ref('')
 
   onMounted(async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${username}`)
-      const result = await response.json()
-
-      const { user: { email, firstName: first, lastName: last }, } = result
-      emailAddress.value = email
-      firstName.value = first
-      lastName.value = last
-      isLoading.value = false
-    } catch (error) {
-      console.log(error)
-    }
+    //
   })
+
+  const createUserProfile = data => {
+    //
+  }
 
   const getFormErrorsChanged = () => {
     const formErrorsChanged = formValues.value.filter(element => {
@@ -68,31 +71,14 @@
         data[inputName] = inputValue
       })
 
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/${username}`, {
-          method: 'PATCH',
-          headers: {
-            Authorization: `Bearer ${accessToken.value}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        })
-        const result = await response.json()
-        const { status } = response
-
-        if (status === 200 && result.status === 'ok') {
-          successDescription.value = 'Your profile has been updated successfully'
-          successTitle.value = 'Great Success'
-          isSuccess.value = true
-        }
-        // TODO: Finish the error handling to address all cases
-        if (status === 400 && result.message) {
-          errorDescription.value = 'One or more required fields were not submitted to the server. Please try again in a few minutes.'
-          errorTitle.value = 'Server Error'
-          isError.value = true
-        }
-      } catch (error) {
-        console.log(error)
+      if (props.formAction === 'add') {
+        createUserProfile(data)
+      } else if (props.formAction === 'edit') {
+        updateUsrProfile(data)
+      } else {
+        errorDescription.value = 'An invalid action was submitted and no data was sent to the server.'
+        errorTitle.value = 'Internal Error'
+        isError.value = true
       }
     }
   }
@@ -127,6 +113,42 @@
     }
   }
 
+const updateUsrProfile = async data => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/id/${props.editId}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${accessToken.value}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    const result = await response.json()
+    const { status } = response
+
+    if (status === 200) {
+      const { n, ok } = result 
+
+      if(n === 1 && ok === 1) {
+        successDescription.value = 'Your profile has been updated successfully'
+        successTitle.value = 'Great Success'
+        isSuccess.value = true
+      } else {
+        errorDescription.value = 'Your profile was not updated.'
+        errorTitle.value = 'Database Error'
+        isError.value = true
+      }
+    }
+    // TODO: Finish the error handling to address all cases
+    if (status === 400 && result.message) {
+      errorDescription.value = 'One or more required fields were not submitted to the server. Please try again in a few minutes.'
+      errorTitle.value = 'Server Error'
+      isError.value = true
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 </script>
 
 <template>
@@ -142,13 +164,15 @@
       </AlertMessage>
     </div>
     <form>
-      <InputNameFirst v-if="!isLoading" :initialValue="firstName" @change-form-values="updateFormValues($event)"/>
-      <InputNameLast v-if="!isLoading" :initialValue="lastName" @change-form-values="updateFormValues($event)" />
-      <InputEmail v-if="!isLoading" :initialValue="emailAddress" @change-form-values="updateFormValues($event)" />
-      <InputUsername v-if="!isLoading" :initialValue="username" @change-form-values="updateFormValues($event)" />
-      <button class="button-primary" :disabled="isError" @click.prevent="handleSubmit">
-        Update Profile
-      </button>
+      <InputNameFirst :initialValue="updateData.firstName || null" @change-form-values="updateFormValues($event)"/>
+      <InputNameLast :initialValue="updateData.lastName || null" @change-form-values="updateFormValues($event)" />
+      <InputEmail :initialValue="updateData.email || null" @change-form-values="updateFormValues($event)" />
+      <InputUsername :initialValue="updateData.username || null" @change-form-values="updateFormValues($event)" />
+      <div class="right">
+        <button class="button-primary" :disabled="isError" @click.prevent="handleSubmit">
+          Update Profile
+        </button>
+      </div>
     </form>
   </div>
 </template>

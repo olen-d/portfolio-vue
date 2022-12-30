@@ -13,7 +13,7 @@ const AdminPagesProjectsRoot = () => import("./views/AdminPagesProjectsRoot.vue"
 const AdminPagesProjectsEdit = () => import("./components/AdminPagesProjectsEdit.vue");
 const AdminPagesSkills = () => import("./components/AdminPagesSkills.vue");
 const AdminPagesWelcome = () => import("./components/AdminPagesWelcome.vue");
-const AdminProfile = () => import("./components/AdminProfile.vue");
+const AdminProfile = () => import("@/components/AdminProfile.vue");
 const AdminSettings = () => import("./views/AdminSettings.vue");
 
 // route level code-splitting
