@@ -3,7 +3,9 @@ const createUser = require("../models/createUser");
 const readOneUser = require("../models/readOneUser");
 const {
   readOneUserByEmail,
+  readOneUserById,
   readOneUserByUserName,
+  updateOneUserById,
   updateOneUserByUsername,
   updateOnePasswordByUserName
 } = require("../models/users");
@@ -71,6 +73,26 @@ exports.read_one_user = (req, res) => {
       res.json(err);
     });
 };
+
+exports.read_one_user_by_id = async (req, res) => {
+  try {
+    const { headers, params: { userId: id }, } = req
+    const authResponse = await auth.checkAuth(headers)
+    const { auth: authorized } = authResponse
+
+    if (authorized) {
+      const response = await readOneUserById(id)
+      delete response.password
+      res.status(200).json({ data: response })
+    } else {
+      res.status(403).json({
+        message: "You must be logged in to perform this function"
+      })
+    }
+  } catch (error) {
+    res.status(500).json(error)
+  }
+}
 
 exports.read_one_user_by_email = async (req, res) => {
   const {
@@ -374,6 +396,26 @@ const checkEmail = async email => {
     return false;
   }
 };
+
+exports.update_one_user_by_id = async (req, res) => {
+  // TODO - validate the input
+  try{
+    const { body, headers, params: { userId }, } = req
+    const authResponse = await auth.checkAuth(headers)
+    const { auth: authorized } = authResponse
+  
+    if (authorized) {
+      const response = await updateOneUserById(userId, body)
+      res.status(200).json(response)
+    } else {
+      res.status(403).json({
+        message: "You must be logged in to perform this function"
+      })
+    }
+  } catch (error) {
+    res.status(500).json(error)
+  }
+}
 
 exports.update_one_user_by_username = async (req, res) => {
   // TODO - validate the input

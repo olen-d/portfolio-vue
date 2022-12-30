@@ -3,10 +3,12 @@ const router = express.Router()
 
 const users_controller = require("../controllers/usersController")
 
+router.patch("/users/id/:userId", users_controller.update_one_user_by_id)
 router.patch("/users/:username", users_controller.update_one_user_by_username)
 router.post("/users/create", users_controller.create_user)
 
 router.get("/users/email/:email", users_controller.read_one_user_by_email) // Meant to be used with password reset, authorization not required
+router.get("/users/id/:userId", users_controller.read_one_user_by_id)
 router.get("/users/:username", users_controller.read_one_user)
 
 router.post("/users/login", users_controller.read_login)
