@@ -8,13 +8,11 @@ import { useAuthStore } from "@/store/auth.js";
 const AdminRoot = () => import("@/views/AdminRoot.vue");
 const AdminDashboard = () => import("@/components/AdminDashboard.vue");
 const AdminPages = () => import("@/views/AdminPages.vue");
-const AdminPagesProjects = () => import("./components/AdminPagesProjects.vue");
-const AdminPagesProjectsRoot = () => import("./views/AdminPagesProjectsRoot.vue");
-const AdminPagesProjectsEdit = () => import("./components/AdminPagesProjectsEdit.vue");
-const AdminPagesSkills = () => import("./components/AdminPagesSkills.vue");
-const AdminPagesWelcome = () => import("./components/AdminPagesWelcome.vue");
+const AdminPagesProjects = () => import("@/components/AdminPagesProjects.vue");
+const AdminPagesSkills = () => import("@/components/AdminPagesSkills.vue");
+const AdminPagesWelcome = () => import("@/components/AdminPagesWelcome.vue");
 const AdminProfile = () => import("@/components/AdminProfile.vue");
-const AdminSettings = () => import("./views/AdminSettings.vue");
+const AdminSettings = () => import("@/views/AdminSettings.vue");
 
 // route level code-splitting
 // this generates a separate chunk (about.[hash].js) for this route
@@ -43,6 +41,12 @@ const router = createRouter({
     {
       path: "/admin",
       component: AdminRoot,
+      meta: {
+        breadcrumb: {
+          dynamic: false,
+          text: "administration"
+        }
+      },
       beforeEnter(to, from, next) {
         const authStore = useAuthStore()
         if (authStore.authorized && authStore.administrator) {
@@ -55,50 +59,81 @@ const router = createRouter({
         {
           path: "",
           name: "adminDashboard",
-          component: AdminDashboard
+          component: AdminDashboard,
+          meta: {
+            breadcrumb: {
+              dynamic: false,
+              text: "dashboard"
+            }
+          },
         },
         {
           path: "pages",
           name: "pagesRoot",
           component: AdminPages,
+          meta: {
+            breadcrumb: {
+              dynamic: false,
+              text: "pages"
+            }
+          },
           children: [
             {
               path: "projects",
-              component: AdminPagesProjectsRoot,
-              children: [
-                {
-                  path: "",
-                  name: "adminPagesProjects",
-                  component: AdminPagesProjects
-                },
-                {
-                  path: "edit",
-                  name: "adminPagesProjectsEdit",
-                  component: AdminPagesProjectsEdit
+              name: "adminPagesProjects",
+              component: AdminPagesProjects,
+              meta: {
+                breadcrumb: {
+                  dynamic: false,
+                  text: "projects"
                 }
-              ]
+              }
             },
             {
               path: "skills",
               name: "adminPagesSkills",
-              component: AdminPagesSkills
+              component: AdminPagesSkills,
+              meta: {
+                breadcrumb: {
+                  dynamic: false,
+                  text: "skills"
+                }
+              },
             },
             {
               path: "welcome",
               name: "adminPagesWelcome",
-              component: AdminPagesWelcome
+              component: AdminPagesWelcome,
+              meta: {
+                breadcrumb: {
+                  dynamic: false,
+                  text: "welcome"
+                }
+              },
             }
           ]
         },
         {
           path: "profile",
           name: "adminProfile",
-          component: AdminProfile
+          component: AdminProfile,
+          meta: {
+            breadcrumb: {
+              dynamic: false,
+              text: "profile"
+            }
+          },
         },
         {
           path: "settings",
           name: "adminSettings",
-          component: AdminSettings
+          component: AdminSettings,
+          meta: {
+            breadcrumb: {
+              dynamic: false,
+              text: "settings"
+            }
+          },
         }
       ]
     },
