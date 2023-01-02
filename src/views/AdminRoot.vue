@@ -1,5 +1,5 @@
 <script setup>
-  import { onMounted, ref, watch } from 'vue'
+  import { computed, onMounted, ref, watch } from 'vue'
   import { useRoute } from 'vue-router'
 
   import { useAuthStore } from '@/store/auth.js'
@@ -10,16 +10,31 @@
   const route = useRoute()
 
   const breadcrumbs = ref([])
+  const currentLocation = ref('')
+
+  const updateBreadcrumbs = () => {
+    const newBreadcrumbs = route.matched.map(element => {
+      return {
+        path: element.path,
+        text: element.meta?.breadcrumb?.text
+      }
+    })
+
+    const { text: newCurrentLocation } = newBreadcrumbs.pop()
+
+    breadcrumbs.value = newBreadcrumbs
+    currentLocation.value = newCurrentLocation
+  }
 
   // Watch
   watch(() => route.matched, newMatched => {
-    const newBreadcrumbs = route.matched.map(element => element.meta?.breadcrumb?.text)
-    breadcrumbs.value = newBreadcrumbs
+    if (newMatched) {
+      updateBreadcrumbs()
+    }
   })
 
   onMounted(() => {
-    const initialBreadcrumbs = route.matched.map(element => element.meta?.breadcrumb?.text)
-    breadcrumbs.value = initialBreadcrumbs
+    updateBreadcrumbs()
   })
 </script>
 
@@ -34,10 +49,7 @@
           <h1>
             Administration
           </h1>
-          <pre>
-            <!-- {{ JSON.stringify(route, null, 3) }} -->
-          </pre>
-          <AdminBreadCrumbs :breadcrumbs="breadcrumbs" />
+          <AdminBreadCrumbs :breadcrumbs="breadcrumbs" :currentLocation="currentLocation" />
           <router-view></router-view>
         </div>
         <div class="one columns">
