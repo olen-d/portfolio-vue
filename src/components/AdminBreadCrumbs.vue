@@ -26,7 +26,9 @@
 <style scoped>
   .admin-bread-crumbs {
     display: inline-block;
+    margin-top: 1rem;
     margin-right: 1rem;
+    margin-bottom: 3rem;
     text-transform: capitalize;
   }
   .admin-bread-crumbs a:link,

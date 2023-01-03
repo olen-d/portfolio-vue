@@ -42,20 +42,26 @@
   <div class="container">
     <div class="admin-root">
       <div class="row">
-        <div class="one columns">
-          &nbsp;
-        </div>
-        <div class="ten columns">
+        <div class="twelve columns">
           <h1>
-            Administration
+            Developer Portfolio
           </h1>
           <AdminBreadCrumbs :breadcrumbs="breadcrumbs" :currentLocation="currentLocation" />
           <router-view></router-view>
-        </div>
-        <div class="one columns">
-          &nbsp;
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+  .admin-root {
+    margin-top: -14rem;
+  }
+
+  .admin-root h1 {
+    margin-top: 2rem;
+    font-size: 3rem;
+    letter-spacing: 0.1rem;
+  }
+</style>
