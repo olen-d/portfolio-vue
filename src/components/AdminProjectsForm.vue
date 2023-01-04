@@ -316,6 +316,25 @@
         @remove-form-values="removeFormValues($event)"
       />
       <SelectBinary
+        errorMessage="Please choose an option under Featured Project"
+        inputName="isFeatured"
+        labeltext="Featured Project?"
+        :initialValue="updateProjectData.isFeatured || ''"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
+      <InputOrder
+        errorMessage="Please enter a valid featured project priority"
+        inputName="featuredPriority"
+        labeltext="Featured Project Sort Priority"
+        placeholder="Enter number..."
+        :initialValue="updateProjectData.featuredPriority || null"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
+      <SelectBinary
         errorMessage="Please choose an option under Display Project"
         inputName="show"
         labeltext="Display Project?"

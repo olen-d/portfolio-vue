@@ -271,19 +271,15 @@
   <div id="admin-pages-projects">
     <ModalConfirmCancel
       v-if="showModalConfirmCancel"
-      v-bind:payload="modalConfirmCancelProps.payload"
-      v-bind:action="modalConfirmCancelProps.action"
-      v-bind:title="modalConfirmCancelProps.title"
-      v-bind:message="modalConfirmCancelProps.message"
-      v-bind:confirm="modalConfirmCancelProps.confirm"
-      v-bind:cancel="modalConfirmCancelProps.cancel"
+      :payload="modalConfirmCancelProps.payload"
+      :action="modalConfirmCancelProps.action"
+      :title="modalConfirmCancelProps.title"
+      :message="modalConfirmCancelProps.message"
+      :confirm="modalConfirmCancelProps.confirm"
+      :cancel="modalConfirmCancelProps.cancel"
       @confirm-action="confirmAction"
       @cancel-action="cancelAction"
-    >
-    </ModalConfirmCancel>
-    <h3>
-      Projects
-    </h3>
+    />
     <button @click="handleShowFormProject('add')">
       Add Project
     </button>
@@ -299,14 +295,13 @@
     </div>
     <AdminProjectsForm
       v-if="showFormProjects"
-      v-bind:formAction="formAction"
-      v-bind:editProjectId="editProjectId"
-      v-bind:updateProjectData="updateProjectData"
+      :formAction="formAction"
+      :editProjectId="editProjectId"
+      :updateProjectData="updateProjectData"
       @project-created="projectCreated"
       @project-updated="projectUpdated"
       @cancel-edit-project="cancelEditProject"
-    >
-    </AdminProjectsForm>
+    />
     <router-view></router-view>
     <h4>
       Filter
@@ -322,6 +317,8 @@
         screenshot,
         skills,
         priority,
+        isFeatured,
+        featuredPriority,
         show
       } in sortedProjects"
       :key="_id"
@@ -347,10 +344,11 @@
           screenshot,
           skills,
           priority,
+          isFeatured,
+          featuredPriority,
           show
         }"
-      >
-      </AdminProjectsCard>
+      />
     </div>
   </div>
 </template>
