@@ -26,6 +26,12 @@
     priority: {
       type: Number
     },
+    isFeatured: {
+      type: String
+    },
+    featuredPriority: {
+      type: Number
+    },
     show: {
       type: String
     }
@@ -117,6 +123,8 @@
     </div>
     <div class="meta">
       <p>Sort Priority: {{ priority }}</p>
+      <p>Featured Project: {{ isFeatured }}</p>
+      <p>Featured Priority: {{ featuredPriority }}</p>
       <p>Display: {{ formatShow(show) }}</p>
     </div>
   </div>

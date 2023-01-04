@@ -14,9 +14,12 @@ h1 {
     margin-top: 6rem;
 }
 
-.card-title h2 {
+.card-title h2, .card-summary-project-title h2 {
   font-size: 2.5rem;
-  text-align: center;
+}
+
+.card-title h2 {
+    text-align: center;
 }
 
 .title {
@@ -57,14 +60,14 @@ a:hover {
     width: 250px;
 }
 
-.card, .card-skinny {
+.card, .card-skinny, .card-summary-project {
     margin-bottom: 10rem;
     border: 1px solid #dddddd;
     border-bottom-right-radius: 15px;
     border-bottom-left-radius: 15px;
 }
 
-.card p, .card-skinny p {
+.card p, .card-skinny p, .card-summary-project p {
     margin-right: 3rem;
     margin-left: 3rem;
 

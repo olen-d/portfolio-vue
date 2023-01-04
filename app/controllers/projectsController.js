@@ -8,6 +8,8 @@ const updateProject = require("../models/updateProject");
 
 const deleteProject = require("../models/deleteProject");
 
+const { readProjectsFeatured } = require("../models/projects.js")
+
 // Helpers
 const auth = require("../helpers/auth-module");
 
@@ -24,6 +26,8 @@ exports.create_project = (req, res) => {
           repoLink,
           skills,
           priority,
+          isFeatured,
+          featuredPriority,
           show
         } = req.body;
 
@@ -38,6 +42,8 @@ exports.create_project = (req, res) => {
           screenshot,
           skills: JSON.parse(skills),
           priority: parseInt(priority),
+          isFeatured,
+          featuredPriority: parseInt(featuredPriority),
           show
         };
         createProject
@@ -97,6 +103,18 @@ exports.read_project_by_id = (req, res) => {
     });
 };
 
+exports.read_projects_featured = async (req, res) => {
+  try {
+    const { params: { limit }, } = req
+    const limitParsed = parseInt(limit)
+
+    const response = await readProjectsFeatured (limitParsed)
+    res.status(200).json(response)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+}
+
 exports.update_project = (req, res) => {
   auth
     .checkAuth(req.headers)
@@ -104,6 +122,7 @@ exports.update_project = (req, res) => {
       if (response.auth && response.administrator) {
         const { body: projectInfo, params: { project_id: projectId }, } = req
 
+        if ('featuredPriority' in projectInfo) { projectInfo.featuredPriority = parseInt(projectInfo.featuredPriority) }
         if ('priority' in projectInfo) { projectInfo.priority = parseInt(projectInfo.priority) }
         if ('skills' in projectInfo) { projectInfo.skills = JSON.parse(projectInfo.skills) }
 

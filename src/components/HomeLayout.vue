@@ -3,6 +3,7 @@
 
   import HeaderFrontEnd from '@/components/HeaderFrontEnd.vue'
   import LoadingIndicator from '@/components/LoadingIndicator.vue'
+  import ProjectsFeatured from '@/components/ProjectsFeatured.vue'
   import SkillsTop from '@/components/SkillsTop.vue'
 
   const error = ref('')
@@ -74,6 +75,30 @@
         </div>
         <div class="ten columns">
           <SkillsTop :limit=3 />
+        </div>
+        <div class="one column">
+          &nbsp;
+        </div>
+      </div>
+      <div class="row">
+        <div class="one column">
+          &nbsp;
+        </div>
+        <div class="ten columns">
+          <h1>
+            Featured Project
+          </h1>
+        </div>
+        <div class="one column">
+          &nbsp;
+        </div>
+      </div>
+      <div class="row">
+        <div class="one column">
+          &nbsp;
+        </div>
+        <div class="ten columns">
+          <ProjectsFeatured :limit=1 />
         </div>
         <div class="one column">
           &nbsp;

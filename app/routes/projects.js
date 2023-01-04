@@ -12,6 +12,7 @@ router.post(
 );
 
 router.get("/projects", projects_controller.read_projects);
+router.get("/projects/featured/:limit", projects_controller.read_projects_featured);
 router.get("/projects/id/:project_id", projects_controller.read_project_by_id);
 
 router.put(
