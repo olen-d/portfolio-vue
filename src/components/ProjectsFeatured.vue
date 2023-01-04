@@ -79,12 +79,19 @@
     height: auto;
   }
   .project-description {
-    margin-right: 4rem;
+    margin-right: 3rem;
     margin-bottom: 0rem;
-    margin-left: 8rem;
+    margin-left: 3rem;
   }
   .project-title {
     margin-top: 6rem;
-    margin-left: 8rem;
+  }
+
+  @media (min-width: 1024px) {
+    .project-description {
+      margin-right: 3rem;
+      margin-bottom: 0rem;
+      margin-left: 0rem;
+    }
   }
 </style>

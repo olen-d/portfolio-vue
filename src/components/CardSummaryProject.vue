@@ -35,27 +35,36 @@ const isDisabled = ref(true)
   </div>
 </template>
 
-  <style scoped>
+<style scoped>
+  .card-summary-project {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    justify-items: center;
+  }
+  .card-summary-project-footer {
+    justify-self: center;
+  }
+
+  /* .card-summary-project-links {
+    margin-right: 8rem;
+    margin-left: 8rem;
+  } */
+  .card-summary-project-link-deployed,
+  .card-summary-project-link-repo {
+    display: inline;
+  }
+
+  @media (min-width: 1024px) {
     .card-summary-project {
-      display: grid;
-      grid-template-columns: 350px 1fr;
       justify-items: start;
-    }
-    .card-summary-project-footer {
-      justify-self: center;
+      grid-template-columns: 350px 1fr;
+      column-gap: 8rem;
     }
     .card-summary-project-title {
       grid-column-start: 2;
     }
-    .card-summary-project-links {
-      margin-right: 8rem;
-      margin-left: 8rem;
-    }
-    .card-summary-project-link-deployed,
-    .card-summary-project-link-repo {
-      display: inline;
-    }
     .card-summary-project-screenshot {
-      grid-row-start: span 4;
+    grid-row-start: span 4;
     }
+  }
 </style>
