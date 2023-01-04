@@ -67,10 +67,9 @@ a:hover {
     border-bottom-left-radius: 15px;
 }
 
-.card p, .card-skinny p, .card-summary-project p {
+.card p, .card-skinny p {
     margin-right: 3rem;
     margin-left: 3rem;
-
 }
 
 .card-icon {
