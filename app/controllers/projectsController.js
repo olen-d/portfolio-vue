@@ -21,6 +21,7 @@ exports.create_project = (req, res) => {
         const {
           userId,
           title,
+          slug,
           description,
           deployedLink,
           repoLink,
@@ -36,6 +37,7 @@ exports.create_project = (req, res) => {
         const projectInfo = {
           userId,
           title,
+          slug,
           description,
           deployedLink,
           repoLink,
