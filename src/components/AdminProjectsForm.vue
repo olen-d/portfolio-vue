@@ -6,6 +6,7 @@
   import AlertMessage from '@/components/AlertMessage.vue'
   import InputFileSingle from '@/components/formFields/InputFileSingle.vue'
   import InputOrder from '@/components/formFields/InputOrder.vue'
+  import InputSlug from '@/components/formFields/InputSlug.vue'
   import InputTitle from '@/components/formFields/InputTitle.vue'
   import InputURI from '@/components/formFields/InputURI.vue'
   import SelectBinary from '@/components/formFields/SelectBinary.vue'
@@ -50,6 +51,7 @@
   const successDescription = ref('')
   const successTitle = ref('')
   const totalFields = ref(0)
+  const valueToSlug = ref('')
 
   const calculateChangedQuantity = () => {
     const changedQuantity = formValues.value.reduce((acc, element) => {
@@ -164,6 +166,9 @@
 
   const updateFormValues = event => {
     const { inputName: name } = event
+
+    if (name === 'title') { valueToSlug.value = event.inputValue }
+  
     const valuesIndex = formValues.value.findIndex(element => element.inputName === name)
     if (valuesIndex === -1) {
       formValues.value.push(event)
@@ -238,6 +243,8 @@
 
 <template>
   <div id="admin-projects-form">
+    Title: {{ formValues[0]?.inputValue }}<br />
+    Slug: {{ formValues[1]?.inputValue }}<br />
     <h4 class="admin-projects-form-title">
       {{ formAction }} a Project
     </h4>
@@ -258,6 +265,16 @@
         placeholder="Enter a project title..."
         :initialValue="updateProjectData.title || null"
         :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
+      <InputSlug
+        errorMessage="Please enter a valid project slug"
+        labeltext="Project Slug"
+        placeholder="Enter a project slug..."
+        :initialValue="updateProjectData.slug || null"
+        :shouldClearInput="shouldClearInputs"
+        :valueToSlug="valueToSlug"
         @change-form-values="updateFormValues($event)" 
         @remove-form-values="removeFormValues($event)"
       />
