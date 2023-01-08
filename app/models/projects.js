@@ -1,6 +1,29 @@
 const db = require('../config/connection')
 const ObjectID = require('mongodb').ObjectID
 
+const readProjectBySlug = slug => {
+  return new Promise((resolve, reject) => {
+    try {
+      db.projects.findOne({ slug }, (error, data) => {
+        if (error) {
+          reject({
+            status: 500,
+            error, 
+            message: `Internal server error. Failed to get project data for ${slug}`})
+        } else {
+          resolve({ data })
+        }
+      })
+    } catch (err) {
+      reject({
+        status: 500,
+        error: err,
+        message: `Internal server error. Failed to get project data for ${slug}.`
+      })
+    }
+  })
+}
+
 const readProjectsFeatured = limit => {
   return new Promise((resolve, reject) => {
     try {
@@ -11,18 +34,27 @@ const readProjectsFeatured = limit => {
         .limit(limit,
         (error, data) => {
           if (error) {
-            reject({ error })
+            reject({
+              status: 500,
+              error,
+              message: 'Internal server error. Failed to get data for featured projects.'
+            })
           } else {
             resolve({ data })
           }
         }
       )
-    } catch (error) {
-      reject(error)
+    } catch (err) {
+      reject({
+        status: 500,
+        error: err,
+        message: 'Internal server error. Failed to get data for featured projects.'
+      })
     }
   })
 }
 
 module.exports = {
+  readProjectBySlug,
   readProjectsFeatured
 }
