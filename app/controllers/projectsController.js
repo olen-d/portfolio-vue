@@ -8,7 +8,7 @@ const updateProject = require("../models/updateProject");
 
 const deleteProject = require("../models/deleteProject");
 
-const { readProjectsFeatured } = require("../models/projects.js")
+const { readProjectBySlug, readProjectsFeatured } = require("../models/projects.js")
 
 // Helpers
 const auth = require("../helpers/auth-module");
@@ -105,12 +105,23 @@ exports.read_project_by_id = (req, res) => {
     });
 };
 
+exports.read_project_by_slug = async (req, res) => {
+  try {
+    const { params: { slug }, } = req
+
+    const response = await readProjectBySlug(slug)
+    res.status(200).json(response)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+}
+
 exports.read_projects_featured = async (req, res) => {
   try {
     const { params: { limit }, } = req
     const limitParsed = parseInt(limit)
 
-    const response = await readProjectsFeatured (limitParsed)
+    const response = await readProjectsFeatured(limitParsed)
     res.status(200).json(response)
   } catch (error) {
     res.status(500).json(error)
