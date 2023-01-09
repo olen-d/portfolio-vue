@@ -14,6 +14,9 @@
     title: {
       type: String
     },
+    slug: {
+      type: String
+    },
     repoLink: {
       type: String
     },
@@ -101,6 +104,9 @@
     </div>
     <div class="title">
       {{ title }}
+    </div>
+    <div class="slug">
+      {{  slug }}
     </div>
     <div class="description">
       {{ description }}

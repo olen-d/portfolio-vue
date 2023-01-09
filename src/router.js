@@ -24,6 +24,8 @@ const LoginPage = () => import("@/views/LoginPage.vue");
 const RequestPasswordResetPage = () => import("@/views/RequestPasswordResetPage.vue");
 const ResetPasswordPage = () => import("@/views/ResetPasswordPage.vue");
 const ProjectsPage = () => import("@/views/ProjectsPage.vue");
+const ProjectLayout = () => import("@/components/ProjectLayout.vue")
+const ProjectsLayout = () => import("@/components/ProjectsLayout.vue")
 const SignupPage = () => import("@/views/SignupPage.vue");
 
 const AuthorizeStrava = () => import("./views/AuthorizeStrava.vue");
@@ -172,7 +174,19 @@ const router = createRouter({
     {
       path: "/projects",
       name: "projects",
-      component: ProjectsPage
+      component: ProjectsPage,
+      children: [
+        {
+          path: "",
+          name: "projectList",
+          component: ProjectsLayout
+        },
+        {
+          path: ":slug",
+          name: "projectDetail",
+          component: ProjectLayout
+        }
+      ]
     },
     {
       path: "/signup",
