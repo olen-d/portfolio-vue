@@ -24,13 +24,7 @@ const isDisabled = ref(true)
       </div>
     </div>
     <div class="card-summary-project-footer">
-      <button
-        :disabled = "isDisabled"
-        @click.prevent="handleClick"
-        class="button-primary"
-      >
-        <slot name="card-summary-project-call-to-action">Learn More</slot>
-      </button>
+        <slot name="call-to-action"></slot>
     </div>
   </div>
 </template>

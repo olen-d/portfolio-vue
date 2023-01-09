@@ -243,8 +243,6 @@
 
 <template>
   <div id="admin-projects-form">
-    Title: {{ formValues[0]?.inputValue }}<br />
-    Slug: {{ formValues[1]?.inputValue }}<br />
     <h4 class="admin-projects-form-title">
       {{ formAction }} a Project
     </h4>

@@ -1,9 +1,9 @@
 <script setup>
-  import ProjectsLayout from '@/components/ProjectsLayout.vue'
+  // import ProjectsLayout from '@/components/ProjectsLayout.vue'
 </script>
 
 <template>
   <div class="projects-page">
-    <ProjectsLayout />
+    <router-view />
   </div>
 </template>

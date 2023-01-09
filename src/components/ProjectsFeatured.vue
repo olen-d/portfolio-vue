@@ -39,7 +39,7 @@
 <template>
   <div class="projects-featured">
     <CardSummaryProject
-      v-for="{ _id, title, description, screenshot, deployedLink, repoLink } in projects"
+      v-for="{ _id, title, slug, description, screenshot, deployedLink, repoLink } in projects"
       :key="_id"
     >
       <template #screenshot>
@@ -62,6 +62,9 @@
       </template>
       <template #link-repo>
         <a :href="repoLink"><i class="fab fa-github repo"></i></a>
+      </template>
+      <template #call-to-action>
+        <router-link :to="`/projects/${slug}`"><button class="button-primary">Learn More</button></router-link>
       </template>
     </CardSummaryProject>
   </div>
