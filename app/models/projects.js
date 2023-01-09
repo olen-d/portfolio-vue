@@ -29,7 +29,7 @@ const readProjectsFeatured = limit => {
     try {
       db.projects.find(
         { isFeatured: 'Yes', show: 'Yes' },
-        { _id: 1, title: 1, description: 1, deployedLink: 1, repoLink: 1, screenshot: 1, featuredPriority: 1 })
+        { _id: 1, title: 1, slug: 1, description: 1, deployedLink: 1, repoLink: 1, screenshot: 1, featuredPriority: 1 })
         .sort({ featuredPriority: 1 })
         .limit(limit,
         (error, data) => {
