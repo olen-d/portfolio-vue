@@ -32,17 +32,12 @@ const isDisabled = ref(true)
 <style scoped>
   .card-summary-project {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: 1fr;
     justify-items: center;
   }
   .card-summary-project-footer {
     justify-self: center;
   }
-
-  /* .card-summary-project-links {
-    margin-right: 8rem;
-    margin-left: 8rem;
-  } */
   .card-summary-project-link-deployed,
   .card-summary-project-link-repo {
     display: inline;

@@ -43,11 +43,13 @@
       :key="_id"
     >
       <template #screenshot>
-        <img
-          class="screenshot"
-          :src="`${publicPath}/assets/images/${screenshot}`"
-          :alt="`Screenshot of ${title}`"
-        />
+        <div class="screenshot">
+          <img
+            class="screenshot-image"
+            :src="`${publicPath}/assets/images/${screenshot}`"
+            :alt="`Screenshot of ${title}`"
+          />
+        </div>
       </template>
       <template #title>
         <h2 class="project-title">{{ title }}</h2>
@@ -77,24 +79,27 @@
   .repo {
     margin-left: 1.5rem;
   }
-  .screenshot {
-    width: 350px;
-    height: auto;
+  .screenshot-image {
+    width: 100%;
+    object-fit: contain;
   }
   .project-description {
-    margin-right: 3rem;
-    margin-bottom: 0rem;
-    margin-left: 3rem;
+    padding-right: 3rem;
+    padding-bottom: 0rem;
+    padding-left: 3rem;
+  }
+  .project-description p {
+    margin: 0rem;
+    padding: 0rem;
   }
   .project-title {
     margin-top: 6rem;
   }
-
   @media (min-width: 1024px) {
     .project-description {
-      margin-right: 3rem;
-      margin-bottom: 0rem;
-      margin-left: 0rem;
+      padding-right: 3rem;
+      padding-bottom: 0rem;
+      padding-left: 0rem;
     }
   }
 </style>
