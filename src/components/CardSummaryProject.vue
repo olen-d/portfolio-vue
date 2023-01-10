@@ -36,6 +36,9 @@
   .card-summary-project-link-repo {
     display: inline;
   }
+  .card-summary-project-links {
+    justify-self: center;
+  }
 
   @media (min-width: 1024px) {
     .card-summary-project {
@@ -43,6 +46,12 @@
       grid-template-columns: 350px 1fr;
       column-gap: 8rem;
     }
+    .card-summary-project-footer {
+    justify-self: start;
+  }
+    .card-summary-project-links {
+    justify-self: start;
+  }
     .card-summary-project-title {
       grid-column-start: 2;
     }
