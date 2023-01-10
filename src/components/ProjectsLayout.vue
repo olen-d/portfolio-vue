@@ -1,6 +1,7 @@
 <script setup>
   import { computed, onMounted, ref } from 'vue'
 
+  import CardBriefProject from '@/components/CardBriefProject.vue'
   import HeaderFrontEnd from '@/components/HeaderFrontEnd.vue'
   import LoadingIndicator from '@/components/LoadingIndicator.vue'
 
@@ -63,36 +64,41 @@
             <LoadingIndicator :loading="loading" :error="error" />
           </div>
           <div v-if="!loading" class="projects">
-            <div
-              v-for="{
-                _id,
-                deployedLink,
-                description,
-                title,
-                repoLink,
-                screenshot
-              } in sortedProjects"
+            <CardBriefProject
+              v-for="{ _id, title, slug, deployedLink, description, repoLink, screenshot } in sortedProjects"
               :key="_id"
-              class="card u-pull-left"
             >
-              <div class="card-title">
-                <img
-                  class="screenshot"
-                  :src="`${publicPath}/assets/images/${screenshot}`"
-                  :alt="`Screenshot of ${title}`"
-                />
-                <h2>
+              <template #screenshot>
+                <div class="screenshot">
+                  <img
+                    class="screenshot-image"
+                    :src="`${publicPath}/assets/images/${screenshot}`"
+                    :alt="`Screenshot of ${title}`"
+                  />
+                </div>
+              </template>
+              <template #title>
+                <h2 class="project-title">
                   {{ title }}
                 </h2>
-                <p>
+              </template>
+              <template #description>
+                <p class="project-description">
                   {{ description }}
                 </p>
-                <p><a :href="deployedLink">Visit the project</a>.</p>
-                <p>
-                  <a :href="repoLink">See the code on Github</a>
-                </p>
-              </div>
-            </div>
+              </template>
+              <template #link-deployed>
+                <a :href="deployedLink" :title="`Open ${title}`"><i class="fas fa-link deployed"></i></a>
+              </template>
+              <template #link-repo>
+                <a :href="repoLink" :title="`${title} Source Code`"><i class="fab fa-github repo"></i></a>
+              </template>
+              <template #call-to-action>
+                <div class="call-to-action">
+                  <router-link :to="`/projects/${slug}`"><button class="button-primary">Learn More</button></router-link>
+                </div>
+              </template>
+            </CardBriefProject>
           </div>
         </div>
         <div class="one column">
@@ -104,12 +110,28 @@
 </template>
 
 <style scoped>
-.loading-indicator-wrapper {
+  .call-to-action {
+    padding-bottom: 3rem;
+  }
+  .deployed, .repo {
+    font-size: 2.5rem;
+  }
+  .repo {
+    margin-left: 1.5rem;
+  }
+  .loading-indicator-wrapper {
   margin-bottom: 10rem;
-}
-
-.screenshot {
-  width: 350px;
-  height: auto;
-}
+  }
+  .project-description {
+    margin: 0rem;
+    padding: 0rem 2rem 0rem 2rem;
+  }
+  .project-title {
+    margin-top: 3rem;
+    font-size: 2.5rem;
+  }
+  .screenshot-image {
+      width: 333px;
+      object-fit: contain;
+  }
 </style>

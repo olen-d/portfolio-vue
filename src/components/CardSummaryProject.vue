@@ -1,9 +1,3 @@
-<script setup>
-import { ref } from 'vue'
-
-const isDisabled = ref(true)
-</script>
-
 <template>
   <div class="card-summary-project">
     <div class="card-summary-project-screenshot">
