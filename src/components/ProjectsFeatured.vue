@@ -60,19 +60,24 @@
         </p>
       </template>
       <template #link-deployed>
-        <a :href="deployedLink"><i class="fas fa-link deployed"></i></a>
+        <a :href="deployedLink" :title="`Open ${title}`"><i class="fas fa-link deployed"></i></a>
       </template>
       <template #link-repo>
-        <a :href="repoLink"><i class="fab fa-github repo"></i></a>
+        <a :href="repoLink" :title="`${title} Source Code`"><i class="fab fa-github repo"></i></a>
       </template>
       <template #call-to-action>
-        <router-link :to="`/projects/${slug}`"><button class="button-primary">Learn More</button></router-link>
+        <div class="call-to-action">
+          <router-link :to="`/projects/${slug}`"><button class="button-primary">Learn More</button></router-link>
+        </div>
       </template>
     </CardSummaryProject>
   </div>
 </template>
 
 <style scoped>
+  .call-to-action {
+    padding-bottom: 3rem;
+  }
   .deployed, .repo {
     font-size: 2.5rem;
   }
@@ -84,14 +89,10 @@
     object-fit: contain;
   }
   .project-description {
-    padding-right: 3rem;
-    padding-bottom: 0rem;
-    padding-left: 3rem;
-  }
-  .project-description p {
     margin: 0rem;
-    padding: 0rem;
+    padding: 0rem 3rem 0rem 3rem;
   }
+
   .project-title {
     margin-top: 6rem;
   }
