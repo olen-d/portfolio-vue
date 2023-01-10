@@ -40,7 +40,14 @@ a:hover {
     display: none;
 }
 
-.projects, .skills {
+.projects {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.skills {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -53,7 +60,7 @@ a:hover {
 }
 
 .card {
-    width: 350px;
+    width: 335px;
 }
 
 .card-skinny {
