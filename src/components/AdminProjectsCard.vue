@@ -11,6 +11,9 @@
     description: {
       type: String
     },
+    overview: {
+      type: String
+    },
     title: {
       type: String
     },
@@ -111,6 +114,9 @@
     <div class="description">
       {{ description }}
     </div>
+    <div class="overview">
+      {{ overview }}
+    </div>
     <div class="links">
       <p>
         Deployed at:<br />
@@ -137,6 +143,9 @@
 </template>
 
 <style scoped>
+  .overview {
+    padding-top: 2rem;
+  }
   .screenshot {
     width: 350px;
   }
