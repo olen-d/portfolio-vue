@@ -30,6 +30,10 @@
       type: Boolean,
       default: false
     },
+    rows: {
+      type: Number,
+      default: 2
+    },
     shouldClearInput: {
       type: Boolean,
       default: false
@@ -102,8 +106,15 @@
       id="textAreaGeneric"
       :placeholder="placeholder"
       :required="required"
+      :rows="rows"
       @blur="handleBlur"
     >
     </textarea>
   </div>
 </template>
+
+<style scoped>
+textarea {
+  height: auto;
+}
+</style>
