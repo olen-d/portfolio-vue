@@ -286,6 +286,16 @@
         @change-form-values="updateFormValues($event)" 
         @remove-form-values="removeFormValues($event)"
       />
+      <TextareaGeneric
+        errorMessage="Please enter a valid project overview"
+        inputName="overview"
+        labeltext="Project Overview"
+        placeholder="Provide additional detail about the project..."
+        :initialValue="updateProjectData.overview || null"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
       <InputFileSingle 
         inputName="file"
         labeltext="Screenshot"
