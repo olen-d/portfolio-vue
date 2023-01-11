@@ -292,6 +292,7 @@
         labeltext="Project Overview"
         placeholder="Provide additional detail about the project..."
         :initialValue="updateProjectData.overview || null"
+        :rows="10"
         :shouldClearInput="shouldClearInputs"
         @change-form-values="updateFormValues($event)" 
         @remove-form-values="removeFormValues($event)"
