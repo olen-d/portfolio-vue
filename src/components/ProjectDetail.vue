@@ -29,6 +29,9 @@
       <div class="description">
         {{  projectData.data.description }}
       </div>
+      <div class="overview">
+        {{ projectData.data.overview }}
+      </div>
       <div class="skills-list">
         <h2>
           Skills Used
@@ -61,6 +64,9 @@
 </template>
 
 <style scoped>
+  .description {
+
+  }
   .links {
     margin-top: 5rem;
     margin-bottom: 5rem;
@@ -75,6 +81,9 @@
   }
   .right {
     justify-self: right;
+  }
+  .overview {
+    grid-column-start: 1;
   }
   .project-detail {
     margin-bottom: 10rem;
@@ -91,6 +100,10 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+  .skills-list {
+    grid-row-start: 1;
+    grid-column-start: 2;
   }
   .skills-list h2 {
     margin-bottom: 1rem;
