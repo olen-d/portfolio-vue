@@ -14,6 +14,9 @@
     overview: {
       type: String
     },
+    challenge: {
+      type: String
+    },
     title: {
       type: String
     },
@@ -116,6 +119,9 @@
     </div>
     <div class="overview">
       {{ overview }}
+    </div>
+    <div class="challenge">
+      {{ challenge }}
     </div>
     <div class="links">
       <p>
