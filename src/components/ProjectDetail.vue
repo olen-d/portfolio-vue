@@ -60,12 +60,18 @@
         :alt="`Screenshot of ${projectData.data.title}`"
       />
     </div>
+    <div class="challenge">
+      <h2>
+        The Challenge
+      </h2>
+      {{  projectData.data.challenge }}
+    </div>
   </div>
 </template>
 
 <style scoped>
-  .description {
-
+  h2 {
+    margin-top: 6rem;
   }
   .links {
     margin-top: 5rem;
