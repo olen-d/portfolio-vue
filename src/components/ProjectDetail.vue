@@ -66,6 +66,12 @@
       </h2>
       {{  projectData.data.challenge }}
     </div>
+    <div class="approach">
+      <h2>
+        The Approach
+      </h2>
+      {{  projectData.data.approach }}
+    </div>
   </div>
 </template>
 
