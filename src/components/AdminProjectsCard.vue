@@ -5,6 +5,9 @@
     _id: {
       type: String
     },
+    approach: {
+      type: String
+    },
     deployedLink: {
       type: String
     },
@@ -122,6 +125,9 @@
     </div>
     <div class="challenge">
       {{ challenge }}
+    </div>
+    <div class="approach">
+      {{ approach }}
     </div>
     <div class="links">
       <p>

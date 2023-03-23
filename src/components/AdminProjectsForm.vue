@@ -309,6 +309,17 @@
         @change-form-values="updateFormValues($event)" 
         @remove-form-values="removeFormValues($event)"
       />
+      <TextareaGeneric
+        errorMessage="Please enter a valid approach description"
+        inputName="approach"
+        labeltext="Project Approach"
+        placeholder="Describe the approach taken to solve the project challenge..."
+        :initialValue="updateProjectData.approach || null"
+        :rows="6"
+        :shouldClearInput="shouldClearInputs"
+        @change-form-values="updateFormValues($event)" 
+        @remove-form-values="removeFormValues($event)"
+      />
       <InputFileSingle 
         inputName="file"
         labeltext="Screenshot"
